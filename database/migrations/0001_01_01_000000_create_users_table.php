@@ -21,6 +21,17 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Insert default admin user
+        DB::table('users')->insert([
+            'name' => 'Admin',
+            'username' => 'admin',
+            'password' => Hash::make('1234'), 
+            'role' => 'admin',
+            'foto' => 'admin.jpg',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('username')->primary();
             $table->string('token');

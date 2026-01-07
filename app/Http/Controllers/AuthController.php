@@ -24,6 +24,11 @@ class AuthController extends Controller
         ]);
     }
 
+    public function showLoginForm()
+    {
+        return view('auth.login'); // file login.blade.php
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();
