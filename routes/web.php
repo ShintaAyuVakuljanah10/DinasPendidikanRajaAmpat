@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'delete'])->name('user.hapus');
 
+    
+});
+
+Route::controller(PagesController::class)->group(function () {
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
     Route::get('/pages/data', [PagesController::class, 'getDatatables'])->name('backend.pages.data');
     Route::post('/pages/store', [PagesController::class, 'store'])->name('backend.pages.store');
@@ -34,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/pages/{id}', [PagesController::class, 'destroy'])->name('backend.pages.destroy');
     Route::get('/pages/getparent', [PagesController::class, 'getParent'])->name('backend.pages.getparent');
 });
+
 Route::get('/home', [HomeController::class, 'index'])
     ->middleware('auth')
     ->name('home');

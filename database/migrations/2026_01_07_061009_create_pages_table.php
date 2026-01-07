@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->nullable();
             $table->longText('content')->nullable();
-            $table->enum('type', ['Pages', 'Sub Pages'])->nullable();
+            $table->enum('type', ['page', 'sub_page'])->nullable();
             $table->unsignedBigInteger('parent')->nullable();
+            $table->boolean('with_direct_link')->default(0)->after('with_content');
+            $table->string('link')->nullable()->after('with_direct_link');
             $table->string('meta_title', 125)->nullable();
             $table->text('meta_keywords')->nullable();
             $table->integer('with_content')->nullable();
