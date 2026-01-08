@@ -18,8 +18,8 @@ return new class extends Migration
             $table->longText('content')->nullable();
             $table->enum('type', ['page', 'sub_page'])->nullable();
             $table->unsignedBigInteger('parent')->nullable();
-            $table->boolean('with_direct_link')->default(0)->after('with_content');
-            $table->string('link')->nullable()->after('with_direct_link');
+            $table->boolean('with_direct_link')->default(0);
+            $table->string('link')->nullable();
             $table->string('meta_title', 125)->nullable();
             $table->text('meta_keywords')->nullable();
             $table->integer('with_content')->nullable();

@@ -34,23 +34,6 @@
             </div>
         </div>
     </div>
-    {{-- <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th width="5%">No</th>
-                <th>Nama</th>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Foto</th>
-                <th width="15%">Aksi</th>
-            </tr>
-        </thead>
-        <tbody id="user-table">
-            <tr>
-                <td colspan="6" class="text-center">Loading...</td>
-            </tr>
-        </tbody>
-    </table> --}}
 </div>
 <!-- Modal Create/Edit User -->
 <div class="modal fade" id="modalUser" tabindex="-1">
