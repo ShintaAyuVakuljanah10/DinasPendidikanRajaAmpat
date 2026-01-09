@@ -83,7 +83,6 @@ public function update(Request $request, $id) {
     {
         $user = User::findOrFail($id);
         
-        // Hapus file foto jika ada
         if ($user->foto && file_exists(storage_path('app/public/' . $user->foto))) {
             unlink(storage_path('app/public/' . $user->foto));
         }

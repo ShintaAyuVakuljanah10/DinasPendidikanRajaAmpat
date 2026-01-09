@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Backend\HomeController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\PagesController;
-
+use App\Http\Controllers\Backend\PostController;
 
 
 Route::get('/', function () {
@@ -17,8 +17,6 @@ Route::middleware('auth')->group(function () {
 });
 Route::middleware('auth')->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('user');
-
-    // AJAX
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
     Route::post('/user/tambah', [UserController::class, 'tambah'])->name('user.tambah');
     Route::get('/users/{id}/edit', [UserController::class, 'edit']);
@@ -28,6 +26,18 @@ Route::middleware('auth')->group(function () {
 
     
 });
+
+Route::controller(PostController::class)->group(function () {
+    Route::get('/post', [PostController::class, 'index'])->name('post');
+    Route::get('/post/data', [PostController::class, 'data'])->name('post.data');
+    Route::post('/post/tambah', [PostController::class, 'store'])->name('post.tambah');
+    Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::post('/post/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::put('/post/{id}', [PostController::class, 'update']);
+    Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.hapus');
+
+});
+
 
 Route::controller(PagesController::class)->group(function () {
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
