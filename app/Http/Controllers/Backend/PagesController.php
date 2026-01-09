@@ -12,7 +12,11 @@ class PagesController extends Controller
 {
     public function index()
     {
-        return view('backend.pages');
+        $pages = DB::table('pages')
+            ->orderBy('order', 'asc')
+            ->get();
+
+        return view('backend.pages', compact('pages'));
     }
 
     public function getDatatables()
