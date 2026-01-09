@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\HomeController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\PagesController;
 use App\Http\Controllers\Backend\PostController;
+use App\Http\Controllers\Backend\SettingController;
 
 
 Route::get('/', function () {
@@ -58,4 +59,12 @@ Route::post('/login', [AuthController::class, 'login'])
 
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
+
+Route::prefix('settings')->middleware('auth')->group(function () {
+    Route::get('/aplikasi', [SettingController::class, 'aplikasi'])
+        ->name('settings.aplikasi');
+
+    Route::get('/banner', [SettingController::class, 'banner'])
+        ->name('settings.banner');
+});
 

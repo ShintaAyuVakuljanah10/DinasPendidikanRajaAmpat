@@ -99,21 +99,24 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-toggle="collapse" href="#data-master"
+                            aria-expanded="false" aria-controls="data-master">
                             <i class="icon-layout menu-icon"></i>
                             <span class="menu-title">Data Master</span>
                             <i class="menu-arrow"></i>
                         </a>
-                        <div class="collapse" id="ui-basic">
+                        <div class="collapse" id="data-master">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="pages/ui-features/buttons.html">Kategori</a></li>
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="pages/ui-features/dropdowns.html">Label</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Kategori</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Label</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('post') }}">
                             <i class="icon-head menu-icon"></i>
@@ -121,21 +124,24 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-toggle="collapse" href="#menu-setting"
+                            aria-expanded="false" aria-controls="menu-setting">
                             <i class="icon-layout menu-icon"></i>
                             <span class="menu-title">Menu</span>
                             <i class="menu-arrow"></i>
                         </a>
-                        <div class="collapse" id="ui-basic">
+                        <div class="collapse" id="menu-setting">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="pages/ui-features/buttons.html">Menu</a></li>
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="pages/ui-features/dropdowns.html">Submenu</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Menu</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Submenu</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+
                     <li class="nav-item {{ request()->is('settings/*') ? 'active' : '' }}">
                         <a class="nav-link" data-toggle="collapse" href="#settings"
                             aria-expanded="{{ request()->is('settings/*') ? 'true' : 'false' }}"
@@ -194,31 +200,23 @@
         <!-- container-scroller -->
 
         <!-- plugins:js -->
-        <script src="{{ asset('vendors/js/vendor.bundle.base.js') }}"></script>
-        <!-- endinject -->
-        <!-- Plugin js for this page -->
-        <script src="{{ asset('vendors/chart.js/Chart.min.js') }}"></script>
-        <script src="{{ asset('vendors/datatables.net/jquery.dataTables.js') }}"></script>
-        <script src="{{ asset('vendors/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
-        <script src="{{ asset('js/dataTables.select.min.js') }}"></script>
+        <!-- jQuery (WAJIB PALING ATAS) -->
+            <script src="{{ asset('assets/skydash/vendors/js/vendor.bundle.base.js') }}"></script>
 
-        <!-- End plugin js for this page -->
-        <!-- inject:js -->
-        <script src="{{ asset('js/off-canvas.js') }}"></script>
-        <script src="{{ asset('js/hoverable-collapse.js') }}"></script>
-        <script src="{{ asset('js/template.js') }}"></script>
-        <script src="{{ asset('js/settings.js') }}"></script>
-        <script src="{{ asset('js/todolist.js') }}"></script>
-        <!-- endinject -->
-        <!-- Custom js for this page-->
-        <script src="{{ asset('js/dashboard.js') }}"></script>
-        <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <!-- Plugin -->
+            <script src="{{ asset('assets/skydash/vendors/datatables.net/jquery.dataTables.js') }}"></script>
+            <script src="{{ asset('assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
 
-        <!-- End custom js for this page-->
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+            <!-- Skydash Core -->
+            <script src="{{ asset('assets/skydash/js/off-canvas.js') }}"></script>
+            <script src="{{ asset('assets/skydash/js/hoverable-collapse.js') }}"></script>
+            <script src="{{ asset('assets/skydash/js/template.js') }}"></script>
+            <script src="{{ asset('assets/skydash/js/settings.js') }}"></script>
 
-        @stack('scripts')
+            <!-- Dashboard -->
+            <script src="{{ asset('assets/skydash/js/dashboard.js') }}"></script>
+
+            @stack('scripts')
     </body>
 
 </html>
