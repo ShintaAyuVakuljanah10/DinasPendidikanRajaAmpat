@@ -4,31 +4,49 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Category;
+use App\Models\User;
+
 
 class Post extends Model
 {
+    protected $table = 'posts';
+
     protected $fillable = [
-        'title','slug','author','intro','content','category','label',
-        'image','meta_title','meta_keywords','status',
-        'created_by','updated_by','published_at'
+        'judul',
+        'slug',
+        'konten',
+        'gambar',
+        'kategori_id',
+        'user_id',
+        'status',
+        'views',
+        'tanggal_publish',
     ];
 
     protected $casts = [
-        'published_at' => 'datetime',
+        'tanggal_publish' => 'datetime',
     ];
-
-    public function scopePublished($query)
+    public function kategori()
     {
-        return $query->where('status', 'Published');
+        return $this->belongsTo(Category::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'published');
+    }
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($post) {
             if (empty($post->slug)) {
-                $post->slug = Str::slug($post->title);
+                $post->slug = Str::slug($post->judul);
             }
         });
     }

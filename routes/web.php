@@ -6,7 +6,8 @@ use App\Http\Controllers\Backend\HomeController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\PagesController;
 use App\Http\Controllers\Backend\PostController;
-use App\Http\Controllers\Backend\SettingController;
+use App\Http\Controllers\Backend\Settings\AppController;
+use App\Http\Controllers\Backend\Settings\BannerController;
 
 
 Route::get('/', function () {
@@ -28,17 +29,31 @@ Route::middleware('auth')->group(function () {
     
 });
 
-Route::controller(PostController::class)->group(function () {
-    Route::get('/post', [PostController::class, 'index'])->name('post');
-    Route::get('/post/data', [PostController::class, 'data'])->name('post.data');
-    Route::post('/post/tambah', [PostController::class, 'store'])->name('post.tambah');
-    Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
-    Route::post('/post/{id}', [PostController::class, 'update'])->name('post.update');
-    Route::put('/post/{id}', [PostController::class, 'update']);
-    Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.hapus');
-
+Route::middleware(['auth'])->controller(PostController::class)->group(function () {
+    Route::get('/post', 'index')->name('post');
+    Route::get('/post/data', 'data')->name('post.data');
+    Route::post('/post/tambah', 'store')->name('post.tambah');
+    Route::get('/post/{id}/edit', 'edit')->name('post.edit');
+    Route::match(['post','put'], '/post/{id}', 'update')->name('post.update');
+    Route::delete('/post/{id}', 'destroy')->name('post.hapus');
 });
 
+
+Route::prefix('settings')
+    ->middleware('auth')
+    ->group(function () {
+
+        Route::controller(AppController::class)->group(function () {
+            Route::get('/aplikasi', 'index')->name('settings.aplikasi');
+            Route::post('/aplikasi', 'update')->name('settings.aplikasi.update');
+        });
+
+        Route::controller(BannerController::class)->group(function () {
+            Route::get('/banner', 'index')->name('settings.banner');
+            Route::post('/banner', 'store')->name('settings.banner.store');
+        });
+
+});
 
 Route::controller(PagesController::class)->group(function () {
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
@@ -60,11 +75,5 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
-Route::prefix('settings')->middleware('auth')->group(function () {
-    Route::get('/aplikasi', [SettingController::class, 'aplikasi'])
-        ->name('settings.aplikasi');
 
-    Route::get('/banner', [SettingController::class, 'banner'])
-        ->name('settings.banner');
-});
 
