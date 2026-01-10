@@ -103,7 +103,7 @@
             <input type="hidden" name="active" id="active" value="1">
             <input type="hidden" name="type" id="type">
             <input type="hidden" name="parent_id" id="parent_id">
-
+            
             <div class="modal-content rounded-4">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">Tambah Page</h5>

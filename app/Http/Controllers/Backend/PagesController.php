@@ -13,7 +13,7 @@ class PagesController extends Controller
     public function index()
     {
         $pages = DB::table('pages')
-            ->orderBy('order', 'asc')
+            ->orderBy('sort_order', 'asc')
             ->get();
 
         return view('backend.pages', compact('pages'));
@@ -29,34 +29,26 @@ class PagesController extends Controller
         $request->validate([
             'title' => 'required|string|max:255|unique:pages,title',
             'slug' => 'required|string|max:255|unique:pages,slug',
-            'type' => 'required|in:page,sub_page',
+            'type' => 'required|in:pages,sub_pages',
             'content' => 'nullable|string',
-            'parent' => 'nullable|integer',
+            'parent_id' => 'nullable|exists:pages,id',
             'meta_title' => 'nullable|string|max:125',
-            'meta_keywords' => 'nullable|string',
             'active' => 'required|in:0,1',
-            'with_content' => 'required|in:0,1',
-            'with_direct_link' => 'nullable|boolean',
-            'link' => 'nullable|string|max:255',
         ]);
 
-        $lastOrder = DB::table('pages')->max('order') ?? 0;
+        $lastOrder = DB::table('pages')->max('sort_order') ?? 0;
 
         DB::table('pages')->insert([
             'title' => $request->title,
             'slug' => $request->slug,
             'content' => $request->content,
             'type' => $request->type,
-            'parent' => $request->parent,
+            'parent_id' => $request->parent_id,
             'meta_title' => $request->meta_title,
-            'meta_keywords' => $request->meta_keywords,
-           'active' => (int) $request->active,
-            'with_content' => (int) $request->with_content,
-            'with_direct_link' => (int) ($request->with_direct_link ?? 0),
-            'link' => $request->link,
+            'active' => (int) $request->active,
+            'sort_order' => $lastOrder + 1,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
-            'order' => $lastOrder + 1,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -76,8 +68,8 @@ class PagesController extends Controller
         $request->validate([
             'title' => 'required|string|max:255|unique:pages,title,' . $id,
             'slug' => 'required|string|max:255|unique:pages,slug,' . $id,
-            'type' => 'required|string',
-            'active' => 'required|boolean',
+            'type' => 'required|in:pages,sub_pages',
+            'active' => 'required|in:0,1',
         ]);
 
         DB::table('pages')->where('id', $id)->update([
@@ -85,13 +77,9 @@ class PagesController extends Controller
             'slug' => $request->slug,
             'content' => $request->content,
             'type' => $request->type,
-            'parent' => $request->parent,
+            'parent_id' => $request->parent_id,
             'meta_title' => $request->meta_title,
-            'meta_keywords' => $request->meta_keywords,
-            'active' => $request->active,
-            'with_content' => $request->with_content ?? 0,
-            'with_direct_link' => $request->with_direct_link ?? 0,
-            'link' => $request->link,
+            'active' => (int) $request->active,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         ]);
@@ -101,20 +89,24 @@ class PagesController extends Controller
 
     public function destroy($id)
     {
-        if (DB::table('pages')->where('parent', $id)->exists()) {
+        if (DB::table('pages')->where('parent_id', $id)->exists()) {
             return response()->json([
                 'message' => 'Page masih memiliki sub pages'
             ], 422);
         }
 
         DB::table('pages')->where('id', $id)->delete();
+
         return response()->json(['success' => true]);
     }
 
     public function getParent()
     {
         return response()->json(
-            DB::table('pages')->whereNull('parent')->get()
+            DB::table('pages')
+                ->whereNull('parent_id')
+                ->where('type', 'pages')
+                ->get()
         );
     }
 }

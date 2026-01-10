@@ -12,24 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pages', function (Blueprint $table) {
-            $table->bigIncrements('id'); // Auto-increment primary key
+            $table->id();
             $table->string('title');
-            $table->string('slug')->nullable();
+            $table->string('slug')->unique();
             $table->longText('content')->nullable();
-            $table->enum('type', ['page', 'sub_page'])->nullable();
-            $table->unsignedBigInteger('parent')->nullable();
-            $table->boolean('with_direct_link')->default(0);
-            $table->string('link')->nullable();
+        
+            $table->enum('type', ['pages', 'sub_pages']);
+            $table->unsignedBigInteger('parent_id')->nullable();
+        
+            $table->boolean('active')->default(true);
+        
             $table->string('meta_title', 125)->nullable();
-            $table->text('meta_keywords')->nullable();
-            $table->integer('with_content')->nullable();
-            $table->unsignedInteger('active')->nullable();
+        
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->integer('order')->nullable();
-        });
+        
+            $table->integer('sort_order')->nullable();
+        
+            $table->timestamps();
+        });               
     }
 
     /**
