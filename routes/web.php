@@ -8,11 +8,24 @@ use App\Http\Controllers\Backend\PagesController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\Settings\AppController;
 use App\Http\Controllers\Backend\Settings\BannerController;
+use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\FileManagerController;
+
 
 
 Route::get('/', function () {
     return view('auth.login');
 });
+Route::get('/home', [HomeController::class, 'index'])
+    ->middleware('auth')
+    ->name('home');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login.process');
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout');
+
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])
         ->name('home');
@@ -55,6 +68,28 @@ Route::prefix('settings')
 
 });
 
+Route::prefix('categories')->group(function () {
+    Route::get('/', [CategoryController::class, 'index'])->name('category');
+    Route::get('/data', [CategoryController::class, 'data'])->name('category.data');
+    Route::post('/', [CategoryController::class, 'store'])->name('category.store');
+    Route::get('/{id}/edit', [CategoryController::class, 'edit']);
+    Route::put('/{id}', [CategoryController::class, 'update']);
+    Route::delete('/{id}', [CategoryController::class, 'destroy']);
+});
+Route::get('/categories/list', function () {
+    return \App\Models\Category::select('id','nama')->orderBy('nama')->get();
+})->name('category.list');
+
+Route::prefix('fileManager')->group(function () {
+    Route::get('/', [FileManagerController::class, 'index'])->name('fileManager');
+    Route::get('/data', [FileManagerController::class, 'data'])->name('fileManager.data');
+    Route::post('/', [FileManagerController::class, 'store'])->name('fileManager.store');
+    Route::delete('/{id}', [FileManagerController::class, 'destroy']);
+});
+
+
+
+
 Route::controller(PagesController::class)->group(function () {
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
     Route::get('/pages/data', [PagesController::class, 'getDatatables'])->name('backend.pages.data');
@@ -65,15 +100,6 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('/pages/getparent', [PagesController::class, 'getParent'])->name('backend.pages.getparent');
 });
 
-Route::get('/home', [HomeController::class, 'index'])
-    ->middleware('auth')
-    ->name('home');
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login.process');
-
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->name('logout');
 
 
 

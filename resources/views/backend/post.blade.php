@@ -99,10 +99,11 @@
 
                                     <div class="mb-3">
                                         <label>Kategori</label>
-                                        <select name="kategori_id" class="form-control">
+                                        <select name="kategori_id" id="kategori_id" class="form-control">
                                             <option value="">Pilih Kategori</option>
                                         </select>
                                     </div>
+
 
                                     <div class="mb-3">
                                         <label>Status</label>
@@ -119,9 +120,19 @@
 
                                     <div class="mb-3">
                                         <label>Gambar</label>
-                                        <input type="file" name="gambar" class="form-control">
-                                    </div>
 
+                                        <!-- preview -->
+                                        <div class="mb-2">
+                                            <img id="previewGambar" src="" style="max-height:120px; display:none;">
+                                        </div>
+
+                                        <!-- input hidden -->
+                                        <input type="hidden" name="gambar" id="gambar">
+
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="openFileManager()">
+                                            Pilih dari File Manager
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +141,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
 
@@ -138,40 +149,112 @@
         </form>
     </div>
 </div>
+<div class="modal fade" id="fileManagerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pilih Gambar</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row" id="fileManagerList">
+                    <!-- ajax -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+$(document).ready(function () {
 
-    $('#btnTambahPost').click(function () {
-    $('#modalPost').modal('show');
-});
-
-$('#modalPost').on('shown.bs.modal', function () {
-    if (!tinymce.get('kontenEditor')) {
-        tinymce.init({
-            selector: '#kontenEditor',
-            height: 400
+    function loadKategori(selectedId = null) {
+        $.get("{{ route('category.list') }}", function (data) {
+            let html = '<option value="">Pilih Kategori</option>';
+            $.each(data, function (i, item) {
+                let selected = selectedId == item.id ? 'selected' : '';
+                html += `<option value="${item.id}" ${selected}>${item.nama}</option>`;
+            });
+            $('#kategori_id').html(html);
         });
     }
-});
+    $('#btnTambahPost').click(function () {
+        $('#formPost')[0].reset();
+        loadKategori(); 
+        $('#modalPost').modal('show');
+    });
+    $('#modalPost').on('shown.bs.modal', function () {
+        tinymce.remove('#kontenEditor');
 
-$('#modalPost').on('hidden.bs.modal', function () {
-    tinymce.remove('#kontenEditor');
-    $('#formPost')[0].reset();
-});
+        tinymce.init({
+            selector: '#kontenEditor',
+            height: 400,
+            menubar: false,
+            plugins: 'link image lists code',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
+        });
+    });
 
-
-    document.getElementById('judul').addEventListener('keyup', function () {
-        document.getElementById('slug').value =
+    $('#modalPost').on('hidden.bs.modal', function () {
+        tinymce.remove('#kontenEditor');
+        $('#formPost')[0].reset();
+    });
+    $('#judul').on('keyup', function () {
+        $('#slug').val(
             this.value.toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)/g, '');
+                .replace(/(^-|-$)/g, '')
+        );
+    });
+    $(document).on('click', '.edit-post', function () {
+        let id = $(this).data('id');
+
+        $.get(`/posts/${id}/edit`, function (data) {
+            $('#judul').val(data.judul);
+            $('#slug').val(data.slug);
+            $('select[name="status"]').val(data.status);
+            $('input[name="tanggal_publish"]').val(data.tanggal_publish);
+
+            loadKategori(data.kategori_id);
+
+            $('#modalPost').modal('show');
+        });
     });
 
 });
+</script>
+<script>
+    function openFileManager() {
+        $('#fileManagerModal').modal('show');
+
+        $.get("{{ route('fileManager.data') }}", function (data) {
+            let html = '';
+
+            data.forEach(file => {
+                html += `
+                    <div class="col-md-3 mb-3 text-center">
+                        <img src="/storage/${file.gambar}"
+                            class="img-thumbnail"
+                            style="cursor:pointer"
+                            onclick="pilihGambar('${file.gambar}')">
+                    </div>
+                `;
+            });
+
+            $('#fileManagerList').html(html);
+        });
+    }
+
+    function pilihGambar(gambar) {
+        $('#gambar').val(gambar);
+        $('#previewGambar').attr('src', '/storage/' + gambar).show();
+        $('#fileManagerModal').modal('hide');
+    }
 </script>
 @endpush

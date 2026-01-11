@@ -22,6 +22,13 @@
     <link rel="stylesheet" href="{{ asset('assets/skydash/css/vertical-layout-light/style.css') }}">
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" />
+    <style>
+        .tox-tinymce,
+        .tox-editor-container,
+        .tox-toolbar {
+            z-index: 2000 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -99,22 +106,10 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#data-master"
-                            aria-expanded="false" aria-controls="data-master">
+                        <a class="nav-link" href="{{ route('category') }}">
                             <i class="icon-layout menu-icon"></i>
-                            <span class="menu-title">Data Master</span>
-                            <i class="menu-arrow"></i>
+                            <span class="menu-title">Kategori</span>
                         </a>
-                        <div class="collapse" id="data-master">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Kategori</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Label</a>
-                                </li>
-                            </ul>
-                        </div>
                     </li>
 
                     <li class="nav-item">
@@ -169,7 +164,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="pages/documentation/documentation.html">
+                        <a class="nav-link" href="{{ route('fileManager') }}">
                             <i class="icon-paper menu-icon"></i>
                             <span class="menu-title">File Manager</span>
                         </a>
@@ -215,7 +210,16 @@
 
             <!-- Dashboard -->
             <script src="{{ asset('assets/skydash/js/dashboard.js') }}"></script>
-
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    if ($.fn.modal) {
+                        $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+                    }
+                });
+            </script>
+            
             @stack('scripts')
     </body>
 
