@@ -94,7 +94,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('pages') }}">
+                        <a class="nav-link" href="{{ route('backend.pages') }}"                        >
                             <i class="mdi mdi-view-dashboard menu-icon"></i>
                             <span class="menu-title">Pages</span>
                         </a>

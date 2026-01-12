@@ -88,17 +88,43 @@ Route::prefix('fileManager')->group(function () {
 });
 
 
+Route::prefix('backend')->name('backend.')->group(function () {
 
-
-Route::controller(PagesController::class)->group(function () {
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
-    Route::get('/pages/data', [PagesController::class, 'getDatatables'])->name('backend.pages.data');
-    Route::post('/pages/store', [PagesController::class, 'store'])->name('backend.pages.store');
-    Route::get('/pages/{id}/edit', [PagesController::class, 'edit'])->name('backend.pages.edit');
-    Route::put('/pages/{id}', [PagesController::class, 'update'])->name('backend.pages.update');
-    Route::delete('/pages/{id}', [PagesController::class, 'destroy'])->name('backend.pages.destroy');
-    Route::get('/pages/getparent', [PagesController::class, 'getParent'])->name('backend.pages.getparent');
-});
+    Route::get('/pages/data', [PagesController::class, 'data'])->name('pages.data');
+    Route::post('/pages/store', [PagesController::class, 'store'])->name('pages.store');
+
+}); 
+
+// Route::prefix('backend')->name('backend.')->group(function () {
+
+//     Route::get('/pages', [PagesController::class, 'index'])
+//         ->name('pages');
+
+//     Route::get('/pages/data', [PagesController::class, 'data'])
+//         ->name('pages.data');
+
+//     Route::post('/pages/store', [PagesController::class, 'store'])
+//         ->name('pages.store');
+
+//     Route::get('/pages/{id}/edit', [PagesController::class, 'edit'])
+//         ->name('pages.edit');
+
+//     Route::put('/pages/{id}', [PagesController::class, 'update'])
+//         ->name('pages.update');
+
+//     Route::delete('/pages/{id}', [PagesController::class, 'destroy'])
+//         ->name('pages.destroy');
+
+//     Route::get('/pages/getparent', [PagesController::class, 'getParent'])
+//         ->name('pages.getparent');
+// });
+
+// Route::get('/backend/pages/data', [PagesController::class, 'data'])
+//     ->name('backend.pages.data');
+
+// Route::post('/backend/pages/store', [PagesController::class, 'store'])
+//     ->name('backend.pages.store');
 
 
 
