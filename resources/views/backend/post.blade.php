@@ -11,38 +11,37 @@
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div class="d-flex align-items-center gap-2 flex-wrap">
                             <h5 class="mb-0 me-3">Filter: </h5>
-                            <select class="form-select ml-2" name="status" id="status" style="width:200px">
-                                <option value="">-- Pilih Status --</option>
-                                <option value="Published">Published</option>
-                                <option value="Unpublished">Unpublished</option>
-                                <option value="Draft">Draft</option>
+                            <select class="form-control ml-2" id="filter_status" style="width:200px">
+                                <option value="">-- Semua Status --</option>
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
                             </select>
-                            <button class="btn btn-primary ml-3" id="btnTampil">
+                            <button class="btn btn-primary ml-3" id="btnFilter">
                                 <i class="fas fa-eye"></i> Tampilkan
                             </button>
                         </div>
+
                         <button id="btnTambahPost" class="btn btn-success btn-icon">
                             <i class="mdi mdi-plus"></i>
                         </button>
                     </div>
                 </div>
 
+
                 <div class="card-body">
-                    <h4 class="font-weight-bold mb-3">POST</h4>
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Created At</th>
-                                    <th>Updated At</th>
+                                    <th>Judul</th>
+                                    <th>Kategori</th>
                                     <th>Status</th>
+                                    <th>Tanggal Publish</th>
                                     <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="user-table">
+                            <tbody id="post-table">
                                 <tr>
                                     <td colspan="6" class="text-center">Loading...</td>
                                 </tr>
@@ -54,27 +53,31 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="modalPost" tabindex="-1">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+<!-- MODAL -->
+<div class="modal fade" id="modalPost" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
         <form id="formPost" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="id" id="post_id">
 
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Tambah Post</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title">Tambah Post</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
                 </div>
 
-                <div class="modal-body">
 
+                <div class="modal-body">
                     <div class="row">
-                        <!-- CONTENT -->
+
+                        <!-- KONTEN -->
                         <div class="col-md-8">
                             <div class="card mb-3">
-                                <div class="card-header"><strong>Content</strong></div>
+                                <div class="card-header"><strong>Konten</strong></div>
                                 <div class="card-body">
-                                    <textarea name="content" id="contentEditor" class="form-control"></textarea>
+                                    <textarea name="konten" id="kontenEditor" class="form-control"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -85,79 +88,60 @@
                                 <div class="card-body">
 
                                     <div class="mb-3">
-                                        <label>Title</label>
-                                        <input type="text" name="title" id="title" class="form-control">
+                                        <label>Judul</label>
+                                        <input type="text" name="judul" id="judul" class="form-control">
                                     </div>
 
                                     <div class="mb-3">
                                         <label>Slug</label>
-                                        <input type="text" name="slug" id="slug" class="form-control">
+                                        <input type="text" name="slug" id="slug" class="form-control" readonly>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label>Author</label>
-                                        <input type="text" name="author" class="form-control">
+                                        <label>Kategori</label>
+                                        <select name="kategori_id" id="kategori_id" class="form-control">
+                                            <option value="">Pilih Kategori</option>
+                                        </select>
+                                    </div>
+
+
+                                    <div class="mb-3">
+                                        <label>Status</label>
+                                        <select name="status" class="form-control">
+                                            <option value="draft">Draft</option>
+                                            <option value="published">Published</option>
+                                        </select>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label>Intro</label>
-                                        <textarea name="intro" class="form-control" rows="3"></textarea>
+                                        <label>Tanggal Publish</label>
+                                        <input type="datetime-local" name="tanggal_publish" class="form-control">
                                     </div>
 
+                                    <div class="mb-3">
+                                        <label>Gambar</label>
+
+                                        <!-- preview -->
+                                        <div class="mb-2">
+                                            <img id="previewGambar" src="" style="max-height:120px; display:none;">
+                                        </div>
+
+                                        <!-- input hidden -->
+                                        <input type="hidden" name="gambar" id="gambar">
+
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="openFileManager()">
+                                            Pilih dari File Manager
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
-
-                    <!-- BOTTOM -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-
-                                <div class="col-md-3 mb-3">
-                                    <label>Thumbnail</label>
-                                    <input type="file" name="image" class="form-control">
-                                </div>
-
-                                <div class="col-md-3 mb-3">
-                                    <label>Category</label>
-                                    <select name="category_id" class="form-control">
-                                        <option value="">Pilih Category</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-3 mb-3">
-                                    <label>Status</label>
-                                    <select name="status" class="form-control">
-                                        <option value="draft">Draft</option>
-                                        <option value="published">Published</option>
-                                        <option value="published">Unpublished</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-3 mb-3">
-                                    <label>Published At</label>
-                                    <input type="datetime-local" name="published_at" class="form-control">
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label>Meta Title</label>
-                                    <input type="text" name="meta_title" class="form-control">
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label>Meta Keywords</label>
-                                    <input type="text" name="meta_keywords" class="form-control">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
 
@@ -165,7 +149,22 @@
         </form>
     </div>
 </div>
+<div class="modal fade" id="fileManagerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pilih Gambar</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
 
+            <div class="modal-body">
+                <div class="row" id="fileManagerList">
+                    <!-- ajax -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
@@ -173,33 +172,89 @@
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+$(document).ready(function () {
 
-    const modalEl = document.getElementById('modalPost');
-    const modal = new bootstrap.Modal(modalEl);
-
-    document.getElementById('btnTambahPost').addEventListener('click', function () {
-        modal.show();
-    });
-
-    modalEl.addEventListener('shown.bs.modal', function () {
-        if (!tinymce.get('contentEditor')) {
-            tinymce.init({
-                selector: '#contentEditor',
-                height: 400,
-                menubar: true,
-                plugins: 'image media table lists link code',
-                toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | image media | code'
+    function loadKategori(selectedId = null) {
+        $.get("{{ route('category.list') }}", function (data) {
+            let html = '<option value="">Pilih Kategori</option>';
+            $.each(data, function (i, item) {
+                let selected = selectedId == item.id ? 'selected' : '';
+                html += `<option value="${item.id}" ${selected}>${item.nama}</option>`;
             });
-        }
+            $('#kategori_id').html(html);
+        });
+    }
+    $('#btnTambahPost').click(function () {
+        $('#formPost')[0].reset();
+        loadKategori(); 
+        $('#modalPost').modal('show');
+    });
+    $('#modalPost').on('shown.bs.modal', function () {
+        tinymce.remove('#kontenEditor');
+
+        tinymce.init({
+            selector: '#kontenEditor',
+            height: 400,
+            menubar: false,
+            plugins: 'link image lists code',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
+        });
     });
 
-    modalEl.addEventListener('hidden.bs.modal', function () {
-        tinymce.remove('#contentEditor');
-        document.getElementById('formPost').reset();
+    $('#modalPost').on('hidden.bs.modal', function () {
+        tinymce.remove('#kontenEditor');
+        $('#formPost')[0].reset();
+    });
+    $('#judul').on('keyup', function () {
+        $('#slug').val(
+            this.value.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '')
+        );
+    });
+    $(document).on('click', '.edit-post', function () {
+        let id = $(this).data('id');
+
+        $.get(`/posts/${id}/edit`, function (data) {
+            $('#judul').val(data.judul);
+            $('#slug').val(data.slug);
+            $('select[name="status"]').val(data.status);
+            $('input[name="tanggal_publish"]').val(data.tanggal_publish);
+
+            loadKategori(data.kategori_id);
+
+            $('#modalPost').modal('show');
+        });
     });
 
 });
 </script>
+<script>
+    function openFileManager() {
+        $('#fileManagerModal').modal('show');
 
+        $.get("{{ route('fileManager.data') }}", function (data) {
+            let html = '';
+
+            data.forEach(file => {
+                html += `
+                    <div class="col-md-3 mb-3 text-center">
+                        <img src="/storage/${file.gambar}"
+                            class="img-thumbnail"
+                            style="cursor:pointer"
+                            onclick="pilihGambar('${file.gambar}')">
+                    </div>
+                `;
+            });
+
+            $('#fileManagerList').html(html);
+        });
+    }
+
+    function pilihGambar(gambar) {
+        $('#gambar').val(gambar);
+        $('#previewGambar').attr('src', '/storage/' + gambar).show();
+        $('#fileManagerModal').modal('hide');
+    }
+</script>
 @endpush
