@@ -93,6 +93,9 @@ Route::prefix('backend')->name('backend.')->group(function () {
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
     Route::get('/pages/data', [PagesController::class, 'data'])->name('pages.data');
     Route::post('/pages/store', [PagesController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{id}', [PagesController::class, 'show']);
+    // Route::resource('pages', PagesController::class);
+    Route::delete('/pages/{id}', [PagesController::class, 'destroy'])->name('pages.destroy');
 
 }); 
 

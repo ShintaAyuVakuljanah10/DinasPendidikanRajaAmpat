@@ -15,21 +15,11 @@ class Pages extends Model
     protected $fillable = [
         'title',
         'slug',
-        'content',
         'type',
-        'parent',
-        'meta_title',
-        'meta_keywords',
+        'parent_id',
         'active',
-        'created_by',
-        'updated_by',
-        'with_content',
-        'with_direct_link',
-        'link',
-        'order',
-        'created_at',
-        'updated_at',
-    ];
+        'sort_order',
+    ];  
 
     // public function data($type = null, $active = null)
     // {

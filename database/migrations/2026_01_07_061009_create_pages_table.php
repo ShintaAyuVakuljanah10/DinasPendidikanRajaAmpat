@@ -15,22 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->longText('content')->nullable();
         
-            $table->enum('type', ['pages', 'sub_pages']);
+            $table->enum('type', ['Pages', 'Sub Pages']);
             $table->unsignedBigInteger('parent_id')->nullable();
         
-            $table->boolean('active')->default(true);
-        
-            $table->string('meta_title', 125)->nullable();
-        
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-        
-            $table->integer('sort_order')->nullable();
+            $table->boolean('active')->default(1);
+            $table->integer('sort_order')->default(0);
         
             $table->timestamps();
-        });               
+        });        
     }
 
     /**

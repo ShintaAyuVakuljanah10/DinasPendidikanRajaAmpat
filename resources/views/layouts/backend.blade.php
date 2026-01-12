@@ -41,7 +41,7 @@
                         alt="logo"
                         style="width:30px;height:auto;margin-right:6px;">
                     <span style="color:#000;font-size:14px;font-weight:500;">
-                        Dinas Pendidikan Raja Ampat
+                        CMS DISDIK
                     </span>
                 </a>
 
