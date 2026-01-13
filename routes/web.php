@@ -10,6 +10,7 @@ use App\Http\Controllers\Backend\Settings\AppController;
 use App\Http\Controllers\Backend\Settings\BannerController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\FileManagerController;
+use App\Http\Controllers\Backend\MenuController;
 
 
 
@@ -115,36 +116,12 @@ Route::prefix('backend')->name('backend.')->group(function () {
 
 }); 
 
-// Route::prefix('backend')->name('backend.')->group(function () {
-
-//     Route::get('/pages', [PagesController::class, 'index'])
-//         ->name('pages');
-
-//     Route::get('/pages/data', [PagesController::class, 'data'])
-//         ->name('pages.data');
-
-//     Route::post('/pages/store', [PagesController::class, 'store'])
-//         ->name('pages.store');
-
-//     Route::get('/pages/{id}/edit', [PagesController::class, 'edit'])
-//         ->name('pages.edit');
-
-//     Route::put('/pages/{id}', [PagesController::class, 'update'])
-//         ->name('pages.update');
-
-//     Route::delete('/pages/{id}', [PagesController::class, 'destroy'])
-//         ->name('pages.destroy');
-
-//     Route::get('/pages/getparent', [PagesController::class, 'getParent'])
-//         ->name('pages.getparent');
-// });
-
-// Route::get('/backend/pages/data', [PagesController::class, 'data'])
-//     ->name('backend.pages.data');
-
-// Route::post('/backend/pages/store', [PagesController::class, 'store'])
-//     ->name('backend.pages.store');
-
-
-
+Route::prefix('backend')->name('backend.')->group(function () {
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+    Route::get('/menu/data', [MenuController::class, 'data'])->name('menu.data');
+    Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
+    Route::get('/menu/{id}', [MenuController::class, 'show']);
+    Route::put('/menu/{id}', [MenuController::class, 'update']);
+    Route::delete('/menu/{id}', [MenuController::class, 'destroy']);
+});
 

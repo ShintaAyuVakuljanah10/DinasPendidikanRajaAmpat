@@ -6,41 +6,37 @@
 
     <div class="container">
         <div class="row mb-3 align-items-center g-3">
-            <div class="col-md-3">
-                <div class="dropdown w-100">
-                    <button class="btn btn-outline-info dropdown-toggle w-100" data-toggle="dropdown">
-                        <span>-- Pilih Tipe --</span>
-                    </button>
-                    <div class="dropdown-menu w-100">
-                        <a class="dropdown-item dropdown-select" href="#" data-value="Pages"
-                            data-target="filter_type">Pages</a>
-                        <a class="dropdown-item dropdown-select" href="#" data-value="Sub Pages"
-                            data-target="filter_type">Sub Pages</a>
-                    </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Cari Title...">
                 </div>
-                <input type="hidden" id="filter_type">
-            </div>
 
-            <div>
-                <div class="dropdown">
-                    <button class="btn btn-outline-info dropdown-toggle w-100" data-toggle="dropdown">
-                        <span id="activeText">Yes</span>
+                <div class="col-md-3">
+                    <select id="typeSelect" class="form-control">
+                        <option value=""> All Type </option>
+                        <option value="Pages">Pages</option>
+                        <option value="Sub Pages">Sub Pages</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="activeSelect" class="form-control">
+                        <option value=""> All Active </option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button id="btnFilter" class="btn btn-primary w-100">
+                        <i class="mdi mdi-magnify"></i>
                     </button>
-                    <div class="dropdown-menu w-100">
-                        <a class="dropdown-item dropdown-select" href="#" data-value="1" data-target="active">Yes</a>
-                        <a class="dropdown-item dropdown-select" href="#" data-value="0" data-target="active">No</a>
-                    </div>
                 </div>
             </div>
 
-
-            <div class="col-md-2">
-                <button class="btn btn-primary w-100">Tampilkan</button>
-            </div>
-
-            <div class="col-md-4 text-end">
+            <div class="col-md-4 text-end mb-3">
                 <button class="btn btn-success" data-toggle="modal" data-target="#modalPage">
-                    Tambah Page
+                    <i class="mdi mdi-plus"></i>
                 </button>
             </div>
         </div>
@@ -144,7 +140,7 @@
                                         placeholder="Judul untuk SEO (opsional)">
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary px-4">
+                                    <button type="submit" id="btnSave" class="btn btn-primary px-4">
                                         Save
                                     </button>
                                 </div>
@@ -255,25 +251,31 @@
                     let html = '<option value="">-- Pilih Parent --</option>';
 
                     data.forEach(function (page) {
+                        // tandai parent yang sudah dipilih saat edit
                         let selected = selectedId == page.id ? 'selected' : '';
                         html += `<option value="${page.id}" ${selected}>${page.title}</option>`;
                     });
 
-                    $('#parent_id').html(html); // isi select dengan data
+                    $('#parent_id').html(html);
                 });
             }
+
 
             // Ketika Type berubah
             $(document).on('change', '#type', function () {
                 const value = $(this).val();
+
                 if (value === 'Sub Pages') {
                     $('#parentWrapper').slideDown();
-                    loadParentPages();
+                    // Jika ada parent_id yang sudah tersimpan (edit), kirim sebagai selectedId
+                    let selectedId = $('#parent_id').val() || null;
+                    loadParentPages(selectedId);
                 } else {
                     $('#parentWrapper').slideUp();
-                    $('#parent_id').val('');
+                    $('#parent_id').val(''); // reset parent
                 }
             });
+
 
             $(document).on('change', '#type', function () {
                 const value = $(this).val();
@@ -293,11 +295,25 @@
 
                 if (value === 'Sub Pages') {
                     $('#parentWrapper').slideDown();
-                    loadParentPages(); // ⬅️ PENTING
+
+                    // load hanya pages dengan type = 'Pages'
+                    $.get("{{ route('backend.pages.data') }}", function (data) {
+                        let html = '<option value="">-- Pilih Parent --</option>';
+
+                        data.forEach(function (page) {
+                            // ambil hanya page dengan type 'Pages'
+                            if (page.type === 'Pages') {
+                                html +=
+                                    `<option value="${page.id}">${page.title}</option>`;
+                            }
+                        });
+
+                        $('#parent_id').html(html);
+                    });
+
                 } else {
                     $('#parentWrapper').slideUp();
-                    $('#parent_id').val('');
-                    $('#parentText').text('-- Pilih Parent --');
+                    $('#parent_id').val(''); // reset parent
                 }
             });
 
@@ -360,6 +376,8 @@
                 $(this).closest('.manual-dropdown').removeClass('show');
             });
 
+
+            
             // SEARCH
             $(document).on('keyup', '.dropdown-search', function () {
                 let keyword = $(this).val().toLowerCase();
@@ -374,18 +392,30 @@
                 $('.manual-dropdown').removeClass('show');
             });
 
+            // RESET MODAL SAAT TOMBOL "TAMBAH PAGE" DIKLIK
+            $('[data-target="#modalPage"]').click(function () {
+                // reset form
+                $('#formPage')[0].reset();
+                $('#page_id').val(''); // kosongkan id
+                $('#type').val(''); // reset type
+                $('#active').val('1'); // default active
+                $('#parent_id').val(''); // reset parent
+                $('#parentWrapper').hide(); // sembunyikan parent
+                $('#modalPage .modal-title').text('Tambah Page'); // judul modal
+                $('#slug').val(''); // reset slug
+                tinymce.get('contentEditor').setContent(''); // reset editor
+            });
+
             // SUBMIT FORM (SAMA KAYA USER)
             $('#formPage').submit(function (e) {
                 e.preventDefault();
 
-                let pageId = $('#page_id').val(); // cek apakah ada id → artinya edit
-                let url = pageId ?
-                    `/backend/pages/${pageId}` // route update
-                    :
-                    "{{ route('backend.pages.store') }}"; // route tambah
-                let type = pageId ? 'POST' : 'POST'; // tetap POST, tapi tambahkan _method untuk edit
-
+                let pageId = $('#page_id').val();
+                let url = pageId ? `/backend/pages/${pageId}` : "{{ route('backend.pages.store') }}";
                 let formData = new FormData(this);
+
+                // pastikan TinyMCE content masuk
+                formData.set('content', tinymce.get('contentEditor').getContent());
 
                 if (pageId) {
                     formData.append('_method', 'PUT'); // Laravel akan menganggap ini update
@@ -393,13 +423,14 @@
 
                 $.ajax({
                     url: url,
-                    type: type,
+                    type: 'POST', // tetap POST, Laravel akan baca _method
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function () {
+                    success: function (res) {
                         $('#modalPage').modal('hide');
                         $('#formPage')[0].reset();
+                        tinymce.get('contentEditor').setContent('');
                         loadPages(); // refresh tabel
                     },
                     error: function (xhr) {
@@ -409,7 +440,45 @@
                 });
             });
 
+        });
 
+        document.getElementById('searchInput').addEventListener('input', function () {
+            document.getElementById('btnFilter').click();
+        });
+
+        document.getElementById('btnFilter').addEventListener('click', function () {
+            let search = document.getElementById('searchInput').value.toLowerCase();
+            let type = document.getElementById('typeSelect').value;
+            let active = document.getElementById('activeSelect').value;
+
+            let tableBody = document.getElementById('pages-table');
+            let rows = tableBody.getElementsByTagName('tr');
+
+            for (let row of rows) {
+                // Ambil text dari kolom Title (1), Type (2), Active (4)
+                let tdTitle = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+                let tdType = row.cells[2] ? row.cells[2].textContent : '';
+                let tdActive = row.cells[4] ? row.cells[4].textContent : '';
+
+                let show = true;
+
+                // Filter search text di Title
+                if (search && !tdTitle.includes(search)) {
+                    show = false;
+                }
+
+                // Filter Type
+                if (type && tdType !== type) {
+                    show = false;
+                }
+
+                // Filter Active
+                if (active && tdActive !== active) {
+                    show = false;
+                }
+
+                row.style.display = show ? '' : 'none';
+            }
         });
 
     </script>

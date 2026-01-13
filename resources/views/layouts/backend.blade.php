@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{{ asset('assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/skydash/vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/skydash/js/select.dataTables.min.css') }}">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <link href="https://cdn.materialdesignicons.com/6.6.96/css/materialdesignicons.min.css" rel="stylesheet">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
@@ -119,6 +121,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('backend.menu') }}">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Menu</span>
+                        </a>
+                    </li>
+                    {{-- <li class="nav-item">
                         <a class="nav-link" data-toggle="collapse" href="#menu-setting"
                             aria-expanded="false" aria-controls="menu-setting">
                             <i class="icon-layout menu-icon"></i>
@@ -135,7 +143,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </li>
+                    </li> --}}
 
                     <li class="nav-item {{ request()->is('settings/*') ? 'active' : '' }}">
                         <a class="nav-link" data-toggle="collapse" href="#settings"
@@ -212,6 +220,7 @@
             <script src="{{ asset('assets/skydash/js/dashboard.js') }}"></script>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
             <script>
                 $(document).ready(function () {
                     if ($.fn.modal) {
