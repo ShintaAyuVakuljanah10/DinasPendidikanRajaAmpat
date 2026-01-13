@@ -17,14 +17,17 @@ class PostController extends Controller
         return view('backend.post');
     }
 
-    public function data()
+    public function data(Request $request)
     {
-        $posts = Post::with(['kategori', 'user'])
-            ->latest()
-            ->get();
+        $query = Post::with('kategori')->latest();
 
-        return response()->json($posts);
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        return $query->get();
     }
+
 
     public function store(Request $request)
     {
@@ -33,34 +36,26 @@ class PostController extends Controller
             'konten'       => 'required',
             'kategori_id'  => 'required|exists:categories,id',
             'status'       => 'required|in:draft,published',
-            'gambar'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'gambar'       => 'nullable|string',
         ]);
 
-        $post = new Post();
-        $post->judul           = $request->judul;
-        $post->slug            = Str::slug($request->judul);
-        $post->konten          = $request->konten;
-        $post->kategori_id     = $request->kategori_id;
-        $post->user_id         = Auth::id();
-        $post->status          = $request->status;
-        $post->tanggal_publish = $request->status === 'published'
-                                    ? now()
-                                    : null;
-
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $name = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/posts'), $name);
-            $post->gambar = $name;
-        }
-
-        $post->save();
+        Post::create([
+            'judul'           => $request->judul,
+            'slug'            => Str::slug($request->judul),
+            'konten'          => $request->konten,
+            'kategori_id'     => $request->kategori_id,
+            'user_id'         => Auth::id(),
+            'status'          => $request->status,
+            'tanggal_publish' => $request->status === 'published' ? now() : null,
+            'gambar'          => $request->gambar,
+        ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Post berhasil disimpan'
         ]);
     }
+
 
     public function edit($id)
     {
@@ -75,7 +70,7 @@ class PostController extends Controller
             'konten'       => 'required',
             'kategori_id'  => 'required|exists:categories,id',
             'status'       => 'required|in:draft,published',
-            'gambar'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'gambar' => 'nullable|string',
         ]);
 
         $post = Post::findOrFail($id);
@@ -88,13 +83,6 @@ class PostController extends Controller
 
         if ($request->status === 'published' && $post->tanggal_publish === null) {
             $post->tanggal_publish = now();
-        }
-
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $name = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/posts'), $name);
-            $post->gambar = $name;
         }
 
         $post->save();

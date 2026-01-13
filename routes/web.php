@@ -67,20 +67,19 @@ Route::prefix('settings')
 
         Route::controller(BannerController::class)->group(function () {
 
-            // halaman
             Route::get('/banner', 'index')->name('settings.banner');
 
-            // AJAX
             Route::get('/banner/data', 'data')->name('banner.data');
             Route::post('/banner', 'store')->name('banner.store');
+
             Route::get('/banner/{id}/edit', 'edit');
             Route::put('/banner/{id}', 'update');
             Route::delete('/banner/{id}', 'destroy');
 
-            // urutan
             Route::post('/banner/{id}/up', 'up');
             Route::post('/banner/{id}/down', 'down');
         });
+
 
 
 });

@@ -36,7 +36,7 @@ class BannerController extends Controller
 
         Banner::create([
             'nama'   => $request->nama,
-            'gambar' => $request->gambar, // file-manager/xxx.jpg
+            'gambar' => $request->gambar,
             'urutan' => $urutan,
         ]);
 
@@ -85,5 +85,28 @@ class BannerController extends Controller
             $bawah->save();
         }
     }
+    public function edit($id)
+    {
+        return response()->json(
+            Banner::findOrFail($id)
+        );
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama'   => 'required',
+            'gambar' => 'required|string',
+        ]);
+
+        $banner = Banner::findOrFail($id);
+        $banner->update([
+            'nama'   => $request->nama,
+            'gambar' => $request->gambar,
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
 
 }

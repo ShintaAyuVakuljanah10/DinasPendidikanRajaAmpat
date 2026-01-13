@@ -24,6 +24,12 @@
     <link rel="stylesheet" href="{{ asset('assets/skydash/css/vertical-layout-light/style.css') }}">
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" />
+    <script src="https://cdn.tiny.cloud/1/e2kzbf6ud3uhuc9nqgzvsagy9crvxasztgheaapn2rayyfvf/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>  
+    <script>
+      tinymce.init({
+        selector: '#mytextarea'
+      });
+    </script>
     <style>
         .tox-tinymce,
         .tox-editor-container,

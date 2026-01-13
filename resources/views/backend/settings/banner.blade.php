@@ -182,21 +182,23 @@ $(document).ready(function () {
     // edit
     $(document).on('click', '.edit', function () {
         let id = $(this).data('id');
-        $.get(`/settings/banners/${id}/edit`, function (data) {
+
+        $.get(`/settings/banner/${id}/edit`, function (data) {
             $('#banner_id').val(data.id);
             $('#nama').val(data.nama);
+            $('#previewGambar').attr('src', '/storage/' + data.gambar).show();
             $('#modalTitle').text('Edit Banner');
-            $('.text-danger').text('');
             $('#modalBanner').modal('show');
         });
     });
 
-    // hapus
+
     $(document).on('click', '.delete', function () {
         let id = $(this).data('id');
+
         if (confirm('Hapus banner ini?')) {
             $.ajax({
-                url: `/settings/banners/${id}`,
+                url: `/settings/banner/${id}`,
                 type: 'DELETE',
                 success: function () {
                     loadBanner();
@@ -205,21 +207,24 @@ $(document).ready(function () {
         }
     });
 
-    // naik urutan
+
     $(document).on('click', '.up', function () {
         let id = $(this).data('id');
-        $.post(`/settings/banners/${id}/up`, function () {
+
+        $.post(`/settings/banner/${id}/up`, function () {
             loadBanner();
         });
     });
 
-    // turun urutan
+
     $(document).on('click', '.down', function () {
         let id = $(this).data('id');
-        $.post(`/settings/banners/${id}/down`, function () {
+
+        $.post(`/settings/banner/${id}/down`, function () {
             loadBanner();
         });
     });
+
 });
 </script>
 <script>

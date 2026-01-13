@@ -25,25 +25,19 @@ class AppController extends Controller
             'hp' => 'nullable|string',
             'alamat' => 'nullable|string',
             'salam' => 'nullable|string',
-            'logo' => 'nullable|image|max:2048',
+            'logo' => 'nullable|string', 
         ]);
 
         $setting = App::first();
 
         if (!$setting) {
-            $setting = App::create([]);
+            $setting = App::create($data);
+        } else {
+            $setting->update($data);
         }
-
-        if ($request->hasFile('logo')) {
-            if ($setting->logo) {
-                Storage::delete($setting->logo);
-            }
-            $data['logo'] = $request->file('logo')->store('logo');
-        }
-
-        $setting->update($data);
 
         return back()->with('success', 'Pengaturan berhasil diperbarui');
     }
+
 
 }

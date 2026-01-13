@@ -34,6 +34,7 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
+                                    <th width="10%">Gambar</th>
                                     <th>Judul</th>
                                     <th>Kategori</th>
                                     <th>Status</th>
@@ -43,7 +44,7 @@
                             </thead>
                             <tbody id="post-table">
                                 <tr>
-                                    <td colspan="6" class="text-center">Loading...</td>
+                                    <td colspan="7" class="text-center">Loading...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -54,11 +55,12 @@
     </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal fade" id="modalPost" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
         <form id="formPost" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" id="post_id" name="post_id">
+
 
             <div class="modal-content">
                 <div class="modal-header">
@@ -72,7 +74,6 @@
                 <div class="modal-body">
                     <div class="row">
 
-                        <!-- KONTEN -->
                         <div class="col-md-8">
                             <div class="card mb-3">
                                 <div class="card-header"><strong>Konten</strong></div>
@@ -82,7 +83,6 @@
                             </div>
                         </div>
 
-                        <!-- META -->
                         <div class="col-md-4">
                             <div class="card mb-3">
                                 <div class="card-body">
@@ -121,12 +121,10 @@
                                     <div class="mb-3">
                                         <label>Gambar</label>
 
-                                        <!-- preview -->
                                         <div class="mb-2">
                                             <img id="previewGambar" src="" style="max-height:120px; display:none;">
                                         </div>
 
-                                        <!-- input hidden -->
                                         <input type="hidden" name="gambar" id="gambar">
 
                                         <button type="button" class="btn btn-secondary btn-sm" onclick="openFileManager()">
@@ -169,42 +167,71 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
-
 <script>
 $(document).ready(function () {
+
+    let mode = 'tambah';
+
+    function initEditor(content = '') {
+        tinymce.remove('#kontenEditor');
+        tinymce.init({
+            selector: '#kontenEditor',
+            height: 400,
+            menubar: false,
+            plugins: 'link image lists code',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code',
+            setup: function (editor) {
+                editor.on('init', function () {
+                    editor.setContent(content);
+                });
+            }
+        });
+    }
 
     function loadKategori(selectedId = null) {
         $.get("{{ route('category.list') }}", function (data) {
             let html = '<option value="">Pilih Kategori</option>';
-            $.each(data, function (i, item) {
+            data.forEach(item => {
                 let selected = selectedId == item.id ? 'selected' : '';
                 html += `<option value="${item.id}" ${selected}>${item.nama}</option>`;
             });
             $('#kategori_id').html(html);
         });
     }
+
     $('#btnTambahPost').click(function () {
+        mode = 'tambah';
         $('#formPost')[0].reset();
-        loadKategori(); 
+        $('#post_id').val('');
+        $('#previewGambar').hide();
+        loadKategori();
+        initEditor('');
         $('#modalPost').modal('show');
     });
-    $('#modalPost').on('shown.bs.modal', function () {
-        tinymce.remove('#kontenEditor');
 
-        tinymce.init({
-            selector: '#kontenEditor',
-            height: 400,
-            menubar: false,
-            plugins: 'link image lists code',
-            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
+    $(document).on('click', '.edit-post', function () {
+        mode = 'edit';
+        let id = $(this).data('id');
+
+        $.get(`/post/${id}/edit`, function (data) {
+            $('#post_id').val(data.id);
+            $('#judul').val(data.judul);
+            $('#slug').val(data.slug);
+            $('select[name="status"]').val(data.status);
+            $('input[name="tanggal_publish"]').val(data.tanggal_publish);
+            $('#gambar').val(data.gambar);
+
+            if (data.gambar) {
+                $('#previewGambar').attr('src', '/storage/' + data.gambar).show();
+            }
+
+            loadKategori(data.kategori_id);
+            initEditor(data.konten);
+
+            $('#modalPost').modal('show');
         });
     });
 
-    $('#modalPost').on('hidden.bs.modal', function () {
-        tinymce.remove('#kontenEditor');
-        $('#formPost')[0].reset();
-    });
     $('#judul').on('keyup', function () {
         $('#slug').val(
             this.value.toLowerCase()
@@ -212,49 +239,146 @@ $(document).ready(function () {
                 .replace(/(^-|-$)/g, '')
         );
     });
-    $(document).on('click', '.edit-post', function () {
-        let id = $(this).data('id');
+    $('#formPost').on('submit', function (e) {
+        e.preventDefault();
 
-        $.get(`/posts/${id}/edit`, function (data) {
-            $('#judul').val(data.judul);
-            $('#slug').val(data.slug);
-            $('select[name="status"]').val(data.status);
-            $('input[name="tanggal_publish"]').val(data.tanggal_publish);
+        let formData = new FormData(this);
+        formData.set('konten', tinymce.get('kontenEditor').getContent());
 
-            loadKategori(data.kategori_id);
+        let id = $('#post_id').val();
 
-            $('#modalPost').modal('show');
+        let url = mode === 'edit'
+            ? `/post/${id}`
+            : "{{ route('post.tambah') }}";
+
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                alert(res.message);
+                $('#modalPost').modal('hide');
+                loadPost();
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert('Gagal menyimpan data');
+            }
         });
     });
 
 });
 </script>
+
 <script>
-    function openFileManager() {
-        $('#fileManagerModal').modal('show');
+function openFileManager() {
+    $('#fileManagerModal').modal('show');
 
-        $.get("{{ route('fileManager.data') }}", function (data) {
-            let html = '';
+    $.get("{{ route('fileManager.data') }}", function (data) {
+        let html = '';
+        data.forEach(file => {
+            html += `
+                <div class="col-md-3 mb-3 text-center">
+                    <img src="/storage/${file.gambar}"
+                        class="img-thumbnail"
+                        style="cursor:pointer"
+                        onclick="pilihGambar('${file.gambar}')">
+                </div>
+            `;
+        });
+        $('#fileManagerList').html(html);
+    });
+}
 
-            data.forEach(file => {
+function pilihGambar(gambar) {
+    $('#gambar').val(gambar);
+    $('#previewGambar').attr('src', '/storage/' + gambar).show();
+    $('#fileManagerModal').modal('hide');
+}
+function loadPost() {
+    let status = $('#filter_status').val();
+
+    $.get("{{ route('post.data') }}", { status: status }, function (data) {
+        let html = '';
+        let no = 1;
+
+        if (data.length === 0) {
+            html = `
+                <tr>
+                    <td colspan="6" class="text-center">Data kosong</td>
+                </tr>
+            `;
+        } else {
+            data.forEach(post => {
+                let gambar = post.gambar
+                    ? `<img src="/storage/${post.gambar}" style="height:50px;width:auto;">`
+                    : '-';
+
                 html += `
-                    <div class="col-md-3 mb-3 text-center">
-                        <img src="/storage/${file.gambar}"
-                            class="img-thumbnail"
-                            style="cursor:pointer"
-                            onclick="pilihGambar('${file.gambar}')">
-                    </div>
+                    <tr>
+                        <td>${no++}</td>
+                        <td class="text-center">${gambar}</td>
+                        <td>${post.judul}</td>
+                        <td>${post.kategori?.nama ?? '-'}</td>
+                        <td>
+                            <span class="badge badge-${post.status === 'published' ? 'success' : 'secondary'}">
+                                ${post.status}
+                            </span>
+                        </td>
+                        <td>${post.tanggal_publish ?? '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning edit-post" data-id="${post.id}">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-post" data-id="${post.id}">
+                                Hapus
+                            </button>
+                        </td>
+                    </tr>
                 `;
             });
 
-            $('#fileManagerList').html(html);
-        });
-    }
+        }
 
-    function pilihGambar(gambar) {
-        $('#gambar').val(gambar);
-        $('#previewGambar').attr('src', '/storage/' + gambar).show();
-        $('#fileManagerModal').modal('hide');
-    }
+        $('#post-table').html(html);
+    });
+}
+$(document).ready(function () {
+    loadPost();
+
+    $('#btnFilter').click(function () {
+        loadPost();
+    });
+});
+</script>
+<script>
+
+
+$(document).on('click', '.delete-post', function () {
+    let id = $(this).data('id');
+
+    if (!confirm('Yakin ingin menghapus post ini?')) return;
+
+    let url = deletePostUrl.replace(':id', id);
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            _token: "{{ csrf_token() }}",
+            _method: 'DELETE'
+        },
+        success: function (res) {
+            alert(res.message);
+            loadPost();
+        },
+        error: function (xhr) {
+            console.log(xhr.responseText);
+            alert('Gagal menghapus data');
+        }
+    });
+});
 </script>
 @endpush
