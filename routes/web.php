@@ -11,8 +11,7 @@ use App\Http\Controllers\Backend\Settings\BannerController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\FileManagerController;
 use App\Http\Controllers\Backend\MenuController;
-
-
+use App\Http\Controllers\Backend\SubMenuController;
 
 Route::get('/', function () {
     return view('frontend.dashboard');
@@ -108,11 +107,12 @@ Route::prefix('backend')->name('backend.')->group(function () {
 
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
     Route::get('/pages/data', [PagesController::class, 'data'])->name('pages.data');
+    Route::get('/pages/parents', [PagesController::class, 'parents'])->name('pages.parents');
     Route::post('/pages/store', [PagesController::class, 'store'])->name('pages.store');
     Route::get('/pages/{id}', [PagesController::class, 'show']);
+    Route::put('/pages/{id}', [PagesController::class, 'update'])->name('pages.update');
     // Route::resource('pages', PagesController::class);
     Route::delete('/pages/{id}', [PagesController::class, 'destroy'])->name('pages.destroy');
-
 }); 
 
 Route::prefix('backend')->name('backend.')->group(function () {
@@ -124,3 +124,11 @@ Route::prefix('backend')->name('backend.')->group(function () {
     Route::delete('/menu/{id}', [MenuController::class, 'destroy']);
 });
 
+Route::prefix('backend')->name('backend.')->group(function () {
+    Route::get('/submenu', [SubMenuController::class, 'index'])->name('submenu');
+    Route::get('submenu/data', [SubMenuController::class, 'data'])->name('submenu.data');
+    Route::post('submenu', [SubMenuController::class, 'store'])->name('submenu.store');
+    Route::get('submenu/{id}', [SubMenuController::class, 'show']);
+    Route::put('submenu/{id}', [SubMenuController::class, 'update']);
+    Route::delete('submenu/{id}', [SubMenuController::class, 'destroy']);
+});

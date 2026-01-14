@@ -75,8 +75,8 @@
 
                 <input type="hidden" name="id" id="page_id">
                 <input type="hidden" name="active" id="active" value="1">
-                <input type="hidden" name="type" id="type">
-                <input type="hidden" name="parent_id" id="parent_id">
+                {{-- <input type="hidden" name="type" id="type"> --}}
+                {{-- <input type="hidden" name="parent_id" id="parent_id"> --}}
 
                 <div class="modal-content rounded-4">
                     <div class="modal-header">
@@ -123,15 +123,14 @@
                                             <option value="Sub Pages">Sub Pages</option>
                                         </select>
                                     </div>
-
+                                    
                                     <div id="parentWrapper" style="display:none">
                                         <label class="fw-semibold">Parent Page</label>
                                         <select class="form-control" name="parent_id" id="parent_id">
                                             <option value="">-- Pilih Parent --</option>
-                                            <!-- DIISI VIA AJAX -->
                                         </select>
-                                    </div>
-
+                                      </div>
+                                    
                                 </div>
                                 <hr>
                                 <div>
@@ -296,12 +295,10 @@
                 if (value === 'Sub Pages') {
                     $('#parentWrapper').slideDown();
 
-                    // load hanya pages dengan type = 'Pages'
                     $.get("{{ route('backend.pages.data') }}", function (data) {
                         let html = '<option value="">-- Pilih Parent --</option>';
 
                         data.forEach(function (page) {
-                            // ambil hanya page dengan type 'Pages'
                             if (page.type === 'Pages') {
                                 html +=
                                     `<option value="${page.id}">${page.title}</option>`;
@@ -313,7 +310,7 @@
 
                 } else {
                     $('#parentWrapper').slideUp();
-                    $('#parent_id').val(''); // reset parent
+                    $('#parent_id').val(''); // reset hanya saat bukan Sub Pages
                 }
             });
 
@@ -335,11 +332,33 @@
                 }
             });
 
+            $(document).on('change', '#type', function () {
+                if ($(this).val() === 'Sub Pages') {
+                    $('#parentWrapper').slideDown();
+
+                    $.get("{{ route('backend.pages.parents') }}", function (data) {
+                        let html = '<option value="">-- Pilih Parent --</option>';
+
+                        data.forEach(page => {
+                            html += `<option value="${page.id}">${page.title}</option>`;
+                        });
+
+                        $('#parent_id').html(html);
+                    });
+
+                } else {
+                    $('#parentWrapper').slideUp();
+                    $('#parent_id').val('');
+                }
+            });
+
             // PARENT SELECT
             $(document).on('click', '.parent-select', function (e) {
                 e.preventDefault();
 
-                $('#parent_id').val($(this).data('id'));
+                let id = $(this).data('id');
+
+                $('#parent_id').val(id); // INI PENTING
                 $('#parentText').text($(this).text());
             });
 
@@ -377,7 +396,7 @@
             });
 
 
-            
+
             // SEARCH
             $(document).on('keyup', '.dropdown-search', function () {
                 let keyword = $(this).val().toLowerCase();
@@ -423,7 +442,7 @@
 
                 $.ajax({
                     url: url,
-                    type: 'POST', // tetap POST, Laravel akan baca _method
+                    type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
@@ -431,13 +450,26 @@
                         $('#modalPage').modal('hide');
                         $('#formPage')[0].reset();
                         tinymce.get('contentEditor').setContent('');
-                        loadPages(); // refresh tabel
+                        loadPages();
                     },
                     error: function (xhr) {
-                        console.log(xhr.responseText);
-                        alert('Gagal menyimpan data');
+                        console.log(xhr.responseJSON); // lihat di console
+
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let message = '';
+
+                            Object.keys(errors).forEach(function (key) {
+                                message += errors[key][0] + '\n';
+                            });
+
+                            alert(message);
+                        } else {
+                            alert('Terjadi kesalahan server');
+                        }
                     }
                 });
+
             });
 
         });

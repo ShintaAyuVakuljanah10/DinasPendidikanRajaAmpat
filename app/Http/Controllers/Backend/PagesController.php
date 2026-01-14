@@ -18,25 +18,35 @@ class PagesController extends Controller
 
     public function data()
     {
-        // Ambil semua pages
-        $pages = Pages::where('type', 'Pages')->orderBy('sort_order', 'asc')->get();
+        $pages = Pages::with('parent')
+            ->orderBy('sort_order', 'asc')
+            ->get();
 
-        // Bisa return id dan title saja supaya ringan
-        return response()->json($pages->map(function($page) {
+        return response()->json($pages->map(function ($page) {
             return [
-                'id' => $page->id,
-                'title' => $page->title,
+                'id'         => $page->id,
+                'title'      => $page->title,
+                'type'       => $page->type,
+                'parent'     => $page->parent?->title ?? '-',
+                'active'     => (int) $page->active,
+                'sort_order' => $page->sort_order ?? 0,
             ];
         }));
     }
-
+    
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'title' => 'required',
             'slug'  => 'required|unique:pages,slug',
             'type'  => 'required|in:Pages,Sub Pages',
-        ]);
+        ];
+
+        if ($request->type === 'Sub Pages') {
+            $rules['parent_id'] = 'required';
+        }
+
+        $request->validate($rules);
 
         Pages::create([
             'title'     => $request->title,
@@ -48,6 +58,11 @@ class PagesController extends Controller
         ]);
 
         return response()->json(['success' => true]);
+    }
+
+    public function parents()
+    {
+        return Pages::where('type', 'Pages')->get();
     }
 
     public function show($id)

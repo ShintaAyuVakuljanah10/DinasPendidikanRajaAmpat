@@ -5,16 +5,17 @@ namespace App\Models\BackEnd;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Menu extends Model
+class SubMenu extends Model
 {
     use HasFactory;
 
-    protected $table = 'menus';
+    protected $table = 'sub_menus';
 
     protected $fillable = [
         'name',
         'icon',
         'route',
+        'parent_id',
         'sort_order',
         'active',
     ];
@@ -24,9 +25,8 @@ class Menu extends Model
         'sort_order' => 'integer',
     ];
 
-    public function subMenus()
+    public function parent()
     {
-        return $this->hasMany(SubMenu::class, 'parent_id');
+        return $this->belongsTo(Menu::class, 'parent_id');
     }
-
 }

@@ -126,13 +126,13 @@
                             <span class="menu-title">Post</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ route('backend.menu') }}">
                             <i class="icon-layout menu-icon"></i>
                             <span class="menu-title">Menu</span>
                         </a>
-                    </li>
-                    {{-- <li class="nav-item">
+                    </li> --}}
+                    <li class="nav-item">
                         <a class="nav-link" data-toggle="collapse" href="#menu-setting"
                             aria-expanded="false" aria-controls="menu-setting">
                             <i class="icon-layout menu-icon"></i>
@@ -142,14 +142,14 @@
                         <div class="collapse" id="menu-setting">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Menu</a>
+                                    <a class="nav-link" href="{{ route('backend.menu') }}">Menu</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Submenu</a>
+                                    <a class="nav-link" href="{{ route('backend.submenu') }}">Submenu</a>
                                 </li>
                             </ul>
                         </div>
-                    </li> --}}
+                    </li>
 
                     <li class="nav-item {{ request()->is('settings/*') ? 'active' : '' }}">
                         <a class="nav-link" data-toggle="collapse" href="#settings"

@@ -10,25 +10,25 @@ class MenuController extends Controller
 {
     public function index()
     {
-        return view('backend.menu'); 
+        return view('backend.menu');
     }
 
     public function data()
     {
-        $menus = Menu::orderBy('sort_order', 'asc')->get();
-        return response()->json($menus);
+        return Menu::orderBy('sort_order')->get();
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'type' => 'required|in:Main,Sub',
-            'icon' => 'nullable|string|max:255',
+            'name'  => 'required|string|max:255',
+            'icon'  => 'nullable|string|max:255',
             'route' => 'nullable|string|max:255',
-            'sort_order' => 'nullable|integer',
-            'active' => 'nullable|boolean',
+            'active'=> 'required|boolean',
         ]);
+
+        // auto urutan terakhir
+        $data['sort_order'] = Menu::max('sort_order') + 1;
 
         Menu::create($data);
 
@@ -37,8 +37,7 @@ class MenuController extends Controller
 
     public function show($id)
     {
-        $menu = Menu::findOrFail($id);
-        return response()->json($menu);
+        return Menu::findOrFail($id);
     }
 
     public function update(Request $request, $id)
@@ -46,12 +45,10 @@ class MenuController extends Controller
         $menu = Menu::findOrFail($id);
 
         $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'type' => 'required|in:Main,Sub',
-            'icon' => 'nullable|string|max:255',
+            'name'  => 'required|string|max:255',
+            'icon'  => 'nullable|string|max:255',
             'route' => 'nullable|string|max:255',
-            'sort_order' => 'nullable|integer',
-            'active' => 'nullable|boolean',
+            'active'=> 'required|boolean',
         ]);
 
         $menu->update($data);
@@ -61,8 +58,7 @@ class MenuController extends Controller
 
     public function destroy($id)
     {
-        $menu = Menu::findOrFail($id);
-        $menu->delete();
+        Menu::findOrFail($id)->delete();
 
         return response()->json(['message' => 'Menu berhasil dihapus']);
     }
