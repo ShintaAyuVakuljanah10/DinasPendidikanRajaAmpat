@@ -36,7 +36,7 @@ class AppController extends Controller
             $setting->update($data);
         }
 
-        return back()->with('success', 'Pengaturan berhasil diperbarui');
+        return redirect()->back()->with('success', 'Pengaturan aplikasi berhasil disimpan');
     }
 
 

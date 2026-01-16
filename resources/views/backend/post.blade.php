@@ -258,14 +258,25 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (res) {
-                alert(res.message);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: res.message ?? 'Post berhasil disimpan',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
                 $('#modalPost').modal('hide');
                 loadPost();
             },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert('Gagal menyimpan data');
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Gagal menyimpan data'
+                });
             }
+
         });
     });
 
@@ -359,26 +370,49 @@ $(document).ready(function () {
 $(document).on('click', '.delete-post', function () {
     let id = $(this).data('id');
 
-    if (!confirm('Yakin ingin menghapus post ini?')) return;
+    $(document).on('click', '.delete-post', function () {
+        let id = $(this).data('id');
 
-    let url = deletePostUrl.replace(':id', id);
+        let url = deletePostUrl.replace(':id', id);
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: {
-            _token: "{{ csrf_token() }}",
-            _method: 'DELETE'
-        },
-        success: function (res) {
-            alert(res.message);
-            loadPost();
-        },
-        error: function (xhr) {
-            console.log(xhr.responseText);
-            alert('Gagal menghapus data');
-        }
+        Swal.fire({
+            title: 'Yakin?',
+            text: 'Post ini akan dihapus permanen!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'DELETE'
+                    },
+                    success: function (res) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Terhapus',
+                            text: res.message ?? 'Post berhasil dihapus',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        loadPost();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Gagal menghapus post'
+                        });
+                    }
+                });
+            }
+        });
     });
+
 });
 </script>
 @endpush

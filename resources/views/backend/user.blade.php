@@ -173,7 +173,18 @@ $(document).ready(function () {
                 $('#modalUser').modal('hide');
                 $('#formUser')[0].reset();
                 loadUsers();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: userId 
+                        ? 'User berhasil diperbarui' 
+                        : 'User berhasil ditambahkan',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
             },
+
             error: function (xhr) {
                 if (xhr.status === 422) {
                     let errors = xhr.responseJSON.errors;
@@ -181,11 +192,14 @@ $(document).ready(function () {
                         $('.error-' + key).text(value[0]);
                     });
                 } else {
-                    console.log(xhr.status);
-                    console.log(xhr.responseText);
-                    alert('Terjadi kesalahan: ' + xhr.status + ' ' + xhr.statusText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: 'Terjadi kesalahan pada server'
+                    });
                 }
             }
+
         });
     });
 
@@ -208,21 +222,39 @@ $(document).ready(function () {
     // Delete user
     $(document).on('click', '.delete-user', function () {
         let userId = $(this).data('id');
-        if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
-            $.ajax({
-                url: `/users/${userId}`,
-                type: 'DELETE',
-                success: function () {
-                    alert('User berhasil dihapus');
-                    loadUsers();
-                },
-                error: function (xhr) {
-                    console.log(xhr.status);
-                    console.log(xhr.responseText);
-                    alert('Terjadi kesalahan saat menghapus user');
-                }
-            });
-        }
+        Swal.fire({
+    title: 'Yakin?',
+    text: 'User ini akan dihapus permanen!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, hapus',
+    cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/users/${userId}`,
+                    type: 'DELETE',
+                    success: function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Terhapus',
+                            text: 'User berhasil dihapus',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        loadUsers();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'User gagal dihapus'
+                        });
+                    }
+                });
+            }
+        });
+
     });
 
 });

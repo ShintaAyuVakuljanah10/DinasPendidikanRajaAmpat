@@ -20,8 +20,11 @@ Route::get('/backend', function () {
     return view('auth.login');
 });
 Route::get('/home', [HomeController::class, 'index'])
-    ->middleware('auth')
+    ->middleware(['auth', 'log.agent'])
     ->name('home');
+Route::middleware(['auth', 'log.agent'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+});
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.process');
@@ -29,11 +32,7 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])
-        ->name('home');
-});
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'log.agent'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
     Route::post('/user/tambah', [UserController::class, 'tambah'])->name('user.tambah');
@@ -45,7 +44,7 @@ Route::middleware('auth')->group(function () {
     
 });
 
-Route::middleware(['auth'])->controller(PostController::class)->group(function () {
+Route::middleware(['auth', 'log.agent'])->controller(PostController::class)->group(function () {
     Route::get('/post', 'index')->name('post');
     Route::get('/post/data', 'data')->name('post.data');
     Route::post('/post/tambah', 'store')->name('post.tambah');
@@ -56,7 +55,7 @@ Route::middleware(['auth'])->controller(PostController::class)->group(function (
 
 
 Route::prefix('settings')
-    ->middleware('auth')
+    ->middleware(['auth', 'log.agent'])
     ->group(function () {
 
         Route::controller(AppController::class)->group(function () {
@@ -83,7 +82,7 @@ Route::prefix('settings')
 
 });
 
-Route::prefix('categories')->group(function () {
+Route::prefix('categories')->middleware(['auth', 'log.agent'])->group(function () {
     Route::get('/', [CategoryController::class, 'index'])->name('category');
     Route::get('/data', [CategoryController::class, 'data'])->name('category.data');
     Route::post('/', [CategoryController::class, 'store'])->name('category.store');
@@ -95,7 +94,7 @@ Route::get('/categories/list', function () {
     return \App\Models\Category::select('id','nama')->orderBy('nama')->get();
 })->name('category.list');
 
-Route::prefix('fileManager')->group(function () {
+Route::prefix('fileManager')->middleware(['auth', 'log.agent'])->group(function () {
     Route::get('/', [FileManagerController::class, 'index'])->name('fileManager');
     Route::get('/data', [FileManagerController::class, 'data'])->name('fileManager.data');
     Route::post('/', [FileManagerController::class, 'store'])->name('fileManager.store');
@@ -103,7 +102,10 @@ Route::prefix('fileManager')->group(function () {
 });
 
 
-Route::prefix('backend')->name('backend.')->group(function () {
+
+
+
+Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
 
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
     Route::get('/pages/data', [PagesController::class, 'data'])->name('pages.data');

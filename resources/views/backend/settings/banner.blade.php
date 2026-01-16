@@ -154,7 +154,7 @@ $(document).ready(function () {
     $('#formBanner').submit(function (e) {
         e.preventDefault();
         let id = $('#banner_id').val();
-        let url = id ? `/settings/banners/${id}` : "{{ route('banner.store') }}";
+        let url = id ? `/settings/banner/${id}` : "{{ route('banner.store') }}";
 
         let formData = new FormData(this);
         if (id) formData.append('_method', 'PUT');
@@ -168,14 +168,34 @@ $(document).ready(function () {
             success: function () {
                 $('#modalBanner').modal('hide');
                 loadBanner();
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: $('#banner_id').val()
+                        ? 'Banner berhasil diperbarui'
+                        : 'Banner berhasil ditambahkan',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                });
             },
+
             error: function (xhr) {
                 if (xhr.status === 422) {
                     let e = xhr.responseJSON.errors;
                     $('.error-nama').text(e.nama ? e.nama[0] : '');
                     $('.error-gambar').text(e.gambar ? e.gambar[0] : '');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Terjadi kesalahan pada server'
+                    });
                 }
             }
+
         });
     });
 
@@ -196,15 +216,40 @@ $(document).ready(function () {
     $(document).on('click', '.delete', function () {
         let id = $(this).data('id');
 
-        if (confirm('Hapus banner ini?')) {
-            $.ajax({
-                url: `/settings/banner/${id}`,
-                type: 'DELETE',
-                success: function () {
-                    loadBanner();
-                }
-            });
-        }
+        Swal.fire({
+            title: 'Yakin?',
+            text: 'Banner ini akan dihapus permanen!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/settings/banner/${id}`,
+                    type: 'DELETE',
+                    success: function () {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Banner berhasil dihapus',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        loadBanner();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Banner gagal dihapus'
+                        });
+                    }
+                });
+            }
+        });
+
     });
 
 
@@ -213,8 +258,17 @@ $(document).ready(function () {
 
         $.post(`/settings/banner/${id}/up`, function () {
             loadBanner();
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Urutan banner diperbarui',
+                showConfirmButton: false,
+                timer: 1500
+            });
         });
     });
+
 
 
     $(document).on('click', '.down', function () {
@@ -222,8 +276,17 @@ $(document).ready(function () {
 
         $.post(`/settings/banner/${id}/down`, function () {
             loadBanner();
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Urutan banner diperbarui',
+                showConfirmButton: false,
+                timer: 1500
+            });
         });
     });
+
 
 });
 </script>

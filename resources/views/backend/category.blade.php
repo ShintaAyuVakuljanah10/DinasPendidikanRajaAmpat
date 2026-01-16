@@ -118,15 +118,35 @@ $(document).ready(function () {
 
         $.post(url, data)
         .done(function () {
-            $('#modalCategory').modal('hide');
+    $('#modalCategory').modal('hide');
             loadCategory();
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: $('#category_id').val()
+                    ? 'Category berhasil diperbarui'
+                    : 'Category berhasil ditambahkan',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
         })
+
         .fail(function (xhr) {
             if (xhr.status === 422) {
                 let errors = xhr.responseJSON.errors;
                 $('.error-nama').text(errors.nama ? errors.nama[0] : '');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Terjadi kesalahan pada server'
+                });
             }
         });
+
     });
 
     // edit
@@ -144,15 +164,40 @@ $(document).ready(function () {
     // hapus
     $(document).on('click', '.delete', function () {
         let id = $(this).data('id');
-        if (confirm('Hapus category ini?')) {
-            $.ajax({
-                url: `/categories/${id}`,
-                type: 'DELETE',
-                success: function () {
-                    loadCategory();
-                }
-            });
-        }
+        Swal.fire({
+            title: 'Yakin?',
+            text: 'Category ini akan dihapus permanen!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/categories/${id}`,
+                    type: 'DELETE',
+                    success: function () {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Category berhasil dihapus',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        loadCategory();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Category gagal dihapus'
+                        });
+                    }
+                });
+            }
+        });
+
     });
 
 });

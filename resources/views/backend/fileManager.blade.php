@@ -110,29 +110,70 @@ $(document).ready(function () {
             success: function () {
                 $('#modalFile').modal('hide');
                 loadFiles();
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Upload berhasil',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
             },
+
             error: function (xhr) {
                 if (xhr.status === 422) {
                     let errors = xhr.responseJSON.errors;
                     $('.error-judul').text(errors.judul ?? '');
                     $('.error-gambar').text(errors.gambar ?? '');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Terjadi kesalahan pada server'
+                    });
                 }
             }
+
         });
     });
 
     // hapus
     $(document).on('click', '.delete', function () {
         let id = $(this).data('id');
-        if (confirm('Hapus gambar ini?')) {
-            $.ajax({
-                url: `/fileManager/${id}`,
-                type: 'DELETE',
-                success: function () {
-                    loadFiles();
-                }
-            });
-        }
+        Swal.fire({
+            title: 'Yakin?',
+            text: 'Gambar ini akan dihapus permanen!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/fileManager/${id}`,
+                    type: 'DELETE',
+                    success: function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Terhapus',
+                            text: 'Gambar berhasil dihapus',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        loadFiles();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Gambar gagal dihapus'
+                        });
+                    }
+                });
+            }
+        });
+
     });
 
 });

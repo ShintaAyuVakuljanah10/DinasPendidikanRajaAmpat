@@ -46,13 +46,9 @@ class BannerController extends Controller
 
     public function destroy($id)
     {
-        $file = Banner::findOrFail($id);
+        $banner = Banner::findOrFail($id);
 
-        if (Storage::disk('public')->exists($file->gambar)) {
-            Storage::disk('public')->delete($file->gambar);
-        }
-
-        $file->delete();
+        $banner->delete();
 
         return response()->json(['success' => true]);
     }

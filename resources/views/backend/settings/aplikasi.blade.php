@@ -119,6 +119,28 @@
 
 
 @push('scripts')
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+@endif
+
+@if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: 'Periksa kembali data yang kamu input'
+        });
+    </script>
+@endif
+
 
 <script>
     tinymce.init({
