@@ -20,19 +20,32 @@ class MenuController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name'  => 'required|string|max:255',
-            'icon'  => 'nullable|string|max:255',
-            'route' => 'nullable|string|max:255',
-            'active'=> 'required|boolean',
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'icon' => 'nullable|string',
+            'route' => 'nullable|string',
+            'is_submenu' => 'boolean',
+            'active' => 'boolean',
         ]);
 
-        // auto urutan terakhir
-        $data['sort_order'] = Menu::max('sort_order') + 1;
+        Menu::create([
+            'name' => $request->name,
+            'icon' => $request->icon,
+            'route' => $request->is_submenu ? null : $request->route,
+            'is_submenu' => $request->is_submenu ?? 0,
+            'active' => $request->active ?? 1,
+            'sort_order' => 0,
+        ]);
 
-        Menu::create($data);
+        return response()->json(['message' => 'Menu berhasil ditambahkan']);
+    }
 
-        return response()->json(['message' => 'Menu berhasil dibuat']);
+    public function parentMenu()
+    {
+        return Menu::where('is_submenu', true)
+            ->where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     public function show($id)

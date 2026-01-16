@@ -123,14 +123,14 @@
                                             <option value="Sub Pages">Sub Pages</option>
                                         </select>
                                     </div>
-                                    
+
                                     <div id="parentWrapper" style="display:none">
                                         <label class="fw-semibold">Parent Page</label>
                                         <select class="form-control" name="parent_id" id="parent_id">
                                             <option value="">-- Pilih Parent --</option>
                                         </select>
-                                      </div>
-                                    
+                                    </div>
+
                                 </div>
                                 <hr>
                                 <div>
@@ -228,19 +228,40 @@
             });
 
             // ================= DELETE PAGE =================
+            // DELETE PAGE
             $(document).on('click', '.btn-delete', function () {
                 let id = $(this).data('id');
 
-                if (!confirm('Yakin ingin menghapus page ini?')) return;
-
-                $.ajax({
-                    url: `/backend/pages/${id}`,
-                    type: 'DELETE',
-                    success: function () {
-                        loadPages();
-                    },
-                    error: function () {
-                        alert('Gagal menghapus data');
+                Swal.fire({
+                    title: 'Yakin?',
+                    text: 'Page yang dihapus tidak bisa dikembalikan!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/backend/pages/${id}`,
+                            type: 'DELETE',
+                            success: function () {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Terhapus',
+                                    text: 'Page berhasil dihapus',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                loadPages();
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal',
+                                    text: 'Page gagal dihapus'
+                                });
+                            }
+                        });
                     }
                 });
             });
@@ -426,18 +447,22 @@
             });
 
             // SUBMIT FORM (SAMA KAYA USER)
+            // SUBMIT FORM PAGE
             $('#formPage').submit(function (e) {
                 e.preventDefault();
 
                 let pageId = $('#page_id').val();
-                let url = pageId ? `/backend/pages/${pageId}` : "{{ route('backend.pages.store') }}";
+                let url = pageId ?
+                    `/backend/pages/${pageId}` :
+                    "{{ route('backend.pages.store') }}";
+
                 let formData = new FormData(this);
 
-                // pastikan TinyMCE content masuk
+                // pastikan TinyMCE ikut terkirim
                 formData.set('content', tinymce.get('contentEditor').getContent());
 
                 if (pageId) {
-                    formData.append('_method', 'PUT'); // Laravel akan menganggap ini update
+                    formData.append('_method', 'PUT');
                 }
 
                 $.ajax({
@@ -446,15 +471,25 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function (res) {
+
+                    success: function () {
                         $('#modalPage').modal('hide');
                         $('#formPage')[0].reset();
                         tinymce.get('contentEditor').setContent('');
                         loadPages();
-                    },
-                    error: function (xhr) {
-                        console.log(xhr.responseJSON); // lihat di console
 
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: pageId ?
+                                'Page berhasil diperbarui' :
+                                'Page berhasil ditambahkan',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    },
+
+                    error: function (xhr) {
                         if (xhr.status === 422) {
                             let errors = xhr.responseJSON.errors;
                             let message = '';
@@ -463,15 +498,21 @@
                                 message += errors[key][0] + '\n';
                             });
 
-                            alert(message);
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Validasi gagal',
+                                text: message
+                            });
                         } else {
-                            alert('Terjadi kesalahan server');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops!',
+                                text: 'Terjadi kesalahan pada server'
+                            });
                         }
                     }
                 });
-
             });
-
         });
 
         document.getElementById('searchInput').addEventListener('input', function () {

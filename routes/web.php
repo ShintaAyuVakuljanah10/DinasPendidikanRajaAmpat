@@ -121,6 +121,7 @@ Route::prefix('backend')->name('backend.')->group(function () {
     Route::get('/menu', [MenuController::class, 'index'])->name('menu');
     Route::get('/menu/data', [MenuController::class, 'data'])->name('menu.data');
     Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
+    Route::get('/menu/parent', [MenuController::class, 'parentMenu'])->name('menu.parent');
     Route::get('/menu/{id}', [MenuController::class, 'show']);
     Route::put('/menu/{id}', [MenuController::class, 'update']);
     Route::delete('/menu/{id}', [MenuController::class, 'destroy']);

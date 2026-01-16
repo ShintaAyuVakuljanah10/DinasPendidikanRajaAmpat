@@ -26,7 +26,7 @@ class SubMenuController extends Controller
                     'icon'        => $item->icon ?? '-',
                     'route'       => $item->route,
                     'parent_id'   => $item->parent_id,
-                    'parent_name' => $item->parent->title ?? '-',
+                    'parent_name' => $item->parent->name ?? '-',
                     'active'      => $item->active,
                 ];
             });

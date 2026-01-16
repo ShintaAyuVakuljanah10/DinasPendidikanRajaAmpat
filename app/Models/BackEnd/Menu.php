@@ -15,6 +15,7 @@ class Menu extends Model
         'name',
         'icon',
         'route',
+        'is_submenu',
         'sort_order',
         'active',
     ];

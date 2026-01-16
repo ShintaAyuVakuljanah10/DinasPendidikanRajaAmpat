@@ -5,15 +5,12 @@
 @section('content')
 <div class="container">
 
-    <div class="row mb-3 align-items-center">
-        <div class="col-md-6">
-            <h3 class="fw-bold">Sub Menu</h3>
-        </div>
-        <div class="col-md-6 text-end">
-            <button class="btn btn-success" data-toggle="modal" data-target="#modalSubMenu">
-                <i class="mdi mdi-plus"></i>
-            </button>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">Sub Menu Management</h4>
+
+        <button class="btn btn-success" data-toggle="modal" data-target="#modalSubMenu">
+            <i class="mdi mdi-plus"></i>
+        </button>
     </div>
 
     <div class="card">
@@ -62,8 +59,7 @@
 
                         <div class="col-md-6">
                             <label class="fw-semibold">Nama Sub Menu</label>
-                            <input type="text" id="name" class="form-control"
-                                   placeholder="Masukkan Nama Sub Menu">
+                            <input type="text" id="name" class="form-control" placeholder="Masukkan Nama Sub Menu">
                         </div>
 
                         <div class="col-md-6">
@@ -73,9 +69,7 @@
 
                         <div class="col-md-6">
                             <label class="fw-semibold">Route</label>
-                            <select id="route" class="form-control">
-                                <option value="">Pilih Route Menu</option>
-                            </select>
+                            <input type="text" id="route" class="form-control">
                         </div>
 
                         <div class="col-md-4">
@@ -106,18 +100,18 @@
 
 @push('scripts')
 <script>
-$(function () {
+    $(function () {
 
-    loadSubMenu();
-    loadParentMenu();
+        loadSubMenu();
+        loadParentMenu();
 
-    function loadSubMenu() {
-        $.get("{{ route('backend.submenu.data') }}", function (data) {
-            let html = '';
-            let no = 1;
+        function loadSubMenu() {
+            $.get("{{ route('backend.submenu.data') }}", function (data) {
+                let html = '';
+                let no = 1;
 
-            data.forEach(item => {
-                html += `
+                data.forEach(item => {
+                    html += `
                 <tr>
                     <td>${no++}</td>
                     <td>${item.name}</td>
@@ -138,81 +132,84 @@ $(function () {
                         </button>
                     </td>
                 </tr>`;
+                });
+
+                $('#submenu-table').html(html);
             });
+        }
 
-            $('#submenu-table').html(html);
-        });
-    }
+        function loadParentMenu() {
+            $.get("{{ route('backend.menu.parent') }}", function (data) {
+                let html = '<option value="">Pilih Parent Menu</option>';
 
-    function loadParentMenu() {
-        $.get("{{ route('backend.menu.data') }}", function (data) {
-            let html = '<option value="">Pilih Parent Menu</option>';
+                data.forEach(menu => {
+                    html += `<option value="${menu.id}">${menu.name}</option>`;
+                });
 
-            data.forEach(menu => {
-                html += `<option value="${menu.id}">${menu.name}</option>`;
+                $('#parent_id').html(html);
             });
+        }
 
-            $('#parent_id').html(html);
+        // SUBMIT
+        $('#formSubMenu').submit(function (e) {
+            e.preventDefault();
+
+            let id = $('#submenu_id').val();
+            let url = id ? `/backend/submenu/${id}` : "{{ route('backend.submenu.store') }}";
+
+            let data = {
+                name: $('#name').val(),
+                icon: $('#icon').val(),
+                route: $('#route').val(),
+                parent_id: $('#parent_id').val(),
+                active: $('#active').is(':checked') ? 1 : 0,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            if (id) data._method = 'PUT';
+
+            $.post(url, data, function () {
+                $('#modalSubMenu').modal('hide');
+                $('#formSubMenu')[0].reset();
+                $('#active').prop('checked', true);
+                loadSubMenu();
+            });
         });
-    }
 
-    // SUBMIT
-    $('#formSubMenu').submit(function (e) {
-        e.preventDefault();
+        // EDIT
+        $(document).on('click', '.btn-edit', function () {
+            let id = $(this).data('id');
 
-        let id = $('#submenu_id').val();
-        let url = id ? `/backend/submenu/${id}` : "{{ route('backend.submenu.store') }}";
+            $.get(`/backend/submenu/${id}`, function (data) {
+                $('#submenu_id').val(data.id);
+                $('#name').val(data.name);
+                $('#icon').val(data.icon);
+                $('#route').val(data.route);
+                $('#parent_id').val(data.parent_id);
+                $('#active').prop('checked', data.active);
 
-        let data = {
-            name: $('#name').val(),
-            icon: $('#icon').val(),
-            route: $('#route').val(),
-            parent_id: $('#parent_id').val(),
-            active: $('#active').is(':checked') ? 1 : 0,
-            _token: $('meta[name="csrf-token"]').attr('content')
-        };
-
-        if (id) data._method = 'PUT';
-
-        $.post(url, data, function () {
-            $('#modalSubMenu').modal('hide');
-            $('#formSubMenu')[0].reset();
-            $('#active').prop('checked', true);
-            loadSubMenu();
+                $('.modal-title').text('Edit Data');
+                $('#modalSubMenu').modal('show');
+            });
         });
+
+        // DELETE
+        $(document).on('click', '.btn-delete', function () {
+            if (!confirm('Yakin hapus submenu ini?')) return;
+
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: `/backend/submenu/${id}`,
+                type: 'DELETE',
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: loadSubMenu
+            });
+        });
+
     });
 
-    // EDIT
-    $(document).on('click', '.btn-edit', function () {
-        let id = $(this).data('id');
-
-        $.get(`/backend/submenu/${id}`, function (data) {
-            $('#submenu_id').val(data.id);
-            $('#name').val(data.name);
-            $('#icon').val(data.icon);
-            $('#route').val(data.route);
-            $('#parent_id').val(data.parent_id);
-            $('#active').prop('checked', data.active);
-
-            $('.modal-title').text('Edit Data');
-            $('#modalSubMenu').modal('show');
-        });
-    });
-
-    // DELETE
-    $(document).on('click', '.btn-delete', function () {
-        if (!confirm('Yakin hapus submenu ini?')) return;
-
-        let id = $(this).data('id');
-
-        $.ajax({
-            url: `/backend/submenu/${id}`,
-            type: 'DELETE',
-            data: { _token: "{{ csrf_token() }}" },
-            success: loadSubMenu
-        });
-    });
-
-});
 </script>
 @endpush

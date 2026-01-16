@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('icon')->nullable();
             $table->string('route')->nullable();
+            $table->boolean('is_submenu')->default(false);
             $table->integer('sort_order')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamps();

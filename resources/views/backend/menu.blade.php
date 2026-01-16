@@ -4,16 +4,14 @@
 
 @section('content')
 <div class="container">
-    <div class="row mb-3 align-items-center">
-        <div class="col-md-6">
-            <h3 class="fw-bold">Menu Management</h3>
-        </div>
-        <div class="col-md-6 text-end">
-            <button class="btn btn-success" data-toggle="modal" data-target="#modalMenu">
-                <i class="mdi mdi-plus"></i>
-            </button>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">Menu Management</h4>
+
+        <button class="btn btn-success" data-toggle="modal" data-target="#modalMenu">
+            <i class="mdi mdi-plus"></i>
+        </button>
     </div>
+
 
     <div class="card">
         <div class="card-body">
@@ -42,7 +40,7 @@
 
 
 <div class="modal fade" id="modalMenu" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-center">
         <form id="formMenu">
             @csrf
             <input type="hidden" id="menu_id">
@@ -66,7 +64,7 @@
                             <label class="fw-semibold">Icon</label>
                             <select id="icon" class="form-control">
                                 <option value="">-- Select Icon --</option>
-                        
+
                                 <option value="bi bi-grid">🟦 Grid</option>
                                 <option value="bi bi-stack">📚 Stack</option>
                                 <option value="bi bi-grid-1x2-fill">🧩 Grid 1x2 Fill</option>
@@ -79,16 +77,27 @@
                                 <option value="bi bi-chat-dots">💬 Chat</option>
                                 <option value="bi bi-bell">🔔 Notification</option>
                             </select>
-                        </div>                        
+                        </div>
 
                         <div class="col-md-6">
                             <label class="fw-semibold">Route</label>
                             <input type="text" id="route" class="form-control">
                         </div>
 
-                        <div class="col-md-6">
-                            <label class="fw-semibold">Active?</label><br>
-                            <input type="checkbox" id="active" checked>
+                        <div class="col-md-6 mt-2">
+                            <label class="fw-semibold d-block mb-2">&nbsp;</label>
+
+                            <div class="d-flex gap-4 align-items-center">
+                                <label class="d-flex align-items-center gap-2 mb-0">
+                                    <input type="checkbox" id="active" checked>
+                                    <span class="fw-semibold">Active</span>
+                                </label>
+
+                                <label class="d-flex align-items-center gap-2 mb-0">
+                                    <input type="checkbox" id="is_submenu">
+                                    <span class="fw-semibold">Sub Menu</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,18 +182,64 @@
         $(document).on('click', '.btn-delete', function () {
             let id = $(this).data('id');
 
-            if (!confirm('Yakin ingin menghapus menu ini?')) return;
-
-            $.ajax({
-                url: `/backend/menu/${id}`,
-                type: 'DELETE',
-                data: {
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function () {
-                    loadMenu();
+            Swal.fire({
+                title: 'Yakin?',
+                text: 'Menu yang dihapus tidak bisa dikembalikan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/backend/menu/${id}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Terhapus',
+                                text: 'Menu berhasil dihapus',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            loadMenu();
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: 'Menu gagal dihapus'
+                            });
+                        }
+                    });
                 }
             });
+        });
+
+
+        $(document).ready(function () {
+
+            function toggleRouteInput() {
+                if ($('#is_submenu').is(':checked')) {
+                    $('#route').val('').prop('disabled', true);
+                } else {
+                    $('#route').prop('disabled', false);
+                }
+            }
+
+            // pertama kali modal dibuka
+            $('#modalMenu').on('shown.bs.modal', function () {
+                toggleRouteInput();
+            });
+
+            // saat checkbox Sub Menu berubah
+            $('#is_submenu').on('change', function () {
+                toggleRouteInput();
+            });
+
         });
 
         $('#formMenu').submit(function (e) {
@@ -198,15 +253,54 @@
                 icon: $('#icon').val(),
                 route: $('#route').val(),
                 active: $('#active').is(':checked') ? 1 : 0,
+                is_submenu: $('#is_submenu').is(':checked') ? 1 : 0,
                 _token: $('meta[name="csrf-token"]').attr('content')
             };
 
             if (id) data._method = 'PUT';
 
-            $.post(url, data, function () {
-                $('#modalMenu').modal('hide');
-                $('#formMenu')[0].reset();
-                loadMenu();
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function () {
+                    $('#modalMenu').modal('hide');
+                    $('#formMenu')[0].reset();
+                    $('#active').prop('checked', true);
+                    loadMenu();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: id ?
+                            'Menu berhasil diperbarui' :
+                            'Menu berhasil ditambahkan',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                },
+                error: function (xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        let message = '';
+
+                        Object.keys(errors).forEach(function (key) {
+                            message += errors[key][0] + '\n';
+                        });
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Validasi gagal',
+                            text: message
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: 'Terjadi kesalahan pada server'
+                        });
+                    }
+                }
             });
         });
     });
