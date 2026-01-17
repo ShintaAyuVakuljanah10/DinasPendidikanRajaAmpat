@@ -173,6 +173,11 @@
                 $('#formSubMenu')[0].reset();
                 $('#active').prop('checked', true);
                 loadSubMenu();
+
+                toastTop(
+                    'success',
+                    id ? 'Sub Menu berhasil diperbarui' : 'Sub Menu berhasil ditambahkan'
+                );
             });
         });
 
@@ -195,21 +200,48 @@
 
         // DELETE
         $(document).on('click', '.btn-delete', function () {
-            if (!confirm('Yakin hapus submenu ini?')) return;
-
             let id = $(this).data('id');
 
-            $.ajax({
-                url: `/backend/submenu/${id}`,
-                type: 'DELETE',
-                data: {
-                    _token: "{{ csrf_token() }}"
-                },
-                success: loadSubMenu
+            Swal.fire({
+                title: 'Yakin?',
+                text: 'Sub menu yang dihapus tidak bisa dikembalikan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/backend/submenu/${id}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function () {
+                            loadSubMenu();
+                            toastTop('success', 'Sub Menu berhasil dihapus');
+                        },
+                        error: function () {
+                            toastTop('error', 'Gagal menghapus Sub Menu');
+                        }
+                    });
+                }
             });
         });
-
     });
 
+</script>
+<script>
+    const toastTop = (icon, title) => {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: icon,
+            title: title,
+            showConfirmButton: false,
+            timer: 1800,
+            timerProgressBar: true
+        });
+    };
 </script>
 @endpush

@@ -26,4 +26,10 @@ class Pages extends Model
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id')
+            ->where('active', 1)
+            ->orderBy('sort_order', 'asc');
+    }   
 }

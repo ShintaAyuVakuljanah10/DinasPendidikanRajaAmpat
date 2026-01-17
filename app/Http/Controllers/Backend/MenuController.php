@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BackEnd\Menu;
+use Illuminate\Support\Facades\DB;
 
 class MenuController extends Controller
 {
@@ -34,7 +35,7 @@ class MenuController extends Controller
             'route' => $request->is_submenu ? null : $request->route,
             'is_submenu' => $request->is_submenu ?? 0,
             'active' => $request->active ?? 1,
-            'sort_order' => 0,
+            'sort_order' => Menu::max('sort_order') + 1,
         ]);
 
         return response()->json(['message' => 'Menu berhasil ditambahkan']);
@@ -68,6 +69,54 @@ class MenuController extends Controller
 
         return response()->json(['message' => 'Menu berhasil diupdate']);
     }
+
+    public function orderUp($id)
+{
+    DB::transaction(function () use ($id) {
+        $menu = Menu::findOrFail($id);
+
+        $above = Menu::where('sort_order', '<', $menu->sort_order)
+            ->orderBy('sort_order', 'desc')
+            ->first();
+
+        if (!$above) {
+            return;
+        }
+
+        $currentOrder = $menu->sort_order;
+        $menu->sort_order = $above->sort_order;
+        $above->sort_order = $currentOrder;
+
+        $menu->save();
+        $above->save();
+    });
+
+    return response()->json(['success' => true]);
+}
+
+public function orderDown($id)
+{
+    DB::transaction(function () use ($id) {
+        $menu = Menu::findOrFail($id);
+
+        $below = Menu::where('sort_order', '>', $menu->sort_order)
+            ->orderBy('sort_order', 'asc')
+            ->first();
+
+        if (!$below) {
+            return;
+        }
+
+        $currentOrder = $menu->sort_order;
+        $menu->sort_order = $below->sort_order;
+        $below->sort_order = $currentOrder;
+
+        $menu->save();
+        $below->save();
+    });
+
+    return response()->json(['success' => true]);
+}
 
     public function destroy($id)
     {

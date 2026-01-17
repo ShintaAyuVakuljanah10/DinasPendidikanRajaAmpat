@@ -62,22 +62,60 @@
 
                         <div class="col-md-6">
                             <label class="fw-semibold">Icon</label>
-                            <select id="icon" class="form-control">
+                            <select id="icon" name="icon" class="form-control">
+                        
                                 <option value="">-- Select Icon --</option>
-
-                                <option value="bi bi-grid">🟦 Grid</option>
-                                <option value="bi bi-stack">📚 Stack</option>
-                                <option value="bi bi-grid-1x2-fill">🧩 Grid 1x2 Fill</option>
-                                <option value="bi bi-people-fill">👥 People</option>
-                                <option value="bi bi-book">📖 Book</option>
-                                <option value="bi bi-gear">⚙️ Settings</option>
-                                <option value="bi bi-person">👤 Profile</option>
-                                <option value="bi bi-calendar">📅 Calendar</option>
-                                <option value="bi bi-envelope">✉️ Mail</option>
-                                <option value="bi bi-chat-dots">💬 Chat</option>
-                                <option value="bi bi-bell">🔔 Notification</option>
+                        
+                                <!-- DASHBOARD -->
+                                <option value="mdi mdi-view-dashboard">📊 Dashboard</option>
+                                <option value="mdi mdi-home">🏠 Home</option>
+                        
+                                <!-- CONTENT -->
+                                <option value="mdi mdi-file-document">📄 Pages</option>
+                                <option value="mdi mdi-post">📝 Post</option>
+                                <option value="mdi mdi-folder">📁 Category</option>
+                                <option value="mdi mdi-tag">🏷️ Tag</option>
+                        
+                                <!-- USER -->
+                                <option value="mdi mdi-account">👤 User</option>
+                                <option value="mdi mdi-account-group">👥 Users</option>
+                                <option value="mdi mdi-shield-account">🛡️ Role</option>
+                        
+                                <!-- SETTINGS -->
+                                <option value="mdi mdi-cog">⚙️ Settings</option>
+                                <option value="mdi mdi-cogs">⚙️ Advanced Settings</option>
+                                <option value="mdi mdi-tools">🛠️ Tools</option>
+                        
+                                <!-- MEDIA -->
+                                <option value="mdi mdi-image">🖼️ Media</option>
+                                <option value="mdi mdi-image-multiple">🖼️ Gallery</option>
+                                <option value="mdi mdi-file-upload">⬆️ Upload</option>
+                        
+                                <!-- NAVIGATION -->
+                                <option value="mdi mdi-menu">📋 Menu</option>
+                                <option value="mdi mdi-menu-open">📂 Sub Menu</option>
+                        
+                                <!-- COMMUNICATION -->
+                                <option value="mdi mdi-email">✉️ Email</option>
+                                <option value="mdi mdi-chat">💬 Chat</option>
+                                <option value="mdi mdi-bell">🔔 Notification</option>
+                        
+                                <!-- DATE & TIME -->
+                                <option value="mdi mdi-calendar">📅 Calendar</option>
+                                <option value="mdi mdi-clock-outline">⏰ Time</option>
+                        
+                                <!-- SECURITY -->
+                                <option value="mdi mdi-lock">🔒 Security</option>
+                                <option value="mdi mdi-lock-open">🔓 Unlock</option>
+                        
+                                <!-- SYSTEM -->
+                                <option value="mdi mdi-database">🗄️ Database</option>
+                                <option value="mdi mdi-server">🖥️ Server</option>
+                                <option value="mdi mdi-logout">🚪 Logout</option>
+                        
                             </select>
                         </div>
+                        
 
                         <div class="col-md-6">
                             <label class="fw-semibold">Route</label>
@@ -145,6 +183,8 @@
                     </td>
                     <td>${menu.sort_order}</td>
                     <td>
+                        <button class="btn btn-sm btn-primary up" data-id="${menu.id}">⬆</button>
+                        <button class="btn btn-sm btn-primary down" data-id="${menu.id}">⬇</button>
                         <button class="btn btn-sm btn-primary btn-edit" data-id="${menu.id}">
                             <i class="mdi mdi-pencil"></i>
                         </button>
@@ -219,6 +259,37 @@
             });
         });
 
+        $(document).on('click', '.up', function () {
+            let id = $(this).data('id');
+
+            $.post(`/backend/menu/${id}/up`, function () {
+                loadMenu();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Urutan menu diperbarui',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            });
+        });
+
+        $(document).on('click', '.down', function () {
+            let id = $(this).data('id');
+
+            $.post(`/backend/menu/${id}/down`, function () {
+                loadMenu();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Urutan menu diperbarui',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            });
+        });
 
         $(document).ready(function () {
 
@@ -278,6 +349,10 @@
                         timer: 2000,
                         showConfirmButton: false
                     });
+
+                    setTimeout(function () {
+                            location.reload();
+                        }, 100);
                 },
                 error: function (xhr) {
                     if (xhr.status === 422) {

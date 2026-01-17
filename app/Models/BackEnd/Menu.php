@@ -25,9 +25,10 @@ class Menu extends Model
         'sort_order' => 'integer',
     ];
 
-    public function subMenus()
+    public function submenus()
     {
-        return $this->hasMany(SubMenu::class, 'parent_id');
+        return $this->hasMany(SubMenu::class, 'parent_id')->where('active', 1)
+        ->orderBy('sort_order');
     }
 
 }

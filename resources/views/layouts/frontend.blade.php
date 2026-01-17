@@ -49,34 +49,38 @@
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.html" class="active">Home<br></a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="courses.html">Courses</a></li>
-          <li><a href="trainers.html">Trainers</a></li>
-          <li><a href="events.html">Events</a></li>
-          <li><a href="pricing.html">Pricing</a></li>
-          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li>
-          <li><a href="contact.html">Contact</a></li>
+            @foreach ($pages as $page)
+    
+                @if ($page->children->isEmpty())
+                    <li>
+                        <a href="{{ url($page->slug) }}">
+                            {{ $page->title }}
+                        </a>
+                    </li>
+                @else
+                    <li class="dropdown">
+                        <a href="#">
+                            <span>{{ $page->title }}</span>
+                            <i class="bi bi-chevron-down toggle-dropdown"></i>
+                        </a>
+                        <ul>
+                            @foreach ($page->children as $child)
+                                <li>
+                                    <a href="{{ url($child->slug) }}">
+                                        {{ $child->title }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </li>
+                @endif
+    
+            @endforeach
         </ul>
+    
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
-
+    </nav>
+  
       <a class="btn-getstarted" href="courses.html">Get Started</a>
 
     </div>

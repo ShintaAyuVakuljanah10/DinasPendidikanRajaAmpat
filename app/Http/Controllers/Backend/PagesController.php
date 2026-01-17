@@ -43,18 +43,27 @@ class PagesController extends Controller
         ];
 
         if ($request->type === 'Sub Pages') {
-            $rules['parent_id'] = 'required';
+            $rules['parent_id'] = 'required|exists:pages,id';
         }
 
         $request->validate($rules);
 
+        // tentukan parent_id
+        $parentId = $request->type === 'Sub Pages'
+            ? $request->parent_id
+            : null;
+
+        // ambil order terakhir BERDASARKAN parent
+        $lastOrder = Pages::where('parent_id', $parentId)
+            ->max('sort_order') ?? 0;
+
         Pages::create([
-            'title'     => $request->title,
-            'slug'      => $request->slug,
-            'type'      => $request->type,
-            'parent_id' => $request->parent_id,
-            'active'    => 1,
-            'sort_order'=> 0,
+            'title'      => $request->title,
+            'slug'       => $request->slug,
+            'type'       => $request->type,
+            'parent_id'  => $parentId,
+            'active'     => 1,
+            'sort_order' => $lastOrder + 1,
         ]);
 
         return response()->json(['success' => true]);
@@ -80,7 +89,7 @@ class PagesController extends Controller
             'type'       => $request->type,
             'parent_id'  => $request->parent_id,
             'active'     => $request->active ?? 1,
-            'sort_order' => 0,
+            // 'sort_order' => 0,
             'meta_title' => $request->meta_title,
         ]);
 
@@ -94,4 +103,58 @@ class PagesController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function orderUp($id)
+    {
+        DB::transaction(function () use ($id) {
+            $page = Pages::findOrFail($id);
+
+            // cari page di atasnya (order lebih kecil)
+            $above = Pages::where('sort_order', '<', $page->sort_order)
+                ->orderBy('sort_order', 'desc')
+                ->first();
+
+            // kalau tidak ada, berarti sudah paling atas
+            if (!$above) {
+                return;
+            }
+
+            // swap order
+            $currentOrder = $page->sort_order;
+            $page->sort_order = $above->sort_order;
+            $above->sort_order = $currentOrder;
+
+            $page->save();
+            $above->save();
+        });
+
+        return response()->json(['success' => true]);
+    }
+
+
+    public function orderDown($id)
+    {
+        DB::transaction(function () use ($id) {
+            $page = Pages::findOrFail($id);
+
+            // cari page di bawahnya (order lebih besar)
+            $below = Pages::where('sort_order', '>', $page->sort_order)
+                ->orderBy('sort_order', 'asc')
+                ->first();
+
+            // kalau tidak ada, berarti sudah paling bawah
+            if (!$below) {
+                return;
+            }
+
+            // swap order
+            $currentOrder = $page->sort_order;
+            $page->sort_order = $below->sort_order;
+            $below->sort_order = $currentOrder;
+
+            $page->save();
+            $below->save();
+        });
+
+        return response()->json(['success' => true]);
+    }
 }

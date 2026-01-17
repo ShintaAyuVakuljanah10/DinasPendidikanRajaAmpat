@@ -102,13 +102,12 @@ Route::prefix('fileManager')->middleware(['auth', 'log.agent'])->group(function 
 });
 
 
-
-
-
 Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
 
     Route::get('/pages', [PagesController::class, 'index'])->name('pages');
     Route::get('/pages/data', [PagesController::class, 'data'])->name('pages.data');
+    Route::post('/pages/{id}/up', [PagesController::class, 'orderUp']);
+    Route::post('/pages/{id}/down', [PagesController::class, 'orderDown']);
     Route::get('/pages/parents', [PagesController::class, 'parents'])->name('pages.parents');
     Route::post('/pages/store', [PagesController::class, 'store'])->name('pages.store');
     Route::get('/pages/{id}', [PagesController::class, 'show']);
@@ -117,9 +116,11 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::delete('/pages/{id}', [PagesController::class, 'destroy'])->name('pages.destroy');
 }); 
 
-Route::prefix('backend')->name('backend.')->group(function () {
+Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
     Route::get('/menu', [MenuController::class, 'index'])->name('menu');
     Route::get('/menu/data', [MenuController::class, 'data'])->name('menu.data');
+    Route::post('/menu/{id}/up', [MenuController::class, 'orderUp']);
+    Route::post('/menu/{id}/down', [MenuController::class, 'orderDown']);
     Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
     Route::get('/menu/parent', [MenuController::class, 'parentMenu'])->name('menu.parent');
     Route::get('/menu/{id}', [MenuController::class, 'show']);
@@ -127,7 +128,7 @@ Route::prefix('backend')->name('backend.')->group(function () {
     Route::delete('/menu/{id}', [MenuController::class, 'destroy']);
 });
 
-Route::prefix('backend')->name('backend.')->group(function () {
+Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
     Route::get('/submenu', [SubMenuController::class, 'index'])->name('submenu');
     Route::get('submenu/data', [SubMenuController::class, 'data'])->name('submenu.data');
     Route::post('submenu', [SubMenuController::class, 'store'])->name('submenu.store');

@@ -189,6 +189,8 @@
                             </td>
                             <td>${page.sort_order ?? 0}</td>
                             <td>
+                                <button class="btn btn-sm btn-primary up" data-id="${page.id}">⬆</button>
+                                <button class="btn btn-sm btn-primary down" data-id="${page.id}">⬇</button>
                                 <button class="btn btn-sm btn-warning btn-edit" data-id="${page.id}">Edit</button>
                                 <button class="btn btn-sm btn-danger btn-delete" data-id="${page.id}">Hapus
                                 </button>
@@ -263,6 +265,49 @@
                             }
                         });
                     }
+                });
+            });
+
+            // PAGE UP
+            $(document).on('click', '.up', function (e) {
+                e.preventDefault();
+
+                let id = $(this).data('id');
+
+                $.post(`/backend/pages/${id}/up`, {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                }, function () {
+                    loadPages();
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Urutan page berhasil dinaikkan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                });
+            });
+
+
+            // PAGE DOWN
+            $(document).on('click', '.down', function (e) {
+                e.preventDefault();
+
+                let id = $(this).data('id');
+
+                $.post(`/backend/pages/${id}/down`, {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                }, function () {
+                    loadPages();
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Urutan page berhasil diturunkan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 });
             });
 
@@ -402,6 +447,8 @@
                 $(this).closest('.manual-dropdown').toggleClass('show');
             });
 
+
+
             // SELECT ITEM
             $(document).on('click', '.dropdown-select', function (e) {
                 e.preventDefault();
@@ -487,6 +534,10 @@
                             timer: 2000,
                             showConfirmButton: false
                         });
+
+                        setTimeout(function () {
+                            location.reload();
+                        }, 100);
                     },
 
                     error: function (xhr) {
