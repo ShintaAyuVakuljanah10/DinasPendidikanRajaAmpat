@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\BackEnd\Pages;
 use App\Models\BackEnd\Menu;
+use App\Models\BackEnd\Banner;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 
@@ -41,6 +42,12 @@ class AppServiceProvider extends ServiceProvider
                 ->get();
     
             $view->with('menus', $menus);
+        });
+
+        View::composer('layouts.frontend', function ($view) {
+            $banners = Banner::orderBy('urutan', 'asc')->get();
+
+            $view->with('banners', $banners);
         });
     }
 }

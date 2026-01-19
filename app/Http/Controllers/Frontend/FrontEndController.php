@@ -13,7 +13,7 @@ class FrontEndController extends Controller
         $pages = Pages::whereNull('parent_id')
             ->where('active', 1)
             ->orderBy('sort_order', 'asc')
-            ->with('children') // relasi children
+            ->with('children')
             ->get();
 
         return view('layout.frontend', compact('pages'));   
