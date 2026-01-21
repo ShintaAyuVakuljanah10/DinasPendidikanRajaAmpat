@@ -81,6 +81,10 @@ class PostController extends Controller
         $post->kategori_id     = $request->kategori_id;
         $post->status          = $request->status;
 
+        if ($request->filled('gambar')) {
+            $post->gambar = $request->gambar;
+        }
+
         if ($request->status === 'published' && $post->tanggal_publish === null) {
             $post->tanggal_publish = now();
         }
@@ -92,6 +96,18 @@ class PostController extends Controller
             'message' => 'Post berhasil diupdate'
         ]);
     }
+
+    public function show($slug)
+    {
+        $post = Post::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        $post->increment('views');
+
+        return view('frontend.berita.show', compact('post'));
+    }
+
 
     public function destroy($id)
     {

@@ -12,10 +12,22 @@ use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\FileManagerController;
 use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\SubMenuController;
+use App\Http\Controllers\Frontend\DashboardController;
+use App\Http\Controllers\Frontend\BeritaController;
 
-Route::get('/', function () {
-    return view('frontend.dashboard');
-});
+
+// Route::get('/', function () {
+//     return view('frontend.dashboard');
+// });
+
+Route::get('/', [DashboardController::class, 'index']);
+
+Route::get('/berita', [BeritaController::class, 'index'])
+    ->name('berita.index');
+
+Route::get('/berita/{slug}', [BeritaController::class, 'show'])
+    ->name('berita.detail');
+
 Route::get('/backend', function () {
     return view('auth.login');
 });
@@ -54,6 +66,7 @@ Route::middleware(['auth', 'log.agent'])->controller(PostController::class)->gro
 });
 
 
+
 Route::prefix('settings')
     ->middleware(['auth', 'log.agent'])
     ->group(function () {
@@ -81,6 +94,8 @@ Route::prefix('settings')
 
 
 });
+
+
 
 Route::prefix('categories')->middleware(['auth', 'log.agent'])->group(function () {
     Route::get('/', [CategoryController::class, 'index'])->name('category');
