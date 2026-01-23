@@ -519,6 +519,7 @@
 
                     <!-- Main JS File -->
                     <script src="{{ asset('assets/Mentor/assets/js/main.js') }}"></script>
+    
 
 </body>
 
