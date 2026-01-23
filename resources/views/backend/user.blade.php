@@ -13,8 +13,8 @@
             <div class="card-body">
                 <h3 class="font-weight-bold mb-3">Data User</h3>
                 <div class="table-responsive">
-                    <table class="table">
-                        <thead>
+                    <table class="table table-hover" id="usersTable">
+                        <thead classs="text-center">
                             <tr>
                                 <th width="5%">No</th>
                                 <th>Nama</th>
@@ -25,9 +25,9 @@
                             </tr>
                         </thead>
                         <tbody id="user-table">
-                            <tr>
+                            {{-- <tr>
                                 <td colspan="6" class="text-center">Loading...</td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                 </div>
@@ -103,40 +103,82 @@
 
 @push('scripts')
 <script>
+let usersTable;
+
 $(document).ready(function () {
 
     $.ajaxSetup({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
+    usersTable = $('#usersTable').DataTable({
+        pageLength: 10,
+        ordering: true,
+        lengthChange: true,
+        searching: true,
+        autoWidth: false,
+        language: {
+            search: "Cari",
+            lengthMenu: "Tampilkan _MENU_",
+            info: "_START_ - _END_ dari _TOTAL_ data",
+            paginate: {
+                previous: "‹",
+                next: "›"
+            }
+        },
+        columnDefs: [
+            { targets: [0,5], className: 'text-center' },
+            { targets: [5], orderable: false }
+        ]
+    });
+
     loadUsers();
 
     function loadUsers() {
         $.get("{{ route('user.data') }}", function (data) {
-            let html = '';
-            if (data.length === 0) {
-                html = `<tr><td colspan="6" class="text-center">Data kosong</td></tr>`;
-            } else {
-                $.each(data, function (i, user) {
-                    let foto = user.foto
-                        ? `<img src="/storage/${user.foto}" width="50">`
-                        : `<span class="text-muted">No Image</span>`;
 
-                    html += `
-                    <tr>
-                        <td>${i+1}</td>
-                        <td>${user.name}</td>
-                        <td>${user.username}</td>
-                        <td>${user.role}</td>
-                        <td>${foto}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning edit-user" data-id="${user.id}">Edit</button>
-                            <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Hapus</button>
-                        </td>
-                    </tr>`;
-                });
+            console.log('RESPON AJAX:', data);
+
+            usersTable.clear();
+
+            if (data.length === 0) {
+                usersTable.row.add([
+                    '',
+                    'Data kosong',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]).draw();
+                return;
             }
-            $('#user-table').html(html);
+
+            $.each(data, function (i, user) {
+
+                let foto = user.foto
+                    ? `<img src="/storage/${user.foto}" width="50">`
+                    : `<span class="text-muted">No Image</span>`;
+
+                usersTable.row.add([
+                    i + 1,
+                    user.name,
+                    user.username,
+                    user.role,
+                    foto,
+                    `
+                    <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-primary btn-edit" data-id="${user.id}">
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-delete" data-id="${user.id}">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                </div>
+                    `
+                ]);
+            });
+
+            usersTable.draw();
         });
     }
 
@@ -204,7 +246,7 @@ $(document).ready(function () {
     });
 
     // Edit user
-    $(document).on('click', '.edit-user', function () {
+    $(document).on('click', '.btn-edit', function () {
         let userId = $(this).data('id');
         $.get(`/users/${userId}/edit`, function (data) {
             $('#modalTitle').text('Edit User');
@@ -220,7 +262,7 @@ $(document).ready(function () {
     });
 
     // Delete user
-    $(document).on('click', '.delete-user', function () {
+    $(document).on('click', '.btn-delete', function () {
         let userId = $(this).data('id');
         Swal.fire({
     title: 'Yakin?',

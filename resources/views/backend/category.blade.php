@@ -13,8 +13,8 @@
         <div class="card-body">
             <h3 class="font-weight-bold mb-3">Data Category</h3>
             <div class="table-responsive">
-                <table class="table">
-                    <thead>
+                <table class="table table-hover" id="categoryTable">
+                    <thead class="text-center">
                         <tr>
                             <th width="5%">No</th>
                             <th>Nama</th>
@@ -23,9 +23,9 @@
                         </tr>
                     </thead>
                     <tbody id="category-table">
-                        <tr>
+                        {{-- <tr>
                             <td colspan="4" class="text-center">Loading...</td>
-                        </tr>
+                        </tr> --}}
                     </tbody>
                 </table>
             </div>
@@ -67,34 +67,59 @@
 @endsection
 @push('scripts')
 <script>
+let categoryTable;
 $(document).ready(function () {
 
     $.ajaxSetup({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
+    categoryTable = $('#categoryTable').DataTable({
+        ordering: true,
+        searching: true,
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            { targets: [0,3], orderable: false }
+        ]
+    });
+
     loadCategory();
 
     function loadCategory() {
         $.get("{{ route('category.data') }}", function (data) {
-            let html = '';
+
+            categoryTable.clear();
+
             if (data.length === 0) {
-                html = `<tr><td colspan="4" class="text-center">Data kosong</td></tr>`;
-            } else {
-                $.each(data, function (i, item) {
-                    html += `
-                    <tr>
-                        <td>${i+1}</td>
-                        <td>${item.nama}</td>
-                        <td>${item.slug}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning edit" data-id="${item.id}">Edit</button>
-                            <button class="btn btn-sm btn-danger delete" data-id="${item.id}">Hapus</button>
-                        </td>
-                    </tr>`;
-                });
+                categoryTable.row.add([
+                    '',
+                    'Data kosong',
+                    '',
+                    ''
+                ]).draw();
+                return;
             }
-            $('#category-table').html(html);
+
+            $.each(data, function (i, item) {
+                categoryTable.row.add([
+                    i + 1,
+                    item.nama,
+                    item.slug,
+                    `
+                    <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-primary btn-edit" data-id="${item.id}">
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-delete" data-id="${item.id}">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                </div>
+                    `
+                ]);
+            });
+
+            categoryTable.draw();
         });
     }
 
@@ -150,7 +175,7 @@ $(document).ready(function () {
     });
 
     // edit
-    $(document).on('click', '.edit', function () {
+    $(document).on('click', '.btn-edit', function () {
         let id = $(this).data('id');
         $.get(`/categories/${id}/edit`, function (data) {
             $('#category_id').val(data.id);
@@ -162,7 +187,7 @@ $(document).ready(function () {
     });
 
     // hapus
-    $(document).on('click', '.delete', function () {
+    $(document).on('click', '.btn-delete', function () {
         let id = $(this).data('id');
         Swal.fire({
             title: 'Yakin?',

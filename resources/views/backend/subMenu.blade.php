@@ -15,9 +15,8 @@
 
     <div class="card">
         <div class="card-body">
-
-            <table class="table align-middle">
-                <thead>
+            <table class="table table-hover align-middle" id="submenuTable">
+                <thead class="text-center">
                     <tr>
                         <th>No</th>
                         <th>Menu</th>
@@ -28,10 +27,10 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="submenu-table">
-                    <tr>
+                <tbody>
+                    {{-- <tr>
                         <td colspan="7" class="text-center">Loading...</td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
 
@@ -104,39 +103,71 @@
 
         loadSubMenu();
         loadParentMenu();
+        let subMenuTable;
+
+        $(document).ready(function () {
+
+            subMenuTable = $('#submenuTable').DataTable({
+                pageLength: 10,
+                ordering: true,
+                lengthChange: true,
+                autoWidth: false,
+                language: {
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_",
+                    info: "_START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "‹",
+                        next: "›"
+                    }
+                },
+                columnDefs: [{
+                        targets: [0, 5, 6],
+                        className: 'text-center'
+                    },
+                    {
+                        targets: [6],
+                        orderable: false
+                    }
+                ]
+            });
+
+            loadSubMenu(); // ⬅️ panggil SETELAH init
+        });
+
 
         function loadSubMenu() {
             $.get("{{ route('backend.submenu.data') }}", function (data) {
-                let html = '';
-                let no = 1;
 
-                data.forEach(item => {
-                    html += `
-                <tr>
-                    <td>${no++}</td>
-                    <td>${item.name}</td>
-                    <td>${item.icon ?? '-'}</td>
-                    <td>${item.route}</td>
-                    <td>${item.parent_name}</td>
-                    <td>
-                        ${item.active
-                            ? '<span class="badge bg-success">Yes</span>'
-                            : '<span class="badge bg-secondary">No</span>'}
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-primary btn-edit" data-id="${item.id}">
-                            <i class="mdi mdi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="${item.id}">
-                            <i class="mdi mdi-delete"></i>
-                        </button>
-                    </td>
-                </tr>`;
+                subMenuTable.clear();
+
+                data.forEach((item, i) => {
+                    subMenuTable.row.add([
+                        i + 1,
+                        item.name,
+                        item.icon ?? '-',
+                        item.route ?? '-',
+                        item.parent_name ?? '-',
+                        item.active ?
+                        '<span class="badge bg-success">Yes</span>' :
+                        '<span class="badge bg-secondary">No</span>',
+                        `
+                <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-primary btn-edit" data-id="${item.id}">
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-delete" data-id="${item.id}">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                </div>
+                `
+                    ]);
                 });
 
-                $('#submenu-table').html(html);
+                subMenuTable.draw();
             });
         }
+
 
         function loadParentMenu() {
             $.get("{{ route('backend.menu.parent') }}", function (data) {
@@ -243,5 +274,6 @@
             timerProgressBar: true
         });
     };
+
 </script>
 @endpush

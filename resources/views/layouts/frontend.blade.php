@@ -4,13 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Index - Mentor Bootstrap Template</title>
+    <title>DISDIK RAJA AMPAT</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="">
     <meta name="keywords" content="">
 
     <!-- Favicons -->
-    <link href="{{ asset('assets/Mentor/assets/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" rel="icon">
     <link href="{{ asset('assets/Mentor/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
     <!-- Fonts -->
@@ -83,7 +83,7 @@
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
 
-            <a class="btn-getstarted" href="courses.html">Get Started</a>
+            {{-- <a class="btn-getstarted" href="courses.html">Get Started</a> --}}
 
         </div>
     </header>

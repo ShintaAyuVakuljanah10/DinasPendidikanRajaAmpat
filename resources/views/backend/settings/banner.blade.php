@@ -14,8 +14,8 @@
             <h3 class="font-weight-bold mb-3">Data Banner</h3>
 
             <div class="table-responsive">
-                <table class="table table-bordered align-middle">
-                    <thead>
+                <table class="table table-hover" id="bannerTable">
+                    <thead class="text-center">
                         <tr>
                             <th width="5%">No</th>
                             <th>Nama</th>
@@ -24,10 +24,10 @@
                             <th width="25%">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="banner-table">
-                        <tr>
+                    <tbody>
+                        {{-- <tr>
                             <td colspan="5" class="text-center">Loading...</td>
-                        </tr>
+                        </tr> --}}
                     </tbody>
                 </table>
             </div>
@@ -105,41 +105,79 @@
 @endsection
 @push('scripts')
 <script>
+    let bannerTable;
 $(document).ready(function () {
 
     $.ajaxSetup({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
+    bannerTable = $('#bannerTable').DataTable({
+        ordering: false,
+        searching: true,
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            { targets: [0,4], className: 'text-center' }
+        ],
+        language: {
+            search: "Cari",
+            lengthMenu: "Tampilkan _MENU_",
+            info: "_START_ - _END_ dari _TOTAL_ data",
+            paginate: {
+                previous: "‹",
+                next: "›"
+            }
+        }
+    });
+
     loadBanner();
 
     function loadBanner() {
-        $.get("{{ route('banner.data') }}", function (data) {
-            let html = '';
-            if (data.length === 0) {
-                html = `<tr><td colspan="5" class="text-center">Data kosong</td></tr>`;
-            } else {
-                $.each(data, function (i, item) {
-                    html += `
-                    <tr>
-                        <td>${i+1}</td>
-                        <td>${item.nama}</td>
-                        <td>
-                            <img src="/storage/${item.gambar}" width="500" height="220" class="img-thumbnail">
-                        </td>
-                        <td class="text-center">${item.urutan}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary up" data-id="${item.id}">⬆</button>
-                            <button class="btn btn-sm btn-primary down" data-id="${item.id}">⬇</button>
-                            <button class="btn btn-sm btn-warning edit" data-id="${item.id}">Edit</button>
-                            <button class="btn btn-sm btn-danger delete" data-id="${item.id}">Hapus</button>
-                        </td>
-                    </tr>`;
-                });
-            }
-            $('#banner-table').html(html);
+    $.get("{{ route('banner.data') }}", function (data) {
+
+        bannerTable.clear();
+
+        if (data.length === 0) {
+            bannerTable.row.add([
+                '',
+                'Data kosong',
+                '',
+                '',
+                ''
+            ]).draw();
+            return;
+        }
+
+        $.each(data, function (i, item) {
+            bannerTable.row.add([
+                i + 1,
+                item.nama,
+                `<img src="/storage/${item.gambar}" width="200" class="img-thumbnail">`,
+                item.urutan,
+                `
+                <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-secondary up" data-id="${item.id}">
+                        <i class="mdi mdi-arrow-up"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary down" data-id="${item.id}">
+                        <i class="mdi mdi-arrow-down"></i>
+                    </button>
+                    <button class="btn btn-outline-primary btn-edit" data-id="${item.id}">
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-delete" data-id="${item.id}">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                </div>
+                `
+            ]);
         });
-    }
+
+        bannerTable.draw();
+    });
+}
+
 
     // tambah
     $('#btnAddBanner').click(function () {
@@ -200,7 +238,7 @@ $(document).ready(function () {
     });
 
     // edit
-    $(document).on('click', '.edit', function () {
+    $(document).on('click', '.btn-edit', function () {
         let id = $(this).data('id');
 
         $.get(`/settings/banner/${id}/edit`, function (data) {
@@ -213,7 +251,7 @@ $(document).ready(function () {
     });
 
 
-    $(document).on('click', '.delete', function () {
+    $(document).on('click', '.btn-delete', function () {
         let id = $(this).data('id');
 
         Swal.fire({

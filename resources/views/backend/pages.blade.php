@@ -6,37 +6,41 @@
 
     <div class="container">
         <div class="row mb-3 align-items-center g-3">
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <select id="typeSelect" class="form-control">
-                        <option value=""> All Type </option>
-                        <option value="Pages">Pages</option>
-                        <option value="Sub Pages">Sub Pages</option>
-                    </select>
+            <div class="col-md-8">
+                <div class="row g-2 align-items-center">
+            
+                    <div class="col-md-5">
+                        <select id="typeSelect" class="form-control">
+                            <option value="">All Type</option>
+                            <option value="Pages">Pages</option>
+                            <option value="Sub Pages">Sub Pages</option>
+                        </select>
+                    </div>
+            
+                    <div class="col-md-5">
+                        <select id="activeSelect" class="form-control">
+                            <option value="">All Active</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+            
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button id="btnFilter" class="btn btn-primary px-4 py-3">
+                            <i class="mdi mdi-magnify"></i>
+                        </button>
+                    </div>
+            
                 </div>
-
-                <div class="col-md-3">
-                    <select id="activeSelect" class="form-control">
-                        <option value=""> All Active </option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <button id="btnFilter" class="btn btn-primary w-100">
-                        <i class="mdi mdi-magnify"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="col-md-4 text-end mb-3">
-                <button class="btn btn-success" data-toggle="modal" data-target="#modalPage">
+            </div>            
+        
+            <div class="col-md-2 text-end">
+                <button class="btn btn-success px-4 py-3" data-toggle="modal" data-target="#modalPage">
                     <i class="mdi mdi-plus"></i>
                 </button>
-            </div>
+            </div>          
         </div>
-
+        
         <div class="card">
             <div class="card-body">
                 <h3 class="fw-bold mb-3">Data Pages</h3>
@@ -154,6 +158,8 @@
 
     @push('scripts')
     <script>
+        let pagesTable;
+
         $(document).ready(function () {
 
             $.ajaxSetup({
@@ -162,478 +168,415 @@
                 }
             });
 
-            let pagesTable;
-
-            $(document).ready(function () {
-
-                pagesTable = $('#pagesTable').DataTable({
-                    pageLength: 10,
-                    ordering: true,
-                    lengthChange: true,
-                    autoWidth: false,
-                    language: {
-                        search: "Cari",
-                        lengthMenu: "Tampilkan _MENU_",
-                        info: "_START_ - _END_ dari _TOTAL_ data",
-                        paginate: {
-                            previous: "‹",
-                            next: "›"
-                        }
+            pagesTable = $('#pagesTable').DataTable({
+                pageLength: 10,
+                ordering: true,
+                lengthChange: true,
+                autoWidth: false,
+                language: {
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_",
+                    info: "_START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "‹",
+                        next: "›"
+                    }
+                },
+                columnDefs: [{
+                        targets: [0, 4, 5, 6],
+                        className: 'text-center'
                     },
-                    columnDefs: [{
-                            targets: [0, 4, 5, 6],
-                            className: 'text-center'
+                    {
+                        targets: [6],
+                        orderable: false
+                    }
+                ]
+            });
+
+            $.fn.dataTable.ext.search.push(function (settings, data) {
+
+                let type = $('#typeSelect').val();
+                let active = $('#activeSelect').val();
+
+                let colType = data[2]; // kolom Type
+                let colActive = $('<div>').html(data[4]).text().trim(); // Yes / No
+
+                if (type && colType !== type) {
+                    return false;
+                }
+
+                if (active && colActive !== active) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            $('#btnFilter, #typeSelect, #activeSelect').on('change click', function () {
+                pagesTable.draw();
+            });
+
+            loadPages();
+        });
+
+        function loadPages() {
+            $.get("{{ route('backend.pages.data') }}", function (data) {
+
+                pagesTable.clear();
+
+                data.forEach((page, i) => {
+                    pagesTable.row.add([
+                        i + 1,
+                        page.title,
+                        page.type,
+                        page.parent ?? '-',
+                        page.active == 1
+                            ? '<span class="badge badge-success">Yes</span>'
+                            : '<span class="badge badge-secondary">No</span>',
+                        page.sort_order ?? 0,
+                        `
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button class="btn btn-outline-secondary up" data-id="${page.id}">
+                                <i class="mdi mdi-arrow-up"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary down" data-id="${page.id}">
+                                <i class="mdi mdi-arrow-down"></i>
+                            </button>
+                            <button class="btn btn-outline-primary btn-edit" data-id="${page.id}">
+                                <i class="mdi mdi-pencil"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-delete" data-id="${page.id}">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </div>
+                        `
+                    ]);
+                });
+
+                pagesTable.draw();
+            });
+        }
+
+        $(document).on('click', '.btn-edit', function () {
+            let id = $(this).data('id');
+
+            $.get(`/backend/pages/${id}`, function (data) {
+                $('#modalTitle').text('Edit Page');
+                $('#btnSave').text('Update');
+
+                $('#page_id').val(data.id);
+                $('#title').val(data.title);
+                $('#slug').val(data.slug);
+                $('#type').val(data.type);
+                $('#parent_id').val(data.parent_id);
+                $('#active').val(data.active);
+                $('#meta_title').val(data.meta_title);
+
+                if (data.type === 'Sub Pages') {
+                    $('#parentWrapper').show();
+                    loadParentPages();
+                } else {
+                    $('#parentWrapper').hide();
+                }
+
+                $('#modalPage').modal('show');
+            });
+        });
+
+        // ================= DELETE PAGE =================
+        // DELETE PAGE
+        $(document).on('click', '.btn-delete', function () {
+            let id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Yakin?',
+                text: 'Page yang dihapus tidak bisa dikembalikan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/backend/pages/${id}`,
+                        type: 'DELETE',
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Terhapus',
+                                text: 'Page berhasil dihapus',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            loadPages();
                         },
-                        {
-                            targets: [6],
-                            orderable: false
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: 'Page gagal dihapus'
+                            });
                         }
-                    ]
-                });
+                    });
+                }
+            });
+        });
 
+        // PAGE UP
+        $(document).on('click', '.up', function (e) {
+            e.preventDefault();
+
+            let id = $(this).data('id');
+
+            $.post(`/backend/pages/${id}/up`, {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            }, function () {
                 loadPages();
-            });
-
-
-            function loadPages() {
-                $.get("{{ route('backend.pages.data') }}", function (data) {
-
-                    pagesTable.clear();
-
-                    data.forEach((page, i) => {
-                        pagesTable.row.add([
-                            i + 1,
-                            page.title,
-                            page.type,
-                            page.parent ?? '-',
-                            page.active == 1 ?
-                            '<span class="badge badge-success">Active</span>' :
-                            '<span class="badge badge-secondary">Inactive</span>',
-                            page.sort_order ?? 0,
-                            `
-                <div class="btn-group btn-group-sm" role="group">
-                    <button class="btn btn-outline-secondary up" data-id="${page.id}" title="Naik">
-                        <i class="mdi mdi-arrow-up"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary down" data-id="${page.id}" title="Turun">
-                        <i class="mdi mdi-arrow-down"></i>
-                    </button>
-                    <button class="btn btn-outline-primary btn-edit" data-id="${page.id}" title="Edit">
-                        <i class="mdi mdi-pencil"></i>
-                    </button>
-                    <button class="btn btn-outline-danger btn-delete" data-id="${page.id}" title="Hapus">
-                        <i class="mdi mdi-delete"></i>
-                    </button>
-                </div>
-                `
-                        ]);
-                    });
-
-                    pagesTable.draw();
-                });
-            }
-
-
-            $(document).on('click', '.btn-edit', function () {
-                let id = $(this).data('id');
-
-                $.get(`/backend/pages/${id}`, function (data) {
-                    $('#modalTitle').text('Edit Page');
-                    $('#btnSave').text('Update');
-
-                    $('#page_id').val(data.id);
-                    $('#title').val(data.title);
-                    $('#slug').val(data.slug);
-                    $('#type').val(data.type);
-                    $('#parent_id').val(data.parent_id);
-                    $('#active').val(data.active);
-                    $('#meta_title').val(data.meta_title);
-
-                    if (data.type === 'Sub Pages') {
-                        $('#parentWrapper').show();
-                        loadParentPages();
-                    } else {
-                        $('#parentWrapper').hide();
-                    }
-
-                    $('#modalPage').modal('show');
-                });
-            });
-
-            // ================= DELETE PAGE =================
-            // DELETE PAGE
-            $(document).on('click', '.btn-delete', function () {
-                let id = $(this).data('id');
-
                 Swal.fire({
-                    title: 'Yakin?',
-                    text: 'Page yang dihapus tidak bisa dikembalikan!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `/backend/pages/${id}`,
-                            type: 'DELETE',
-                            success: function () {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Terhapus',
-                                    text: 'Page berhasil dihapus',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                                loadPages();
-                            },
-                            error: function () {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Gagal',
-                                    text: 'Page gagal dihapus'
-                                });
-                            }
-                        });
-                    }
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Urutan page berhasil dinaikkan',
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             });
+        });
 
-            // PAGE UP
-            $(document).on('click', '.up', function (e) {
-                e.preventDefault();
 
-                let id = $(this).data('id');
+        // PAGE DOWN
+        $(document).on('click', '.down', function (e) {
+            e.preventDefault();
 
-                $.post(`/backend/pages/${id}/up`, {
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                }, function () {
-                    loadPages();
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Urutan page berhasil dinaikkan',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+            let id = $(this).data('id');
+
+            $.post(`/backend/pages/${id}/down`, {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            }, function () {
+                loadPages();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Urutan page berhasil diturunkan',
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             });
+        });
 
+        function loadParentPages(selectedId = null) {
+            $.get("{{ route('backend.pages.data') }}", function (data) {
+                let html = '<option value="">-- Pilih Parent --</option>';
 
-            // PAGE DOWN
-            $(document).on('click', '.down', function (e) {
-                e.preventDefault();
-
-                let id = $(this).data('id');
-
-                $.post(`/backend/pages/${id}/down`, {
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                }, function () {
-                    loadPages();
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Urutan page berhasil diturunkan',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+                data.forEach(function (page) {
+                    // tandai parent yang sudah dipilih saat edit
+                    let selected = selectedId == page.id ? 'selected' : '';
+                    html += `<option value="${page.id}" ${selected}>${page.title}</option>`;
                 });
-            });
 
-            function loadParentPages(selectedId = null) {
-                $.get("{{ route('backend.pages.data') }}", function (data) {
+                $('#parent_id').html(html);
+            });
+        }
+
+
+        // Ketika Type berubah
+        $(document).on('change', '#type', function () {
+            const value = $(this).val();
+
+            if (value === 'Sub Pages') {
+                $('#parentWrapper').slideDown();
+                // Jika ada parent_id yang sudah tersimpan (edit), kirim sebagai selectedId
+                let selectedId = $('#parent_id').val() || null;
+                loadParentPages(selectedId);
+            } else {
+                $('#parentWrapper').slideUp();
+                $('#parent_id').val(''); // reset parent
+            }
+        });
+
+        // TYPE SELECT
+        $(document).on('click', '.type-select', function (e) {
+            e.preventDefault();
+
+            let value = $(this).data('value');
+
+            $('#type').val(value);
+            $('#typeText').text(value);
+
+            if (value === 'Sub Pages') {
+                $('#parentWrapper').slideDown();
+            } else {
+                $('#parentWrapper').slideUp();
+                $('#parent_id').val('');
+                $('#parentText').text('-- Pilih Parent --');
+            }
+        });
+
+        $(document).on('change', '#type', function () {
+            if ($(this).val() === 'Sub Pages') {
+                $('#parentWrapper').slideDown();
+
+                $.get("{{ route('backend.pages.parents') }}", function (data) {
                     let html = '<option value="">-- Pilih Parent --</option>';
 
-                    data.forEach(function (page) {
-                        // tandai parent yang sudah dipilih saat edit
-                        let selected = selectedId == page.id ? 'selected' : '';
-                        html += `<option value="${page.id}" ${selected}>${page.title}</option>`;
+                    data.forEach(page => {
+                        html += `<option value="${page.id}">${page.title}</option>`;
                     });
 
                     $('#parent_id').html(html);
                 });
+
+            } else {
+                $('#parentWrapper').slideUp();
+                $('#parent_id').val('');
+            }
+        });
+
+        // PARENT SELECT
+        $(document).on('click', '.parent-select', function (e) {
+            e.preventDefault();
+
+            let id = $(this).data('id');
+
+            $('#parent_id').val(id); // INI PENTING
+            $('#parentText').text($(this).text());
+        });
+
+        // DROPDOWN SELECT (ACTIVE)
+        $(document).on('click', '.dropdown-select', function (e) {
+            e.preventDefault();
+
+            let value = $(this).data('value');
+            let target = $(this).data('target');
+
+            $('#' + target).val(value);
+            $('#' + target + 'Text').text($(this).text());
+        });
+
+        // OPEN / CLOSE DROPDOWN
+        $('.dropdown-btn').on('click', function (e) {
+            e.stopPropagation();
+
+            $('.manual-dropdown').not($(this).closest('.manual-dropdown')).removeClass('show');
+            $(this).closest('.manual-dropdown').toggleClass('show');
+        });
+
+
+
+        // SELECT ITEM
+        $(document).on('click', '.dropdown-select', function (e) {
+            e.preventDefault();
+
+            let value = $(this).data('value');
+            let target = $(this).data('target');
+            let text = $(this).text();
+
+            $('#' + target).val(value);
+            $('#' + target + 'Text').text(text);
+
+            $(this).closest('.manual-dropdown').removeClass('show');
+        });
+
+
+
+        // SEARCH
+        $(document).on('keyup', '.dropdown-search', function () {
+            let keyword = $(this).val().toLowerCase();
+
+            $(this).siblings('.dropdown-item').each(function () {
+                $(this).toggle($(this).text().toLowerCase().includes(keyword));
+            });
+        });
+
+        // CLICK OUTSIDE → CLOSE
+        $(document).on('click', function () {
+            $('.manual-dropdown').removeClass('show');
+        });
+
+        // RESET MODAL SAAT TOMBOL "TAMBAH PAGE" DIKLIK
+        $('[data-target="#modalPage"]').click(function () {
+            // reset form
+            $('#formPage')[0].reset();
+            $('#page_id').val(''); // kosongkan id
+            $('#type').val(''); // reset type
+            $('#active').val('1'); // default active
+            $('#parent_id').val(''); // reset parent
+            $('#parentWrapper').hide(); // sembunyikan parent
+            $('#modalPage .modal-title').text('Tambah Page'); // judul modal
+            $('#slug').val(''); // reset slug
+            tinymce.get('contentEditor').setContent(''); // reset editor
+        });
+
+        // SUBMIT FORM (SAMA KAYA USER)
+        // SUBMIT FORM PAGE
+        $('#formPage').submit(function (e) {
+            e.preventDefault();
+
+            let pageId = $('#page_id').val();
+            let url = pageId ?
+                `/backend/pages/${pageId}` :
+                "{{ route('backend.pages.store') }}";
+
+            let formData = new FormData(this);
+
+            // pastikan TinyMCE ikut terkirim
+            formData.set('content', tinymce.get('contentEditor').getContent());
+
+            if (pageId) {
+                formData.append('_method', 'PUT');
             }
 
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
 
-            // Ketika Type berubah
-            $(document).on('change', '#type', function () {
-                const value = $(this).val();
+                success: function () {
+                    $('#modalPage').modal('hide');
+                    $('#formPage')[0].reset();
+                    tinymce.get('contentEditor').setContent('');
+                    loadPages();
 
-                if (value === 'Sub Pages') {
-                    $('#parentWrapper').slideDown();
-                    // Jika ada parent_id yang sudah tersimpan (edit), kirim sebagai selectedId
-                    let selectedId = $('#parent_id').val() || null;
-                    loadParentPages(selectedId);
-                } else {
-                    $('#parentWrapper').slideUp();
-                    $('#parent_id').val(''); // reset parent
-                }
-            });
-
-
-            $(document).on('change', '#type', function () {
-                const value = $(this).val();
-
-                if (value === 'Sub Pages') {
-                    $('#parentWrapper').slideDown();
-                    loadParentPages(); // load parent pages
-                } else {
-                    $('#parentWrapper').slideUp();
-                    $('#parent_id').val('');
-                }
-            });
-
-
-            $(document).on('change', '#type', function () {
-                const value = $(this).val();
-
-                if (value === 'Sub Pages') {
-                    $('#parentWrapper').slideDown();
-
-                    $.get("{{ route('backend.pages.data') }}", function (data) {
-                        let html = '<option value="">-- Pilih Parent --</option>';
-
-                        data.forEach(function (page) {
-                            if (page.type === 'Pages') {
-                                html +=
-                                    `<option value="${page.id}">${page.title}</option>`;
-                            }
-                        });
-
-                        $('#parent_id').html(html);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: pageId ?
+                            'Page berhasil diperbarui' : 'Page berhasil ditambahkan',
+                        timer: 2000,
+                        showConfirmButton: false
                     });
 
-                } else {
-                    $('#parentWrapper').slideUp();
-                    $('#parent_id').val(''); // reset hanya saat bukan Sub Pages
-                }
-            });
+                    setTimeout(function () {
+                        location.reload();
+                    }, 100);
+                },
 
-            // TYPE SELECT
-            $(document).on('click', '.type-select', function (e) {
-                e.preventDefault();
+                error: function (xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        let message = '';
 
-                let value = $(this).data('value');
-
-                $('#type').val(value);
-                $('#typeText').text(value);
-
-                if (value === 'Sub Pages') {
-                    $('#parentWrapper').slideDown();
-                } else {
-                    $('#parentWrapper').slideUp();
-                    $('#parent_id').val('');
-                    $('#parentText').text('-- Pilih Parent --');
-                }
-            });
-
-            $(document).on('change', '#type', function () {
-                if ($(this).val() === 'Sub Pages') {
-                    $('#parentWrapper').slideDown();
-
-                    $.get("{{ route('backend.pages.parents') }}", function (data) {
-                        let html = '<option value="">-- Pilih Parent --</option>';
-
-                        data.forEach(page => {
-                            html += `<option value="${page.id}">${page.title}</option>`;
+                        Object.keys(errors).forEach(function (key) {
+                            message += errors[key][0] + '\n';
                         });
-
-                        $('#parent_id').html(html);
-                    });
-
-                } else {
-                    $('#parentWrapper').slideUp();
-                    $('#parent_id').val('');
-                }
-            });
-
-            // PARENT SELECT
-            $(document).on('click', '.parent-select', function (e) {
-                e.preventDefault();
-
-                let id = $(this).data('id');
-
-                $('#parent_id').val(id); // INI PENTING
-                $('#parentText').text($(this).text());
-            });
-
-            // DROPDOWN SELECT (ACTIVE)
-            $(document).on('click', '.dropdown-select', function (e) {
-                e.preventDefault();
-
-                let value = $(this).data('value');
-                let target = $(this).data('target');
-
-                $('#' + target).val(value);
-                $('#' + target + 'Text').text($(this).text());
-            });
-
-            // OPEN / CLOSE DROPDOWN
-            $('.dropdown-btn').on('click', function (e) {
-                e.stopPropagation();
-
-                $('.manual-dropdown').not($(this).closest('.manual-dropdown')).removeClass('show');
-                $(this).closest('.manual-dropdown').toggleClass('show');
-            });
-
-
-
-            // SELECT ITEM
-            $(document).on('click', '.dropdown-select', function (e) {
-                e.preventDefault();
-
-                let value = $(this).data('value');
-                let target = $(this).data('target');
-                let text = $(this).text();
-
-                $('#' + target).val(value);
-                $('#' + target + 'Text').text(text);
-
-                $(this).closest('.manual-dropdown').removeClass('show');
-            });
-
-
-
-            // SEARCH
-            $(document).on('keyup', '.dropdown-search', function () {
-                let keyword = $(this).val().toLowerCase();
-
-                $(this).siblings('.dropdown-item').each(function () {
-                    $(this).toggle($(this).text().toLowerCase().includes(keyword));
-                });
-            });
-
-            // CLICK OUTSIDE → CLOSE
-            $(document).on('click', function () {
-                $('.manual-dropdown').removeClass('show');
-            });
-
-            // RESET MODAL SAAT TOMBOL "TAMBAH PAGE" DIKLIK
-            $('[data-target="#modalPage"]').click(function () {
-                // reset form
-                $('#formPage')[0].reset();
-                $('#page_id').val(''); // kosongkan id
-                $('#type').val(''); // reset type
-                $('#active').val('1'); // default active
-                $('#parent_id').val(''); // reset parent
-                $('#parentWrapper').hide(); // sembunyikan parent
-                $('#modalPage .modal-title').text('Tambah Page'); // judul modal
-                $('#slug').val(''); // reset slug
-                tinymce.get('contentEditor').setContent(''); // reset editor
-            });
-
-            // SUBMIT FORM (SAMA KAYA USER)
-            // SUBMIT FORM PAGE
-            $('#formPage').submit(function (e) {
-                e.preventDefault();
-
-                let pageId = $('#page_id').val();
-                let url = pageId ?
-                    `/backend/pages/${pageId}` :
-                    "{{ route('backend.pages.store') }}";
-
-                let formData = new FormData(this);
-
-                // pastikan TinyMCE ikut terkirim
-                formData.set('content', tinymce.get('contentEditor').getContent());
-
-                if (pageId) {
-                    formData.append('_method', 'PUT');
-                }
-
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-
-                    success: function () {
-                        $('#modalPage').modal('hide');
-                        $('#formPage')[0].reset();
-                        tinymce.get('contentEditor').setContent('');
-                        loadPages();
 
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: pageId ?
-                                'Page berhasil diperbarui' :
-                                'Page berhasil ditambahkan',
-                            timer: 2000,
-                            showConfirmButton: false
+                            icon: 'warning',
+                            title: 'Validasi gagal',
+                            text: message
                         });
-
-                        setTimeout(function () {
-                            location.reload();
-                        }, 100);
-                    },
-
-                    error: function (xhr) {
-                        if (xhr.status === 422) {
-                            let errors = xhr.responseJSON.errors;
-                            let message = '';
-
-                            Object.keys(errors).forEach(function (key) {
-                                message += errors[key][0] + '\n';
-                            });
-
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Validasi gagal',
-                                text: message
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops!',
-                                text: 'Terjadi kesalahan pada server'
-                            });
-                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: 'Terjadi kesalahan pada server'
+                        });
                     }
-                });
+                }
             });
-        });
-
-        document.getElementById('searchInput').addEventListener('input', function () {
-            document.getElementById('btnFilter').click();
-        });
-
-        document.getElementById('btnFilter').addEventListener('click', function () {
-            let search = document.getElementById('searchInput').value.toLowerCase();
-            let type = document.getElementById('typeSelect').value;
-            let active = document.getElementById('activeSelect').value;
-
-            let tableBody = document.getElementById('pages-table');
-            let rows = tableBody.getElementsByTagName('tr');
-
-            for (let row of rows) {
-                // Ambil text dari kolom Title (1), Type (2), Active (4)
-                let tdTitle = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
-                let tdType = row.cells[2] ? row.cells[2].textContent : '';
-                let tdActive = row.cells[4] ? row.cells[4].textContent : '';
-
-                let show = true;
-
-                // Filter search text di Title
-                if (search && !tdTitle.includes(search)) {
-                    show = false;
-                }
-
-                // Filter Type
-                if (type && tdType !== type) {
-                    show = false;
-                }
-
-                // Filter Active
-                if (active && tdActive !== active) {
-                    show = false;
-                }
-
-                row.style.display = show ? '' : 'none';
-            }
         });
 
     </script>
