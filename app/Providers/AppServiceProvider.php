@@ -33,6 +33,26 @@ class AppServiceProvider extends ServiceProvider
             $view->with('pages', $pages);
         });
 
+        View::composer('layouts.frontend.navbar', function ($view) {
+            $pages = Pages::whereNull('parent_id')
+                ->where('active', 1)
+                ->orderBy('sort_order', 'asc')
+                ->with('children')
+                ->get();
+    
+            $view->with('pages', $pages);
+        });
+
+        View::composer('layouts.frontend.footer', function ($view) {
+            $footerPages = Pages::where('type', 'Pages')
+                ->where('active', 1)
+                ->orderBy('sort_order', 'asc')
+                ->limit(5)
+                ->get();
+    
+            $view->with('footerPages', $footerPages);
+        });
+
         view()->composer('layouts.backend', function ($view) {
             $menus = Menu::where('active', 1)
                 ->orderBy('sort_order')

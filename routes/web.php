@@ -14,6 +14,8 @@ use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\SubMenuController;
 use App\Http\Controllers\Frontend\DashboardController;
 use App\Http\Controllers\Frontend\BeritaController;
+use App\Http\Controllers\Frontend\KategoriController;
+use App\Http\Controllers\Frontend\DokumenPublikController;
 
 
 // Route::get('/', function () {
@@ -21,6 +23,7 @@ use App\Http\Controllers\Frontend\BeritaController;
 // });
 
 Route::get('/', [DashboardController::class, 'index']);
+Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::get('/berita', [BeritaController::class, 'index'])
     ->name('berita.index');
@@ -31,11 +34,11 @@ Route::get('/berita/{slug}', [BeritaController::class, 'show'])
 Route::get('/backend', function () {
     return view('auth.login');
 });
-Route::get('/home', [HomeController::class, 'index'])
+Route::get('/dashboard', [HomeController::class, 'index'])
     ->middleware(['auth', 'log.agent'])
     ->name('home');
 Route::middleware(['auth', 'log.agent'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
 });
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])
@@ -151,3 +154,6 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::put('submenu/{id}', [SubMenuController::class, 'update']);
     Route::delete('submenu/{id}', [SubMenuController::class, 'destroy']);
 });
+
+Route::get('/kategori', [KategoriController::class, 'index']);
+Route::get('/dokumen-publik', [DokumenPublikController::class, 'index']);

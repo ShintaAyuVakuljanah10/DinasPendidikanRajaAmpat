@@ -16,6 +16,6 @@ class FrontEndController extends Controller
             ->with('children')
             ->get();
 
-        return view('layout.frontend', compact('pages'));   
+        return view('frontend.navbar', compact('pages'));   
     }
 }
