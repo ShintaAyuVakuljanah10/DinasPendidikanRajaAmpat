@@ -7,10 +7,6 @@
     <div class="container">
         <div class="row mb-3 align-items-center g-3">
             <div class="row mb-3">
-                <div class="col-md-4">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Cari Title...">
-                </div>
-
                 <div class="col-md-3">
                     <select id="typeSelect" class="form-control">
                         <option value=""> All Type </option>
@@ -44,8 +40,8 @@
         <div class="card">
             <div class="card-body">
                 <h3 class="fw-bold mb-3">Data Pages</h3>
-                <table class="table">
-                    <thead>
+                <table class="table table-hover align-middle" id="pagesTable">
+                    <thead class="text-center">
                         <tr>
                             <th>No</th>
                             <th>Title</th>
@@ -56,10 +52,10 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="pages-table">
-                        <tr>
+                    <tbody>
+                        {{-- <tr>
                             <td colspan="7" class="text-center">Loading...</td>
-                        </tr>
+                        </tr> --}}
                     </tbody>
 
                 </table>
@@ -166,42 +162,77 @@
                 }
             });
 
-            loadPages();
+            let pagesTable;
+
+            $(document).ready(function () {
+
+                pagesTable = $('#pagesTable').DataTable({
+                    pageLength: 10,
+                    ordering: true,
+                    lengthChange: true,
+                    autoWidth: false,
+                    language: {
+                        search: "Cari",
+                        lengthMenu: "Tampilkan _MENU_",
+                        info: "_START_ - _END_ dari _TOTAL_ data",
+                        paginate: {
+                            previous: "‹",
+                            next: "›"
+                        }
+                    },
+                    columnDefs: [{
+                            targets: [0, 4, 5, 6],
+                            className: 'text-center'
+                        },
+                        {
+                            targets: [6],
+                            orderable: false
+                        }
+                    ]
+                });
+
+                loadPages();
+            });
+
 
             function loadPages() {
                 $.get("{{ route('backend.pages.data') }}", function (data) {
-                    let html = '';
 
-                    if (data.length === 0) {
-                        html = `<tr><td colspan="7" class="text-center">Data kosong</td></tr>`;
-                    } else {
-                        $.each(data, function (i, page) {
-                            html += `
-                        <tr>
-                            <td>${i+1}</td>
-                            <td>${page.title}</td>
-                            <td>${page.type}</td>
-                            <td>${page.parent ?? '-'}</td>
-                            <td>
-                                ${page.active == 1 
-                                    ? '<span class="badge badge-success">Active</span>' 
-                                    : '<span class="badge badge-secondary">Inactive</span>'}
-                            </td>
-                            <td>${page.sort_order ?? 0}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary up" data-id="${page.id}">⬆</button>
-                                <button class="btn btn-sm btn-primary down" data-id="${page.id}">⬇</button>
-                                <button class="btn btn-sm btn-warning btn-edit" data-id="${page.id}">Edit</button>
-                                <button class="btn btn-sm btn-danger btn-delete" data-id="${page.id}">Hapus
-                                </button>
-                            </td>
-                        </tr>`;
-                        });
-                    }
+                    pagesTable.clear();
 
-                    $('#pages-table').html(html);
+                    data.forEach((page, i) => {
+                        pagesTable.row.add([
+                            i + 1,
+                            page.title,
+                            page.type,
+                            page.parent ?? '-',
+                            page.active == 1 ?
+                            '<span class="badge badge-success">Active</span>' :
+                            '<span class="badge badge-secondary">Inactive</span>',
+                            page.sort_order ?? 0,
+                            `
+                <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-secondary up" data-id="${page.id}" title="Naik">
+                        <i class="mdi mdi-arrow-up"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary down" data-id="${page.id}" title="Turun">
+                        <i class="mdi mdi-arrow-down"></i>
+                    </button>
+                    <button class="btn btn-outline-primary btn-edit" data-id="${page.id}" title="Edit">
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-delete" data-id="${page.id}" title="Hapus">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                </div>
+                `
+                        ]);
+                    });
+
+                    pagesTable.draw();
                 });
             }
+
 
             $(document).on('click', '.btn-edit', function () {
                 let id = $(this).data('id');

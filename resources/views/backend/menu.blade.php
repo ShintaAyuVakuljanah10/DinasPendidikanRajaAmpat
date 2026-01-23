@@ -15,8 +15,8 @@
 
     <div class="card">
         <div class="card-body">
-            <table class="table align-middle">
-                <thead>
+            <table class="table table-hover align-middle" id="menuTable">
+                <thead class="text-center">
                     <tr>
                         <th>No</th>
                         <th>Menu</th>
@@ -27,10 +27,10 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="menu-table">
-                    <tr>
+                <tbody>
+                    {{-- <tr>
                         <td colspan="7" class="text-center">Loading...</td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
         </div>
@@ -63,59 +63,59 @@
                         <div class="col-md-6">
                             <label class="fw-semibold">Icon</label>
                             <select id="icon" name="icon" class="form-control">
-                        
+
                                 <option value="">-- Select Icon --</option>
-                        
+
                                 <!-- DASHBOARD -->
                                 <option value="mdi mdi-view-dashboard">📊 Dashboard</option>
                                 <option value="mdi mdi-home">🏠 Home</option>
-                        
+
                                 <!-- CONTENT -->
                                 <option value="mdi mdi-file-document">📄 Pages</option>
                                 <option value="mdi mdi-post">📝 Post</option>
                                 <option value="mdi mdi-folder">📁 Category</option>
                                 <option value="mdi mdi-tag">🏷️ Tag</option>
-                        
+
                                 <!-- USER -->
                                 <option value="mdi mdi-account">👤 User</option>
                                 <option value="mdi mdi-account-group">👥 Users</option>
                                 <option value="mdi mdi-shield-account">🛡️ Role</option>
-                        
+
                                 <!-- SETTINGS -->
                                 <option value="mdi mdi-cog">⚙️ Settings</option>
                                 <option value="mdi mdi-cogs">⚙️ Advanced Settings</option>
                                 <option value="mdi mdi-tools">🛠️ Tools</option>
-                        
+
                                 <!-- MEDIA -->
                                 <option value="mdi mdi-image">🖼️ Media</option>
                                 <option value="mdi mdi-image-multiple">🖼️ Gallery</option>
                                 <option value="mdi mdi-file-upload">⬆️ Upload</option>
-                        
+
                                 <!-- NAVIGATION -->
                                 <option value="mdi mdi-menu">📋 Menu</option>
                                 <option value="mdi mdi-menu-open">📂 Sub Menu</option>
-                        
+
                                 <!-- COMMUNICATION -->
                                 <option value="mdi mdi-email">✉️ Email</option>
                                 <option value="mdi mdi-chat">💬 Chat</option>
                                 <option value="mdi mdi-bell">🔔 Notification</option>
-                        
+
                                 <!-- DATE & TIME -->
                                 <option value="mdi mdi-calendar">📅 Calendar</option>
                                 <option value="mdi mdi-clock-outline">⏰ Time</option>
-                        
+
                                 <!-- SECURITY -->
                                 <option value="mdi mdi-lock">🔒 Security</option>
                                 <option value="mdi mdi-lock-open">🔓 Unlock</option>
-                        
+
                                 <!-- SYSTEM -->
                                 <option value="mdi mdi-database">🗄️ Database</option>
                                 <option value="mdi mdi-server">🖥️ Server</option>
                                 <option value="mdi mdi-logout">🚪 Logout</option>
-                        
+
                             </select>
                         </div>
-                        
+
 
                         <div class="col-md-6">
                             <label class="fw-semibold">Route</label>
@@ -161,45 +161,77 @@
         });
 
         loadMenu();
+        let table;
+
+        $(document).ready(function () {
+
+            // INIT DATATABLE (HARUS PERTAMA)
+            table = $('#menuTable').DataTable({
+                pageLength: 10,
+                ordering: true,
+                lengthChange: true,
+                autoWidth: false,
+                language: {
+                    search: "Cari",
+                    lengthMenu: "Tampilkan _MENU_",
+                    info: "_START_ - _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "‹",
+                        next: "›"
+                    }
+                },
+                columnDefs: [{
+                        targets: [0, 2, 4, 5, 6],
+                        className: 'text-center'
+                    },
+                    {
+                        targets: [6],
+                        orderable: false
+                    }
+                ]
+            });
+
+
+            loadMenu();
+        });
 
         function loadMenu() {
             $.get("{{ route('backend.menu.data') }}", function (data) {
-                let html = '';
 
-                if (data.length === 0) {
-                    html = `<tr><td colspan="7" class="text-center">Data kosong</td></tr>`;
-                } else {
-                    $.each(data, function (i, menu) {
-                        html += `
-                <tr>
-                    <td>${i + 1}</td>
-                    <td>${menu.name}</td>
-                    <td><span class="badge badge-info">${menu.icon}</span></td>
-                    <td>${menu.route ?? '-'}</td>
-                    <td>
-                        ${menu.active 
-                            ? '<span class="badge badge-success">Yes</span>' 
-                            : '<span class="badge badge-secondary">No</span>'}
-                    </td>
-                    <td>${menu.sort_order}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary up" data-id="${menu.id}">⬆</button>
-                        <button class="btn btn-sm btn-primary down" data-id="${menu.id}">⬇</button>
-                        <button class="btn btn-sm btn-primary btn-edit" data-id="${menu.id}">
-                            <i class="mdi mdi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="${menu.id}">
-                            <i class="mdi mdi-delete"></i>
-                        </button>
-                    </td>
-                </tr>`;
-                    });
-                }
+                table.clear();
 
-                $('#menu-table').html(html);
+                data.forEach((menu, i) => {
+                    table.row.add([
+                        i + 1,
+                        menu.name,
+                        `<i class="${menu.icon}"></i>`,
+                        menu.route ? menu.route : '-',
+                        menu.active ?
+                        '<span class="badge badge-success">Yes</span>' :
+                        '<span class="badge badge-secondary">No</span>',
+                        menu.sort_order,
+                        `
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button class="btn btn-outline-secondary up" data-id="${menu.id}" title="Naik">
+                                <i class="mdi mdi-arrow-up"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary down" data-id="${menu.id}" title="Turun">
+                                <i class="mdi mdi-arrow-down"></i>
+                            </button>
+                            <button class="btn btn-outline-primary btn-edit" data-id="${menu.id}" title="Edit">
+                                <i class="mdi mdi-pencil"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-delete" data-id="${menu.id}" title="Hapus">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </div>
+                `
+                    ]);
+                });
+
+                table.draw();
             });
         }
-
         $(document).ready(function () {
             loadMenu();
         });
@@ -351,8 +383,8 @@
                     });
 
                     setTimeout(function () {
-                            location.reload();
-                        }, 100);
+                        location.reload();
+                    }, 100);
                 },
                 error: function (xhr) {
                     if (xhr.status === 422) {
