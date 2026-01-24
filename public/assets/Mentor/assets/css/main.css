@@ -1269,10 +1269,65 @@ section,
 .features .features-item:hover h3 a {
   color: var(--accent-color);
 }
+.features-item {
+    background: #fff;
+    padding: 25px 20px;
+    border-radius: 12px;
+    transition: all .25s ease;
+    cursor: pointer;
+}
+
+.features-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 32px rgba(0,0,0,.15);
+}
+
+.features-item i {
+    font-size: 32px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
 
 /*--------------------------------------------------------------
 # Courses Section
 --------------------------------------------------------------*/
+.course-item {
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.course-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Biar gambar ikut halus */
+.course-item img {
+    transition: transform 0.3s ease;
+}
+
+.course-item:hover img {
+    transform: scale(1.03);
+}
+
+.course-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: #0d6efd;
+    transition: width .3s ease;
+}
+
+.course-item:hover::after {
+    width: 100%;
+}
+
 
 
 .courses .course-item {

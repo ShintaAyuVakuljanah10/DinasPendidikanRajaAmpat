@@ -16,6 +16,7 @@ use App\Http\Controllers\Frontend\DashboardController;
 use App\Http\Controllers\Frontend\BeritaController;
 use App\Http\Controllers\Frontend\KategoriController;
 use App\Http\Controllers\Frontend\DokumenPublikController;
+use App\Http\Controllers\Backend\RoleController;
 
 
 // Route::get('/', function () {
@@ -47,6 +48,9 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
+Route::get('/berita/kategori/{slug}', [BeritaController::class, 'kategori'])
+    ->name('berita.kategori');
+
 Route::middleware(['auth', 'log.agent'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
@@ -58,6 +62,19 @@ Route::middleware(['auth', 'log.agent'])->group(function () {
 
     
 });
+Route::prefix('roles')
+    ->middleware(['auth', 'log.agent'])
+    ->group(function () {
+
+        Route::get('/', [RoleController::class, 'index'])->name('roles');
+        Route::post('/store', [RoleController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [RoleController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [RoleController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [RoleController::class, 'destroy'])->name('destroy');
+        Route::get('/roles/data', [RoleController::class, 'data'])->name('roles.data');
+    });
+
+
 
 Route::middleware(['auth', 'log.agent'])->controller(PostController::class)->group(function () {
     Route::get('/post', 'index')->name('post');

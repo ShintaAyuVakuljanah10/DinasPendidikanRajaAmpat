@@ -295,7 +295,7 @@ function openFileManager() {
                     <img src="/storage/${file.gambar}"
                         class="img-thumbnail"
                         style="cursor:pointer"
-                        onclick="pilihGambar('${file.gambar}')">
+                        onclick="pilihGambar    ('${file.gambar}')">
                 </div>
             `;
         });

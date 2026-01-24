@@ -91,52 +91,70 @@
             <!-- partial -->
             <!-- partial:partials/_sidebar.html -->
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
+               @php
+                    $user = auth()->user();
+                    $menus = $user && $user->role
+                        ? $user->role->menus()
+                            ->with(['submenus' => function ($q) {
+                                $q->orderBy('sort_order');
+                            }])
+                            ->orderBy('sort_order')
+                            ->get()
+                        : collect();
+                @endphp
+
+
                 <ul class="nav">
 
                     @foreach ($menus as $menu)
 
-                    {{-- MENU TANPA SUB --}}
-                    @if ($menu->submenus->isEmpty())
-                    <li class="nav-item {{ request()->routeIs($menu->route) ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route($menu->route) }}">
-                            <i class="{{ $menu->icon }} menu-icon"></i>
-                            <span class="menu-title">{{ $menu->name }}</span>
-                        </a>
-                    </li>
+                        {{-- CEK: menu punya sub yang diizinkan --}}
+                        @php
+                            $allowedSubs = $menu->submenus ?? collect();
 
-                    {{-- MENU DENGAN SUB --}}
-                    @else
-                    @php
-                    $isOpen = $menu->submenus->pluck('route')
-                    ->contains(fn($r) => request()->routeIs($r));
-                    @endphp
+                            $isOpen = $allowedSubs->pluck('route')
+                                ->contains(fn ($r) => request()->routeIs($r));
+                        @endphp
 
-                    <li class="nav-item {{ $isOpen ? 'active' : '' }}">
-                        <a class="nav-link" data-toggle="collapse" href="#menu-{{ $menu->id }}"
-                            aria-expanded="{{ $isOpen ? 'true' : 'false' }}">
-                            <i class="{{ $menu->icon }} menu-icon"></i>
-                            <span class="menu-title">{{ $menu->name }}</span>
-                            <i class="menu-arrow"></i>
-                        </a>
+                        {{-- MENU TANPA SUB --}}
+                        @if ($allowedSubs->isEmpty())
+                            <li class="nav-item {{ request()->routeIs($menu->route) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route($menu->route) }}">
+                                    <i class="{{ $menu->icon }} menu-icon"></i>
+                                    <span class="menu-title">{{ $menu->name }}</span>
+                                </a>
+                            </li>
 
-                        <div class="collapse {{ $isOpen ? 'show' : '' }}" id="menu-{{ $menu->id }}">
-                            <ul class="nav flex-column sub-menu">
-                                @foreach ($menu->submenus as $sub)
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs($sub->route) ? 'active' : '' }}"
-                                        href="{{ route($sub->route) }}">
-                                        {{ $sub->name }}
-                                    </a>
-                                </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </li>
-                    @endif
+                        {{-- MENU DENGAN SUB --}}
+                        @else
+                            <li class="nav-item {{ $isOpen ? 'active' : '' }}">
+                                <a class="nav-link" data-toggle="collapse"
+                                href="#menu-{{ $menu->id }}"
+                                aria-expanded="{{ $isOpen ? 'true' : 'false' }}">
+                                    <i class="{{ $menu->icon }} menu-icon"></i>
+                                    <span class="menu-title">{{ $menu->name }}</span>
+                                    <i class="menu-arrow"></i>
+                                </a>
+
+                                <div class="collapse {{ $isOpen ? 'show' : '' }}" id="menu-{{ $menu->id }}">
+                                    <ul class="nav flex-column sub-menu">
+                                        @foreach ($allowedSubs as $sub)
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ request()->routeIs($sub->route) ? 'active' : '' }}"
+                                                href="{{ route($sub->route) }}">
+                                                    {{ $sub->name }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
 
                     @endforeach
 
                 </ul>
+
             </nav>
 
             <!-- partial -->

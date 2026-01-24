@@ -21,9 +21,13 @@ class User extends Authenticatable
         'name',
         'username',
         'password',
-        'role',
+        'role_id',
         'foto',
     ];
+    public function role()
+    {
+        return $this->belongsTo(\App\Models\Backend\Role::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -46,4 +50,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
 }

@@ -30,5 +30,10 @@ class Menu extends Model
         return $this->hasMany(SubMenu::class, 'parent_id')->where('active', 1)
         ->orderBy('sort_order');
     }
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'menu_role');
+    }
+
 
 }

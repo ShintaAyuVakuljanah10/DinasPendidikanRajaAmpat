@@ -12,13 +12,17 @@ class UserController extends Controller
 {
     public function index()
     {
-        return view('backend.user');
+        $roles = \App\Models\Backend\Role::all();
+        return view('backend.user', compact('roles'));
     }
 
     public function data()
     {
-        return response()->json(User::all());
+        return response()->json(
+            User::with('role.menus')->get()
+        );
     }
+
     public function tambah(Request $request)
     {
         $request->validate([

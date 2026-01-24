@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Backend\Banner;
 use App\Models\Post;
+use App\Models\Category;
 
 class DashboardController extends Controller
 {
@@ -19,7 +20,8 @@ class DashboardController extends Controller
             ->limit(12)
             ->get();
 
+        $categories = Category::orderBy('nama', 'asc')->get();
 
-        return view('frontend.dashboard', compact('banners', 'posts'));
+        return view('frontend.dashboard', compact('banners', 'posts', 'categories'));
     }
 }

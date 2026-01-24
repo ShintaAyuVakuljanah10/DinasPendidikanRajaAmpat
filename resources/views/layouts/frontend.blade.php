@@ -386,45 +386,48 @@
 
             <div class="container">
                 <div class="row">
+                    @if (isset($posts))
+                        @foreach ($posts as $post)
+                            <div class="col-xl-3 col-lg-4 col-md-6 mb-4" data-aos="zoom-in">
+                                <!-- 4 kolom di desktop, 3 di laptop, 2 di tablet -->
 
-                    @foreach ($posts as $post)
-                        <div class="col-xl-3 col-lg-4 col-md-6 mb-4" data-aos="zoom-in">
-                            <!-- 4 kolom di desktop, 3 di laptop, 2 di tablet -->
+                                <div class="course-item h-100">
 
-                            <div class="course-item h-100">
+                                    <img src="{{ asset('storage/' . $post->gambar) }}"
+                                        alt="{{ $post->judul }}"
+                                        class="img-fluid news-img">
 
-                                <img src="{{ asset('storage/' . $post->gambar) }}"
-                                    alt="{{ $post->judul }}"
-                                    class="img-fluid news-img">
+                                    <div class="course-content">
+                                        <h3 class="mt-2">
+                                            <a href="{{ url('berita/' . $post->slug) }}">
+                                                {{ $post->judul }}
+                                            </a>
+                                        </h3>
 
-                                <div class="course-content">
-                                    <h3 class="mt-2">
-                                        <a href="{{ url('berita/' . $post->slug) }}">
-                                            {{ $post->judul }}
-                                        </a>
-                                    </h3>
-
-                                    <p class="description">
-                                        {{ Str::limit(strip_tags($post->konten), 120) }}
-                                    </p>
-                                </div>
-                                <div class="card-footer-news">
-                                    <span class="views">
-                                        <i class="fas fa-eye"></i> {{ number_format($post->views) }} views
-                                    </span>
+                                        <p class="description">
+                                            {{ Str::limit(strip_tags($post->konten), 120) }}
+                                        </p>
+                                    </div>
+                                    <div class="card-footer-news">
+                                        <span class="views">
+                                            <i class="fas fa-eye"></i> {{ number_format($post->views) }} views
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
 
                 </div>
             </div>
-            @if ($posts->count() >= 12)
-                <div class="text-center mt-4">
-                    <a href="{{ route('berita.index') }}" class="btn btn-outline-primary">
-                        Baca Lainnya
-                    </a>
-                </div>
+            @if (isset($posts) && $posts->count() >= 12)
+                @foreach ($posts as $post)
+                    <div class="text-center mt-4">
+                        <a href="{{ route('berita.index') }}" class="btn btn-outline-primary">
+                            Baca Lainnya
+                        </a>
+                    </div>
+                @endforeach
             @endif
 
 

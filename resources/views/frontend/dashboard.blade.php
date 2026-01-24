@@ -201,91 +201,29 @@
 
             <div class="row gy-4">
 
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="features-item">
-                        <i class="bi bi-eye" style="color: #ffbb2c;"></i>
-                        <h3><a href="" class="stretched-link">Lorem Ipsum</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
+                @foreach ($categories as $index => $kategori)
+                    <div class="col-lg-3 col-md-4"
+                        data-aos="fade-up"
+                        data-aos-delay="{{ ($index + 1) * 100 }}">
 
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="features-item">
-                        <i class="bi bi-infinity" style="color: #5578ff;"></i>
-                        <h3><a href="" class="stretched-link">Dolor Sitema</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
+                        <div class="features-item position-relative">
 
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="features-item">
-                        <i class="bi bi-mortarboard" style="color: #e80368;"></i>
-                        <h3><a href="" class="stretched-link">Sed perspiciatis</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
+                            <i class="bi bi-tags"
+                            style="color:#0d6efd;"></i>
 
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="400">
-                    <div class="features-item">
-                        <i class="bi bi-nut" style="color: #e361ff;"></i>
-                        <h3><a href="" class="stretched-link">Magni Dolores</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
+                            <h3>
+                                <a href="{{ route('berita.kategori', $kategori->slug) }}"
+                                class="stretched-link">
+                                    {{ $kategori->nama }}
+                                </a>
+                            </h3>
 
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="500">
-                    <div class="features-item">
-                        <i class="bi bi-shuffle" style="color: #47aeff;"></i>
-                        <h3><a href="" class="stretched-link">Nemo Enim</a></h3>
+                        </div>
                     </div>
-                </div><!-- End Feature Item -->
-
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="600">
-                    <div class="features-item">
-                        <i class="bi bi-star" style="color: #ffa76e;"></i>
-                        <h3><a href="" class="stretched-link">Eiusmod Tempor</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
-
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="700">
-                    <div class="features-item">
-                        <i class="bi bi-x-diamond" style="color: #11dbcf;"></i>
-                        <h3><a href="" class="stretched-link">Midela Teren</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
-
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="800">
-                    <div class="features-item">
-                        <i class="bi bi-camera-video" style="color: #4233ff;"></i>
-                        <h3><a href="" class="stretched-link">Pira Neve</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
-
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="900">
-                    <div class="features-item">
-                        <i class="bi bi-command" style="color: #b2904f;"></i>
-                        <h3><a href="" class="stretched-link">Dirada Pack</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
-
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="1000">
-                    <div class="features-item">
-                        <i class="bi bi-dribbble" style="color: #b20969;"></i>
-                        <h3><a href="" class="stretched-link">Moton Ideal</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
-
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="1100">
-                    <div class="features-item">
-                        <i class="bi bi-activity" style="color: #ff5828;"></i>
-                        <h3><a href="" class="stretched-link">Verdo Park</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
-
-                <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="1200">
-                    <div class="features-item">
-                        <i class="bi bi-brightness-high" style="color: #29cc61;"></i>
-                        <h3><a href="" class="stretched-link">Flavor Nivelanda</a></h3>
-                    </div>
-                </div><!-- End Feature Item -->
+                @endforeach
 
             </div>
+
 
         </div>
 
@@ -307,29 +245,35 @@
                     <div class="col-xl-3 col-lg-4 col-md-6 mb-4" data-aos="zoom-in">
                         <!-- 4 kolom di desktop, 3 di laptop, 2 di tablet -->
 
-                        <div class="course-item h-100">
+                        <div class="course-item position-relative h-100">
 
-                            <img src="{{ asset('storage/' . $post->gambar) }}"
-                                alt="{{ $post->judul }}"
-                                class="img-fluid news-img">
+                        {{-- LINK OVERLAY --}}
+                        <a href="{{ route('berita.detail', $post->slug) }}"
+                        class="stretched-link"
+                        aria-label="{{ $post->judul }}"></a>
 
-                            <div class="course-content">
-                                <h3 class="mt-2">
-                                    <a href="{{ url('berita/' . $post->slug) }}">
-                                        {{ $post->judul }}
-                                    </a>
-                                </h3>
+                        <img src="{{ asset('storage/'.$post->gambar) }}"
+                            class="img-fluid"
+                            style="height:180px; width:100%; object-fit:cover;"
+                            alt="{{ $post->judul }}">
 
-                                <p class="description">
-                                    {{ Str::limit(strip_tags($post->konten), 120) }}
-                                </p>
-                            </div>
-                            <div class="card-footer-news">
-                                <span class="views">
-                                    <i class="fas fa-eye"></i> {{ number_format($post->views) }} views
-                                </span>
-                            </div>
+                        <div class="course-content">
+                            <h3 class="mb-2">
+                                {{ $post->judul }}
+                            </h3>
+
+                            <p class="description">
+                                {{ Str::limit(strip_tags($post->konten), 120) }}
+                            </p>
                         </div>
+
+                        {{-- Views pojok kanan bawah --}}
+                        <div class="position-absolute"
+                            style="right:12px; bottom:10px; font-size:13px; color:#6c757d;">
+                            <i class="bi bi-eye"></i> {{ $post->views }} views
+                        </div>
+
+                    </div>
                     </div>
                 @endforeach
 

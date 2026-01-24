@@ -72,11 +72,11 @@
 
                     <div class="mb-3">
                         <label>Role</label>
-                        <select name="role" id="role" class="form-control" required>
+                        <select name="role_id" id="role" class="form-control" required>
                             <option value="">-- Pilih Role --</option>
-                            <option value="admin">Admin</option>
-                            <option value="writer">Writer</option>
-                            <option value="super_user">Super User</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
                         </select>
                         <small class="text-danger error-role"></small>
                     </div>
@@ -163,7 +163,7 @@ $(document).ready(function () {
                     i + 1,
                     user.name,
                     user.username,
-                    user.role,
+                    user.role ? user.role.name : '-',
                     foto,
                     `
                     <div class="btn-group btn-group-sm" role="group">
