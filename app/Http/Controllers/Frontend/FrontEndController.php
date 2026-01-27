@@ -18,4 +18,21 @@ class FrontEndController extends Controller
 
         return view('frontend.navbar', compact('pages'));   
     }
+
+    public function show($slug)
+    {
+        $page = Pages::where('slug', $slug)
+            ->where('active', 1)
+            ->firstOrFail();
+
+        if ($page->handler === 'download') {
+            return app(DownloadController::class)->index($page);
+        }
+
+        return view('frontend.page', compact('page'));
+    }
+
+    public function kategori(){
+        return view('frontend.kategori');
+    }
 }

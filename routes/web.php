@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\SubMenuController;
 use App\Http\Controllers\Frontend\DashboardController;
 use App\Http\Controllers\Frontend\BeritaController;
+use App\Http\Controllers\Frontend\FrontEndController;
 // use App\Http\Controllers\Frontend\KategoriController;
 // use App\Http\Controllers\Frontend\DokumenPublikController;
 use App\Http\Controllers\Backend\RoleController;
@@ -178,3 +179,6 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
 
 // Route::get('/kategori', [KategoriController::class, 'index']);
 // Route::get('/dokumen-publik', [DokumenPublikController::class, 'index']);
+
+Route::get('/{slug}', [FrontendController::class, 'show']);
+Route::get('/kategori', [FrontendController::class, 'kategori']);

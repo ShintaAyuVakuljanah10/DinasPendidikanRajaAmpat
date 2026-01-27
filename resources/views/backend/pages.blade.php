@@ -94,7 +94,7 @@
                                 <div class="card">
                                     <div class="card-header fw-bold">Content</div>
                                     <div class="card-body">
-                                        <textarea name="content" id="contentEditor" class="form-control"></textarea>
+                                        <textarea  id="contentEditor" name="content"> </textarea>
                                     </div>
                                 </div>
                             </div>
@@ -128,6 +128,14 @@
                                         <label class="fw-semibold">Parent Page</label>
                                         <select class="form-control" name="parent_id" id="parent_id">
                                             <option value="">-- Pilih Parent --</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="fw-semibold">Template Halaman</label>
+                                        <select name="handler" id="handler" class="form-control">
+                                            <option value="page">Page Biasa</option>
+                                            <option value="download">Download</option>
                                         </select>
                                     </div>
 
@@ -257,31 +265,49 @@
             });
         }
 
+        $(document).ready(function () {
+            if ($.fn.modal) {
+                $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+            }
+        });
+
         $(document).on('click', '.btn-edit', function () {
             let id = $(this).data('id');
 
             $.get(`/backend/pages/${id}`, function (data) {
-                $('#modalTitle').text('Edit Page');
+
+                // Judul & tombol
+                $('#modalPage .modal-title').text('Edit Page');
                 $('#btnSave').text('Update');
 
+                // Isi field basic
                 $('#page_id').val(data.id);
                 $('#title').val(data.title);
                 $('#slug').val(data.slug);
                 $('#type').val(data.type);
-                $('#parent_id').val(data.parent_id);
+                $('#handler').val(data.handler ?? 'page');
                 $('#active').val(data.active);
                 $('#meta_title').val(data.meta_title);
 
+                if (window.tinymce && tinymce.get('contentEditor')) {
+                    tinymce.get('contentEditor').setContent(data.content ?? '');
+                }
+
+                // ✅ TYPE & PARENT
                 if (data.type === 'Sub Pages') {
                     $('#parentWrapper').show();
-                    loadParentPages();
+
+                    // load parent + select parent_id yg tersimpan
+                    loadParentPages(data.parent_id);
                 } else {
                     $('#parentWrapper').hide();
+                    $('#parent_id').val('');
                 }
 
                 $('#modalPage').modal('show');
             });
         });
+
 
         // ================= DELETE PAGE =================
         // DELETE PAGE
@@ -366,11 +392,10 @@
         });
 
         function loadParentPages(selectedId = null) {
-            $.get("{{ route('backend.pages.data') }}", function (data) {
+            $.get("{{ route('backend.pages.parents') }}", function (data) {
                 let html = '<option value="">-- Pilih Parent --</option>';
 
-                data.forEach(function (page) {
-                    // tandai parent yang sudah dipilih saat edit
+                data.forEach(page => {
                     let selected = selectedId == page.id ? 'selected' : '';
                     html += `<option value="${page.id}" ${selected}>${page.title}</option>`;
                 });
@@ -505,7 +530,10 @@
             $('#parentWrapper').hide(); // sembunyikan parent
             $('#modalPage .modal-title').text('Tambah Page'); // judul modal
             $('#slug').val(''); // reset slug
-            tinymce.get('contentEditor').setContent(''); // reset editor
+            if (window.tinymce && tinymce.get('contentEditor')) {
+                tinymce.get('contentEditor').setContent('');
+            }
+            // reset editor
         });
 
         // SUBMIT FORM (SAMA KAYA USER)
@@ -521,7 +549,11 @@
             let formData = new FormData(this);
 
             // pastikan TinyMCE ikut terkirim
-            formData.set('content', tinymce.get('contentEditor').getContent());
+            if (window.tinymce && tinymce.get('contentEditor')) {
+                formData.set('content', tinymce.get('contentEditor').getContent());
+            } else {
+                formData.set('content', $('#contentEditor').val());
+            }
 
             if (pageId) {
                 formData.append('_method', 'PUT');
@@ -600,16 +632,17 @@
         });
 
     </script>
-
-
     <script>
         tinymce.init({
-            selector: '#contentEditor',
-            height: 300,
-            menubar: 'file edit view insert format table',
-            plugins: 'table lists link code',
-            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | table | code'
+        selector: 'textarea#default-editor',
+        plugins: [
+            "advlist", "anchor", "autolink", "charmap", "code", "fullscreen",
+            "help", "image", "insertdatetime", "link", "lists", "media",
+            "preview", "searchreplace", "table", "visualblocks",
+        ],
+        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
         });
-
     </script>
+        
+
     @endpush

@@ -18,6 +18,7 @@ class Pages extends Model
         'content',
         'meta_title',
         'type',
+        'handler',
         'parent_id',
         'active',
         'sort_order',

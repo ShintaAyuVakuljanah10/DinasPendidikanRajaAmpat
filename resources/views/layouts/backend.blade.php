@@ -24,19 +24,20 @@
     <link rel="stylesheet" href="{{ asset('assets/skydash/css/vertical-layout-light/style.css') }}">
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" />
-    <script src="https://cdn.tiny.cloud/1/e2kzbf6ud3uhuc9nqgzvsagy9crvxasztgheaapn2rayyfvf/tinymce/6/tinymce.min.js"
-        referrerpolicy="origin"></script>
+
     <script>
         tinymce.init({
-            selector: '#mytextarea'
+            selector: '#contentEditor'
         });
 
     </script>
     <style>
         .tox-tinymce,
         .tox-editor-container,
-        .tox-toolbar {
-            z-index: 2000 !important;
+        .tox-toolbar,
+        .tox-dialog,
+        .tox-dialog-wrap {
+            z-index: 99999 !important;
         }
 
     </style>
@@ -91,16 +92,16 @@
             <!-- partial -->
             <!-- partial:partials/_sidebar.html -->
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
-               @php
-                    $user = auth()->user();
-                    $menus = $user && $user->role
-                        ? $user->role->menus()
-                            ->with(['submenus' => function ($q) {
-                                $q->orderBy('sort_order');
-                            }])
-                            ->orderBy('sort_order')
-                            ->get()
-                        : collect();
+                @php
+                $user = auth()->user();
+                $menus = $user && $user->role
+                ? $user->role->menus()
+                ->with(['submenus' => function ($q) {
+                $q->orderBy('sort_order');
+                }])
+                ->orderBy('sort_order')
+                ->get()
+                : collect();
                 @endphp
 
 
@@ -108,48 +109,47 @@
 
                     @foreach ($menus as $menu)
 
-                        {{-- CEK: menu punya sub yang diizinkan --}}
-                        @php
-                            $allowedSubs = $menu->submenus ?? collect();
+                    {{-- CEK: menu punya sub yang diizinkan --}}
+                    @php
+                    $allowedSubs = $menu->submenus ?? collect();
 
-                            $isOpen = $allowedSubs->pluck('route')
-                                ->contains(fn ($r) => request()->routeIs($r));
-                        @endphp
+                    $isOpen = $allowedSubs->pluck('route')
+                    ->contains(fn ($r) => request()->routeIs($r));
+                    @endphp
 
-                        {{-- MENU TANPA SUB --}}
-                        @if ($allowedSubs->isEmpty())
-                            <li class="nav-item {{ request()->routeIs($menu->route) ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route($menu->route) }}">
-                                    <i class="{{ $menu->icon }} menu-icon"></i>
-                                    <span class="menu-title">{{ $menu->name }}</span>
-                                </a>
-                            </li>
+                    {{-- MENU TANPA SUB --}}
+                    @if ($allowedSubs->isEmpty())
+                    <li class="nav-item {{ request()->routeIs($menu->route) ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route($menu->route) }}">
+                            <i class="{{ $menu->icon }} menu-icon"></i>
+                            <span class="menu-title">{{ $menu->name }}</span>
+                        </a>
+                    </li>
 
-                        {{-- MENU DENGAN SUB --}}
-                        @else
-                            <li class="nav-item {{ $isOpen ? 'active' : '' }}">
-                                <a class="nav-link" data-toggle="collapse"
-                                href="#menu-{{ $menu->id }}"
-                                aria-expanded="{{ $isOpen ? 'true' : 'false' }}">
-                                    <i class="{{ $menu->icon }} menu-icon"></i>
-                                    <span class="menu-title">{{ $menu->name }}</span>
-                                    <i class="menu-arrow"></i>
-                                </a>
+                    {{-- MENU DENGAN SUB --}}
+                    @else
+                    <li class="nav-item {{ $isOpen ? 'active' : '' }}">
+                        <a class="nav-link" data-toggle="collapse" href="#menu-{{ $menu->id }}"
+                            aria-expanded="{{ $isOpen ? 'true' : 'false' }}">
+                            <i class="{{ $menu->icon }} menu-icon"></i>
+                            <span class="menu-title">{{ $menu->name }}</span>
+                            <i class="menu-arrow"></i>
+                        </a>
 
-                                <div class="collapse {{ $isOpen ? 'show' : '' }}" id="menu-{{ $menu->id }}">
-                                    <ul class="nav flex-column sub-menu">
-                                        @foreach ($allowedSubs as $sub)
-                                            <li class="nav-item">
-                                                <a class="nav-link {{ request()->routeIs($sub->route) ? 'active' : '' }}"
-                                                href="{{ route($sub->route) }}">
-                                                    {{ $sub->name }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </li>
-                        @endif
+                        <div class="collapse {{ $isOpen ? 'show' : '' }}" id="menu-{{ $menu->id }}">
+                            <ul class="nav flex-column sub-menu">
+                                @foreach ($allowedSubs as $sub)
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs($sub->route) ? 'active' : '' }}"
+                                        href="{{ route($sub->route) }}">
+                                        {{ $sub->name }}
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
 
                     @endforeach
 
@@ -199,6 +199,56 @@
         {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdn.tiny.cloud/1/9mvhx4krgp9y3cvg8gpjtmzvef4ohg1s3d7htwbujtpqxul7/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
+
+        <script>
+            let tinyInitialized = false;
+            
+            function initTiny() {
+                if (tinyInitialized) return;
+
+                tinymce.init({
+                    selector: '#contentEditor',
+                    height: 300,
+                    menubar: 'file edit view insert format table',
+                    plugins: 'table lists link code',
+                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | table | code',
+                    branding: false,
+                    promotion: false,
+                    setup: function (editor) {
+                        editor.on('init', function () {
+                            tinyInitialized = true;
+                        });
+                    }
+                });
+            }
+
+            function setTinyContent(html = '') {
+                if (tinymce.get('contentEditor')) {
+                    tinymce.get('contentEditor').setContent(html);
+                }
+            }
+
+            function getTinyContent() {
+                return tinymce.get('contentEditor') ?
+                    tinymce.get('contentEditor').getContent() :
+                    '';
+            }
+
+            /* INIT SAAT MODAL TERBUKA */
+            $('#modalPage').on('shown.bs.modal', function () {
+                initTiny();
+            });
+
+            /* JANGAN DESTROY (API LEBIH STABIL) */
+            $('#modalPage').on('hidden.bs.modal', function () {
+                // cukup clear content kalau perlu
+            });
+
+            /* ================= SAFE USAGE ================= */
+
+        </script>
         <script>
             $(document).ready(function () {
                 if ($.fn.modal) {

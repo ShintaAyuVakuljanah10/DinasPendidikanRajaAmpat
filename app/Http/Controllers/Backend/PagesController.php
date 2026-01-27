@@ -40,6 +40,7 @@ class PagesController extends Controller
             'title' => 'required',
             'slug'  => 'required|unique:pages,slug',
             'type'  => 'required|in:Pages,Sub Pages',
+            'handler' => 'required|in:page,download',   
             'content' => 'nullable',
             'meta_title' => 'nullable'
         ];
@@ -59,9 +60,10 @@ class PagesController extends Controller
         Pages::create([
             'title'      => $request->title,
             'slug'       => $request->slug,
-            'content'    => $request->content, // ✅ SIMPAN
+            'content'    => $request->content, 
             'meta_title' => $request->meta_title,
             'type'       => $request->type,
+            'handler'    => $request->handler ?? 'page',
             'parent_id'  => $parentId,
             'active'     => 1,
             'sort_order' => $lastOrder + 1,
@@ -72,7 +74,10 @@ class PagesController extends Controller
 
     public function parents()
     {
-        return Pages::where('type', 'Pages')->get();
+        return Pages::where('type', 'Pages')
+            ->where('active', 1)
+            ->orderBy('sort_order')
+            ->get(['id', 'title']);
     }
 
     public function show($id)
@@ -83,18 +88,34 @@ class PagesController extends Controller
     public function update(Request $request, $id)
     {
         $page = Pages::findOrFail($id);
+
+        // $rules = [
+        //     'title'   => 'required',
+        //     'slug'    => 'required|unique:pages,slug,' . $page->id,
+        //     'type'    => 'required|in:Pages,Sub Pages',
+        //     'handler' => 'required|in:page,download',
+        // ];
+
+        // if ($request->type === 'Sub Pages') {
+        //     $rules['parent_id'] = 'required|exists:pages,id';
+        // }
+
+        // $request->validate($rules);
+
         $page->update([
             'title'      => $request->title,
             'slug'       => $request->slug,
-            'content'    => $request->content, 
+            'content'    => $request->content,
             'meta_title' => $request->meta_title,
             'type'       => $request->type,
-            'parent_id'  => $request->parent_id,
+            'handler'    => $request->handler,
+            'parent_id'  => $request->type === 'Sub Pages' ? $request->parent_id : null,
             'active'     => $request->active ?? 1,
         ]);
 
         return response()->json(['success' => true]);
     }
+
 
     public function destroy($id)
     {
