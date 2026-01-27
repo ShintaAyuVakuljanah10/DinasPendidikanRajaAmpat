@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BackEnd\Menu;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 class MenuController extends Controller
 {
@@ -124,4 +125,10 @@ public function orderDown($id)
 
         return response()->json(['message' => 'Menu berhasil dihapus']);
     }
+
+    public function routeSelect(Request $request)
+    {
+        return Menu::routeSelect($request->q);
+    }
+
 }

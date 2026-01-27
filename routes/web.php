@@ -14,8 +14,8 @@ use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\SubMenuController;
 use App\Http\Controllers\Frontend\DashboardController;
 use App\Http\Controllers\Frontend\BeritaController;
-use App\Http\Controllers\Frontend\KategoriController;
-use App\Http\Controllers\Frontend\DokumenPublikController;
+// use App\Http\Controllers\Frontend\KategoriController;
+// use App\Http\Controllers\Frontend\DokumenPublikController;
 use App\Http\Controllers\Backend\RoleController;
 
 
@@ -158,10 +158,14 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::post('/menu/{id}/down', [MenuController::class, 'orderDown']);
     Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
     Route::get('/menu/parent', [MenuController::class, 'parentMenu'])->name('menu.parent');
+    Route::get('/menu/route-select', [MenuController::class, 'routeSelect'])->name('menu.routeSelect');
     Route::get('/menu/{id}', [MenuController::class, 'show']);
     Route::put('/menu/{id}', [MenuController::class, 'update']);
     Route::delete('/menu/{id}', [MenuController::class, 'destroy']);
 });
+
+// Route::get('/backend/menu/routeSelect', [MenuController::class, 'routeSelect'])->name('backend.menu.routeSelect');
+
 
 Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
     Route::get('/submenu', [SubMenuController::class, 'index'])->name('submenu');
@@ -172,5 +176,5 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::delete('submenu/{id}', [SubMenuController::class, 'destroy']);
 });
 
-Route::get('/kategori', [KategoriController::class, 'index']);
-Route::get('/dokumen-publik', [DokumenPublikController::class, 'index']);
+// Route::get('/kategori', [KategoriController::class, 'index']);
+// Route::get('/dokumen-publik', [DokumenPublikController::class, 'index']);

@@ -40,6 +40,8 @@ class PagesController extends Controller
             'title' => 'required',
             'slug'  => 'required|unique:pages,slug',
             'type'  => 'required|in:Pages,Sub Pages',
+            'content' => 'nullable',
+            'meta_title' => 'nullable'
         ];
 
         if ($request->type === 'Sub Pages') {
@@ -47,19 +49,18 @@ class PagesController extends Controller
         }
 
         $request->validate($rules);
-
-        // tentukan parent_id
         $parentId = $request->type === 'Sub Pages'
             ? $request->parent_id
             : null;
 
-        // ambil order terakhir BERDASARKAN parent
         $lastOrder = Pages::where('parent_id', $parentId)
             ->max('sort_order') ?? 0;
 
         Pages::create([
             'title'      => $request->title,
             'slug'       => $request->slug,
+            'content'    => $request->content, // ✅ SIMPAN
+            'meta_title' => $request->meta_title,
             'type'       => $request->type,
             'parent_id'  => $parentId,
             'active'     => 1,
@@ -85,12 +86,11 @@ class PagesController extends Controller
         $page->update([
             'title'      => $request->title,
             'slug'       => $request->slug,
-            'content'    => $request->content,
+            'content'    => $request->content, 
+            'meta_title' => $request->meta_title,
             'type'       => $request->type,
             'parent_id'  => $request->parent_id,
             'active'     => $request->active ?? 1,
-            // 'sort_order' => 0,
-            'meta_title' => $request->meta_title,
         ]);
 
         return response()->json(['success' => true]);

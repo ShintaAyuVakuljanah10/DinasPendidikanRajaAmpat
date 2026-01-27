@@ -119,8 +119,8 @@
 
                         <div class="col-md-6">
                             <label class="fw-semibold">Route</label>
-                            <input type="text" id="route" class="form-control">
-                        </div>
+                            <select id="route" name="route" class="form-control" style="width:100%"></select>
+                        </div>                        
 
                         <div class="col-md-6 mt-2">
                             <label class="fw-semibold d-block mb-2">&nbsp;</label>
@@ -409,6 +409,22 @@
                     }
                 }
             });
+        });
+
+        $('#route').select2({
+            placeholder: 'Pilih Route',
+            allowClear: true,
+            ajax: {
+                url: "{{ route('backend.menu.routeSelect') }}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { q: params.term };
+                },
+                processResults: function (data) {
+                    return { results: data };
+                }
+            }
         });
     });
 

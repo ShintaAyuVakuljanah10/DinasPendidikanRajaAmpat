@@ -4,6 +4,7 @@ namespace App\Models\BackEnd;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
 
 class Menu extends Model
 {
@@ -35,5 +36,26 @@ class Menu extends Model
         return $this->belongsToMany(Role::class, 'menu_role');
     }
 
+    public static function routeSelect($search = null)
+    {
+        return collect(Route::getRoutes())
+            ->map(fn ($route) => $route->getName())
+            ->filter(function ($name) use ($search) {
+                if (!$name) return false;
 
+                // optional filter backend only
+                // if (!str_starts_with($name, 'backend.')) return false;
+
+                if ($search) {
+                    return str_contains(strtolower($name), strtolower($search));
+                }
+
+                return true;
+            })
+            ->values()
+            ->map(fn ($name) => [
+                'id'   => $name,
+                'text' => $name
+            ]);
+    }
 }
