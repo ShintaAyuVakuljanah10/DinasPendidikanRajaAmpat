@@ -195,7 +195,12 @@
     </section><!-- /Why Us Section -->
 
     <!-- Features Section -->
-    <section id="features" class="features section">
+    <section id="kategori" class="features section" style="scroll-margin-top: 90px;">
+        <div class="container section-title" data-aos="fade-up">
+            <h2>Kategori</h2>
+            <p>Jelajahi Topik Pilihan</p>
+        </div>
+
 
         <div class="container">
 
@@ -208,8 +213,8 @@
 
                         <div class="features-item position-relative">
 
-                            <i class="bi bi-tags"
-                            style="color:#0d6efd;"></i>
+                            <i class="bi {{ $kategori->icon ?? 'bi-folder' }}" 
+                                style="color:#0d6efd; font-size:24px;"></i>
 
                             <h3>
                                 <a href="{{ route('berita.kategori', $kategori->slug) }}"

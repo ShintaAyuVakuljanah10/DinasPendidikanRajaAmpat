@@ -17,6 +17,7 @@
                     <thead class="text-center">
                         <tr>
                             <th width="5%">No</th>
+                            <th width="10%">Icon</th>
                             <th>Nama</th>
                             <th>Slug</th>
                             <th width="15%">Aksi</th>
@@ -54,7 +55,139 @@
                         <input type="text" id="nama" name="nama" class="form-control" required>
                         <small class="text-danger error-nama"></small>
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label>Icon</label>
+                        <div class="row g-3 icon-picker">
+
+                            <div class="col-3">
+                                <div class="icon-box text-primary" data-icon="bi-tags">
+                                    <i class="bi bi-tags"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-success" data-icon="bi-folder">
+                                    <i class="bi bi-folder"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-warning" data-icon="bi-newspaper">
+                                    <i class="bi bi-newspaper"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-purple" data-icon="bi-book">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-danger" data-icon="bi-megaphone">
+                                    <i class="bi bi-megaphone"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-info" data-icon="bi-chat-dots">
+                                    <i class="bi bi-chat-dots"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-success" data-icon="bi-camera">
+                                    <i class="bi bi-camera"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-primary" data-icon="bi-image">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-secondary" data-icon="bi-gear">
+                                    <i class="bi bi-gear"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-warning" data-icon="bi-lightning">
+                                    <i class="bi bi-lightning"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-danger" data-icon="bi-fire">
+                                    <i class="bi bi-fire"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-info" data-icon="bi-globe">
+                                    <i class="bi bi-globe"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-success" data-icon="bi-people">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-primary" data-icon="bi-house">
+                                    <i class="bi bi-house"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-secondary" data-icon="bi-link-45deg">
+                                    <i class="bi bi-link-45deg"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-danger" data-icon="bi-shield-lock">
+                                    <i class="bi bi-shield-lock"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-info" data-icon="bi-cloud">
+                                    <i class="bi bi-cloud"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-warning" data-icon="bi-star">
+                                    <i class="bi bi-star"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-success" data-icon="bi-bar-chart">
+                                    <i class="bi bi-bar-chart"></i>
+                                </div>
+                            </div>
+                        
+                            <div class="col-3">
+                                <div class="icon-box text-primary" data-icon="bi-calendar">
+                                    <i class="bi bi-calendar"></i>
+                                </div>
+                            </div>
+                        
+                        </div>
+                        
+                        <input type="hidden" id="icon" name="icon">
+                        
+                        
+                        <input type="hidden" id="icon" name="icon">
+                        
+                    </div>
+                </div>                                                                                  
 
                 <div class="modal-footer">
                     <button class="btn btn-primary" id="btnSave">Simpan</button>
@@ -104,6 +237,7 @@ $(document).ready(function () {
             $.each(data, function (i, item) {
                 categoryTable.row.add([
                     i + 1,
+                    `<i class="bi ${item.icon ?? 'bi-folder'}" style="font-size:22px;color:#0d6efd;"></i>`,
                     item.nama,
                     item.slug,
                     `
@@ -137,7 +271,11 @@ $(document).ready(function () {
         e.preventDefault();
         let id = $('#category_id').val();
         let url = id ? `/categories/${id}` : "{{ route('category.store') }}";
-        let data = { nama: $('#nama').val() };
+        let data = {
+            nama: $('#nama').val(),
+            icon: $('#icon').val()
+        };
+
 
         if (id) data._method = 'PUT';
 
@@ -180,11 +318,26 @@ $(document).ready(function () {
         $.get(`/categories/${id}/edit`, function (data) {
             $('#category_id').val(data.id);
             $('#nama').val(data.nama);
+            $('#icon').val(data.icon);
+            $('.icon-box').removeClass('active');
+            if (data.icon) {
+                $(`.icon-box[data-icon="${data.icon}"]`).addClass('active');
+            }
             $('#modalTitle').text('Edit Category');
             $('.text-danger').text('');
             $('#modalCategory').modal('show');
         });
     });
+
+    // click
+    $(document).on('click', '.icon-box', function () {
+        $('.icon-box').removeClass('active'); // hapus highlight semua
+        $(this).addClass('active');           // highlight yg diklik
+
+        $('#icon').val($(this).data('icon')); // simpan ke hidden input
+    });
+
+
 
     // hapus
     $(document).on('click', '.btn-delete', function () {

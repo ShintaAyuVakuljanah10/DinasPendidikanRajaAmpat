@@ -51,7 +51,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::get('/berita/kategori/{slug}', [BeritaController::class, 'kategori'])
     ->name('berita.kategori');
-
+    
 Route::middleware(['auth', 'log.agent'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');

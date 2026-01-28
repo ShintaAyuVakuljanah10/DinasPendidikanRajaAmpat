@@ -25,12 +25,14 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|unique:categories,nama'
+            'nama' => 'required|unique:categories,nama',
+            'icon' => 'nullable|string'
         ]);
 
         Category::create([
             'nama' => $request->nama,
-            'slug' => Str::slug($request->nama)
+            'slug' => Str::slug($request->nama),
+            'icon' => $request->icon,
         ]);
 
         return response()->json(['success' => true]);
@@ -46,13 +48,15 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama' => 'required|unique:categories,nama,' . $id
+            'nama' => 'required|unique:categories,nama,' . $id,
+            'icon' => 'nullable|string'
         ]);
 
         $category = Category::findOrFail($id);
         $category->update([
             'nama' => $request->nama,
-            'slug' => Str::slug($request->nama)
+            'slug' => Str::slug($request->nama),
+            'icon' => $request->icon
         ]);
 
         return response()->json(['success' => true]);

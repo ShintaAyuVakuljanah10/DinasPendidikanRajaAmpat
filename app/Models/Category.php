@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class Category extends Model
 {
     protected $table = 'categories';
-    protected $fillable = ['nama', 'slug'];
+    protected $fillable = ['nama', 'slug', 'icon'];
     protected static function booted()
     {
         static::creating(function ($category) {

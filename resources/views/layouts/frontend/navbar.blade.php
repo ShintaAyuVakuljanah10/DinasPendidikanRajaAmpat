@@ -13,10 +13,16 @@
                     {{-- MENU TANPA SUBMENU --}}
                     @if ($page->children->isEmpty())
                         <li>
-                            <a href="{{ url($page->slug) }}"
-                               class="{{ request()->is($page->slug) ? 'active' : '' }}">
+                            <a
+                                href="{{ $page->slug === 'kategori'
+                                    ? (request()->is('/') ? '#kategori' : url('/').'#kategori')
+                                    : url($page->slug) }}"
+                                class="{{ request()->is($page->slug) ? 'active' : '' }}"
+                            >
                                 {{ $page->title }}
                             </a>
+
+
                         </li>
         
                     {{-- MENU DENGAN SUBMENU --}}
