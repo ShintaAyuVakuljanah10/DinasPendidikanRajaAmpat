@@ -4,51 +4,32 @@
 
 @section('content')
 <div class="container">
-    <div class="card">
-        <div class="col-lg-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <h5 class="mb-0 me-3">Filter: </h5>
-                            <select class="form-control ml-2" id="filter_status" style="width:200px">
-                                <option value="">-- Semua Status --</option>
-                                <option value="draft">Draft</option>
-                                <option value="published">Published</option>
-                            </select>
-                            <button class="btn btn-primary ml-3" id="btnFilter">
-                                <i class="fas fa-eye"></i> Tampilkan
-                            </button>
-                        </div>
-
-                        <button id="btnTambahPost" class="btn btn-success btn-icon">
-                            <i class="mdi mdi-plus"></i>
-                        </button>
-                    </div>
-                </div>
-  
-
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th width="5%">No</th>
-                                    <th width="10%">Gambar</th>
-                                    <th>Judul</th>
-                                    <th>Kategori</th>
-                                    <th>Status</th>
-                                    <th>Tanggal Publish</th>
-                                    <th width="15%">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="post-table">
-                                <tr>
-                                    <td colspan="7" class="text-center">Loading...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+    <button id="btnTambahPost" class="btn btn-primary mb-3">
+        + Tambah Berita
+    </button>
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="font-weight-bold mb-3">Data Berita</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="postTable">
+                        <thead class="text-center">
+                            <tr>
+                                <th width="5%">No</th>
+                                <th width="10%">Gambar</th>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>Status</th>
+                                <th>Tanggal Publish</th>
+                                <th width="15%">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="post-table">
+                            {{-- <tr>
+                                <td colspan="6" class="text-center">Loading...</td>
+                            </tr> --}}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -167,8 +148,42 @@
 @endsection
 
 @push('scripts')
+
 <script>
-$(document).ready(function () {
+    let postTable;
+
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        postTable = $('#postTable').DataTable({
+            pageLength: 10,
+            ordering: true,
+            lengthChange: true,
+            searching: true,
+            autoWidth: false,
+            language: {
+                search: "Cari",
+                lengthMenu: "Tampilkan _MENU_",
+                info: "_START_ - _END_ dari _TOTAL_ data",
+                paginate: {
+                    previous: "‹",
+                    next: "›"
+                }
+            },
+            columnDefs: [
+                { targets: [0,1,6], className: 'text-center' },
+                { targets: [6], orderable: false }
+            ]
+        });
+
+        loadPost();
+    });
+
 
     let mode = 'tambah';
 
@@ -279,8 +294,6 @@ $(document).ready(function () {
 
         });
     });
-
-});
 </script>
 
 <script>
@@ -309,110 +322,105 @@ function pilihGambar(gambar) {
     $('#fileManagerModal').modal('hide');
 }
 function loadPost() {
-    let status = $('#filter_status').val();
 
-    $.get("{{ route('post.data') }}", { status: status }, function (data) {
-        let html = '';
-        let no = 1;
+    $.get("{{ route('post.data') }}", function (data) {
+
+        postTable.clear();
 
         if (data.length === 0) {
-            html = `
-                <tr>
-                    <td colspan="6" class="text-center">Data kosong</td>
-                </tr>
-            `;
-        } else {
-            data.forEach(post => {
-                let gambar = post.gambar
-                    ? `<img src="/storage/${post.gambar}" style="height:50px;width:auto;">`
-                    : '-';
-
-                html += `
-                    <tr>
-                        <td>${no++}</td>
-                        <td class="text-center">${gambar}</td>
-                        <td>${post.judul}</td>
-                        <td>${post.kategori?.nama ?? '-'}</td>
-                        <td>
-                            <span class="badge badge-${post.status === 'published' ? 'success' : 'secondary'}">
-                                ${post.status}
-                            </span>
-                        </td>
-                        <td>${post.tanggal_publish ?? '-'}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning edit-post" data-id="${post.id}">
-                                Edit
-                            </button>
-                            <button class="btn btn-sm btn-danger delete-post" data-id="${post.id}">
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
+            postTable.row.add([
+                '',
+                'Data kosong',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]).draw();
+            return;
         }
 
-        $('#post-table').html(html);
+        $.each(data, function (i, post) {
+
+            let gambar = post.gambar
+                ? `<img src="/storage/${post.gambar}" height="50">`
+                : `<span class="text-muted">No Image</span>`;
+
+            let statusBadge =
+                `<span class="badge badge-${post.status === 'published' ? 'success' : 'secondary'}">
+                    ${post.status}
+                </span>`;
+
+            postTable.row.add([
+                i + 1,
+                gambar,
+                post.judul,
+                post.kategori ? post.kategori.nama : '-',
+                statusBadge,
+                post.tanggal_publish ?? '-',
+
+                `
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary edit-post" data-id="${post.id}">
+                        <i class="mdi mdi-pencil"></i>
+                    </button>
+
+                    <button class="btn btn-outline-danger delete-post" data-id="${post.id}">
+                        <i class="mdi mdi-delete"></i>
+                    </button>
+                </div>
+                `
+            ]);
+        });
+
+        postTable.draw();
     });
 }
-$(document).ready(function () {
-    loadPost();
 
-    $('#btnFilter').click(function () {
-        loadPost();
-    });
-});
+
+
 </script>
 <script>
 
 
 $(document).on('click', '.delete-post', function () {
+
     let id = $(this).data('id');
 
-    $(document).on('click', '.delete-post', function () {
-        let id = $(this).data('id');
+    Swal.fire({
+        title: 'Yakin?',
+        text: 'Post ini akan dihapus permanen!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
 
-        let url = deletePostUrl.replace(':id', id);
+        if (result.isConfirmed) {
 
-        Swal.fire({
-            title: 'Yakin?',
-            text: 'Post ini akan dihapus permanen!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, hapus',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: 'DELETE'
-                    },
-                    success: function (res) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Terhapus',
-                            text: res.message ?? 'Post berhasil dihapus',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        loadPost();
-                    },
-                    error: function () {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: 'Gagal menghapus post'
-                        });
-                    }
-                });
-            }
-        });
+            $.ajax({
+                url: `/post/${id}`,
+                type: 'POST',
+                data: {
+                    _method: 'DELETE'
+                },
+                success: function () {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Terhapus',
+                        text: 'Post berhasil dihapus',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    loadPost();
+                }
+            });
+
+        }
     });
-
 });
+
 </script>
 @endpush
