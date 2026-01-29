@@ -29,7 +29,7 @@ class UserController extends Controller
             'name' => 'required',
             'username' => 'required|unique:users',
             'password' => 'required|min:6',
-            'role' => 'required',
+            'role_id' => 'required',
             'foto' => 'nullable|image|max:2048'
         ]);
 
@@ -42,7 +42,7 @@ class UserController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role_id' => $request->role_id,
             'foto' => $foto,
         ]);
         return response()->json(['success' => true]);
@@ -59,7 +59,7 @@ public function update(Request $request, $id) {
         'name' => 'required|string|max:255',
         'username' => 'required|string|unique:users,username,' . $id,
         'password' => 'nullable|string|min:6',
-        'role' => 'required|string',
+        'role_id' => 'required|exists:roles,id',
         'foto' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
     ]);
 
@@ -68,7 +68,7 @@ public function update(Request $request, $id) {
     if($request->password) {
         $user->password = Hash::make($request->password);
     }
-    $user->role = $request->role;
+    $user->role_id = $request->role_id;
 
     if ($request->hasFile('foto')) {
         if($user->foto && Storage::exists('public/'.$user->foto)) {
