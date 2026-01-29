@@ -343,8 +343,10 @@ function loadPost() {
         $.each(data, function (i, post) {
 
             let gambar = post.gambar
-                ? `<img src="/storage/${post.gambar}" height="50">`
+                ? `<img src="/storage/${post.gambar}"
+                        style="width:50px;height:50px;object-fit:cover;border-radius:6px;">`
                 : `<span class="text-muted">No Image</span>`;
+
 
             let statusBadge =
                 `<span class="badge badge-${post.status === 'published' ? 'success' : 'secondary'}">
