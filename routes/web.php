@@ -18,6 +18,7 @@ use App\Http\Controllers\Frontend\FrontEndController;
 // use App\Http\Controllers\Frontend\KategoriController;
 // use App\Http\Controllers\Frontend\DokumenPublikController;
 use App\Http\Controllers\Backend\RoleController;
+use App\Http\Controllers\BackEnd\ProfileController;
 
 
 // Route::get('/', function () {
@@ -51,6 +52,12 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::get('/berita/kategori/{slug}', [BeritaController::class, 'kategori'])
     ->name('berita.kategori');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/backend/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/backend/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+    
     
 Route::middleware(['auth', 'log.agent'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('user');
