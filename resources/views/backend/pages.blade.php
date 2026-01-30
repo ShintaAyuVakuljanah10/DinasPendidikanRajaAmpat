@@ -614,25 +614,6 @@
     </script>
 
     <script>
-        $(document).ready(function () {
-
-            function generateSlug(text) {
-                return text
-                    .toString()
-                    .toLowerCase()
-                    .trim()
-                    .replace(/[^\w\s]+/g, '');
-            }
-
-            $('#title').on('keyup change', function () {
-                let title = $(this).val();
-                $('#slug').val(generateSlug(title));
-            });
-
-        });
-
-    </script>
-    <script>
         tinymce.init({
         selector: 'textarea#default-editor',
         plugins: [

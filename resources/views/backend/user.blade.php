@@ -254,7 +254,7 @@ $(document).ready(function () {
             $('#user_id').val(data.id);
             $('#name').val(data.name);
             $('#username').val(data.username);
-            $('#role').val(data.role);
+            $('#role').val(data.role_id);
             $('#password').val('');
             $('.text-danger').text('');
             $('#modalUser').modal('show');

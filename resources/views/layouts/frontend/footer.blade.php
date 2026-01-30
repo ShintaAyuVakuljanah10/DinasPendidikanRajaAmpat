@@ -4,11 +4,11 @@
         <div class="row gy-4">
             <div class="col-lg-4 col-md-6 footer-about">
                 <a href="index.html" class="logo d-flex align-items-center">
-                    <span class="sitename">Mentor</span>
+                    <span class="sitename">DISDIK RAJA AMPAT</span>
                 </a>
                 <div class="footer-contact pt-3">
-                    <p>A108 Adam Street</p>
-                    <p>New York, NY 535022</p>
+                    <p>HRJJ+W2P, Waisai, Distrik Kota Waisai</p>   
+                    <p>Kabupaten Raja Ampat, Papua Bar. 98482</p> 
                     <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
                     <p><strong>Email:</strong> <span>info@example.com</span></p>
                 </div>

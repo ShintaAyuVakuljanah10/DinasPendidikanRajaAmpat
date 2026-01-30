@@ -21,14 +21,13 @@ class FrontEndController extends Controller
 
     public function show($slug)
     {
-        $page = Pages::where('slug', $slug)
-            ->where('active', 1)
-            ->firstOrFail();
-
-        if ($page->handler === 'download') {
-            return app(DownloadController::class)->index($page);
+        // SLUG KHUSUS DOWNLOAD
+        if (str_starts_with($slug, 'download-laporan-')) {
+            return app(DownloadController::class)->index($slug);
         }
 
+        // PAGE BIASA
+        $page = Pages::where('slug', $slug)->firstOrFail();
         return view('frontend.page', compact('page'));
     }
 

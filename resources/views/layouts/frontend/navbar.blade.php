@@ -9,9 +9,8 @@
         <nav id="navmenu" class="navmenu">
             <ul>
                 @foreach ($pages as $page)
-        
-                    {{-- MENU TANPA SUBMENU --}}
-                    @if ($page->children->isEmpty())
+
+                @if ($page->children->isEmpty())
                         <li>
                             <a
                                 href="{{ $page->slug === 'kategori'
@@ -25,38 +24,40 @@
 
                         </li>
         
-                    {{-- MENU DENGAN SUBMENU --}}
-                    @else
-                        @php
-                            $isActiveParent = request()->is($page->slug.'/*');
-                        @endphp
-        
-                        <li class="dropdown {{ $isActiveParent ? 'active' : '' }}">
-                            <a href="#">
-                                <span class="{{ $isActiveParent ? 'active' : '' }}">
-                                    {{ $page->title }}
-                                </span>
-                                <i class="bi bi-chevron-down toggle-dropdown"></i>
+
+                {{-- MENU DENGAN SUBMENU --}}
+                @else
+                @php
+                $isActiveParent = $page->children->contains(function ($child) {
+                return request()->is($child->slug);
+                });
+                @endphp
+
+                <li class="dropdown {{ $isActiveParent ? 'active' : '' }}">
+                    <a href="#">
+                        <span class="{{ $isActiveParent ? 'active' : '' }}">
+                            {{ $page->title }}
+                        </span>
+                        <i class="bi bi-chevron-down toggle-dropdown"></i>
+                    </a>
+
+                    <ul>
+                        @foreach ($page->children as $child)
+                        <li>
+                            <a href="{{ url($child->slug) }}" class="{{ request()->is($child->slug) ? 'active' : '' }}">
+                                {{ $child->title }}
                             </a>
-        
-                            <ul>
-                                @foreach ($page->children as $child)
-                                    <li>
-                                        <a href="{{ url($child->slug) }}"
-                                           class="{{ request()->is($child->slug) ? 'active' : '' }}">
-                                            {{ $child->title }}
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
                         </li>
-                    @endif
-        
+                        @endforeach
+                    </ul>
+                </li>
+                @endif
+
                 @endforeach
             </ul>
-        
+
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-        </nav>        
+        </nav>
 
     </div>
 </header>

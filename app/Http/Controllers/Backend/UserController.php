@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
     public function index()
-    {
+    {   
         $roles = \App\Models\Backend\Role::all();
         return view('backend.user', compact('roles'));
     }
@@ -71,13 +71,14 @@ public function update(Request $request, $id) {
     $user->role_id = $request->role_id;
 
     if ($request->hasFile('foto')) {
-        if($user->foto && Storage::exists('public/'.$user->foto)) {
-            Storage::delete('public/'.$user->foto);
+
+        // hapus foto lama
+        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+            Storage::disk('public')->delete($user->foto);
         }
-        $file = $request->file('foto');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->storeAs('public', $filename);
-        $user->foto = $filename;
+
+        // simpan foto baru
+        $user->foto = $request->file('foto')->store('users', 'public');
     }
 
     $user->save();
@@ -87,9 +88,9 @@ public function update(Request $request, $id) {
     {
         $user = User::findOrFail($id);
         
-        if ($user->foto && file_exists(storage_path('app/public/' . $user->foto))) {
-            unlink(storage_path('app/public/' . $user->foto));
-        }
+        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+            Storage::disk('public')->delete($user->foto);
+        }    
 
         $user->delete();
 

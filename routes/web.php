@@ -19,6 +19,7 @@ use App\Http\Controllers\Frontend\FrontEndController;
 // use App\Http\Controllers\Frontend\DokumenPublikController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\BackEnd\ProfileController;
+use App\Http\Controllers\BackEnd\DownloadController;
 
 
 // Route::get('/', function () {
@@ -184,8 +185,19 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::delete('submenu/{id}', [SubMenuController::class, 'destroy']);
 });
 
+Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
+    Route::get('/download', function () {
+        $downloads = \App\Models\BackEnd\Download::latest()->get();
+        return view('backend/download', compact('downloads'));
+    })->name('download');
+    Route::get('/download/{slug}', [DownloadController::class, 'index'])->name('download.page');
+    Route::post('/download/store', [DownloadController::class, 'store'])->name('download.store');
+    Route::delete('/download/{id}', [DownloadController::class, 'destroy'])->name('download.destroy');
+});
+
 // Route::get('/kategori', [KategoriController::class, 'index']);
 // Route::get('/dokumen-publik', [DokumenPublikController::class, 'index']);
-
-Route::get('/{slug}', [FrontendController::class, 'show']);
+Route::get('/unduh/{id}', [\App\Http\Controllers\Frontend\DownloadController::class, 'download'])
+    ->name('download.file');
 Route::get('/kategori', [FrontendController::class, 'kategori']);
+Route::get('/{slug}', [FrontendController::class, 'show']);

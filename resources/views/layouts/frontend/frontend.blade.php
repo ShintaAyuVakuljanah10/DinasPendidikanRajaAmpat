@@ -36,6 +36,20 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+    <style>
+        .navmenu .dropdown {
+            position: relative;
+        }
+
+        .navmenu .dropdown ul {
+            right: 0;
+            left: auto;
+            max-width: 90vw;
+            box-sizing: border-box;
+        }
+
+    </style>
 </head>
 
 <body class="index-page">
