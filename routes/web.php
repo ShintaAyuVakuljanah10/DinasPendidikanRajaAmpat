@@ -20,6 +20,7 @@ use App\Http\Controllers\Frontend\FrontEndController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\BackEnd\ProfileController;
 use App\Http\Controllers\BackEnd\DownloadController;
+use App\Http\Controllers\Backend\SekolahController;
 
 
 // Route::get('/', function () {
@@ -193,6 +194,15 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::get('/download/{slug}', [DownloadController::class, 'index'])->name('download.page');
     Route::post('/download/store', [DownloadController::class, 'store'])->name('download.store');
     Route::delete('/download/{id}', [DownloadController::class, 'destroy'])->name('download.destroy');
+});
+
+Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
+    Route::get('/sekolah', [SekolahController::class, 'index'])->name('sekolah');
+    Route::get('/sekolah/data', [SekolahController::class, 'data'])->name('sekolah.data');
+    Route::post('/sekolah', [SekolahController::class, 'store'])->name('sekolah.store');
+    Route::get('/sekolah/{id}/edit', [SekolahController::class, 'edit'])->name('sekolah.edit');
+    Route::put('/sekolah/{id}', [SekolahController::class, 'update'])->name('sekolah.update');
+    Route::delete('/sekolah/{id}', [SekolahController::class, 'destroy'])->name('sekolah.destroy');
 });
 
 // Route::get('/kategori', [KategoriController::class, 'index']);

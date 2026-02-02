@@ -11,7 +11,7 @@ class SekolahController extends Controller
 {
     public function index()
     {
-        return view('sekolah');
+        return view('backend.sekolah');
     }
 
     public function data()
