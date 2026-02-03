@@ -1289,6 +1289,36 @@ section,
 }
 
 
+.app-logo {
+    height: 70px;        /* BESAR tapi masih aman */
+    width: auto;
+    object-fit: contain;
+}
+
+.sitename {
+    line-height: 1.2;
+    font-weight: 600;
+}
+
+/* .navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.navbar .logo img {
+    height: 64px !important;
+    max-height: none !important;
+    width: auto;
+    object-fit: contain;
+}
+
+.navbar .sitename {
+    margin: 0;
+    line-height: 1.2;
+    font-weight: 600;
+} */
+
 
 
 /* =============== */
@@ -2111,6 +2141,99 @@ section,
 .contact .php-email-form button[type=submit]:hover {
   background: color-mix(in srgb, var(--accent-color), transparent 20%);
 }
+.about-content ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.about-content li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.about-content li i {
+    color: #47b2e4;
+    margin-right: 8px;
+    margin-top: 4px;
+}
+/* FOOTER CLEAN UP */
+/* ===== FORCE FOOTER STYLE ===== */
+
+
+
+
+.navbar {
+    height: auto !important;
+    min-height: 90px !important;
+}
+
+.navbar .logo,
+.navbar .navbar-brand {
+    display: flex !important;
+    align-items: center !important;
+    height: auto !important;
+}
+
+.navbar img {
+    height: 70px !important;
+    max-height: none !important;
+    width: auto !important;
+    object-fit: contain;
+}
+/* OVERRIDE LOGO HEADER */
+/* HEADER LOGO ALIGNMENT */
+/* FIX LOGO HEADER - FORCE SIZE */
+.header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.header .logo img {
+    max-height: none !important; /* INI KUNCI UTAMA */
+    height: 70px !important;     /* BESAR LOGO */
+    width: auto !important;
+    object-fit: contain;
+    transform: translateY(-7px);
+    margin-right: 0
+}
+
+.header .logo .sitename {
+    font-size: 23px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+/* ===============================
+   FOOTER FINAL FIX (MENTOR)
+   =============================== */
+
+/* ===== FOOTER LOGO FIX ===== */
+
+.footer .footer-logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    transform: translateY(-2px);
+}
+
+.footer .footer-about .logo {
+    gap: 8px; /* jarak logo ke teks */
+}
+
+.footer .footer-about .sitename {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+}
+
+
+
+
+
 
 /*--------------------------------------------------------------
 # Starter Section Section

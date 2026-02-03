@@ -30,12 +30,12 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" />
 
-    <script>
+    {{-- <script>
         tinymce.init({
             selector: '#contentEditor'
         });
 
-    </script>
+    </script> --}}
     <style>
         .tox-tinymce,
         .tox-editor-container,
@@ -220,8 +220,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         
-        <script src="https://cdn.tiny.cloud/1/9mvhx4krgp9y3cvg8gpjtmzvef4ohg1s3d7htwbujtpqxul7/tinymce/6/tinymce.min.js"
-            referrerpolicy="origin"></script>
+        <script src="https://cdn.tiny.cloud/1/e2kzbf6ud3uhuc9nqgzvsagy9crvxasztgheaapn2rayyfvf/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
 
         <script>
             let tinyInitialized = false;

@@ -141,8 +141,31 @@
     </script>
 @endif
 
-
 <script>
+    function initSalamEditor() {
+        if (typeof tinymce === 'undefined') {
+            console.warn('TinyMCE belum loaded');
+            return;
+        }
+
+        if (tinymce.get('salamEditor')) return;
+
+        tinymce.init({
+            selector: '#salamEditor',
+            height: 300,
+            menubar: true,
+            plugins: 'lists link image table code',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code',
+            branding: false,
+            promotion: false
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initSalamEditor();
+    });
+</script>
+{{-- <script>
     tinymce.init({
         selector: '#salamEditor',
         height: 300,
@@ -150,7 +173,7 @@
         plugins: 'lists link image table code',
         toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
     });
-</script>
+</script> --}}
 
 <script>
     function openFileManager() {
