@@ -110,10 +110,10 @@
                                 <label>Jenjang</label>
                                 <select id="jenjang" name="jenjang" class="form-control">
                                     <option value="">-- Pilih --</option>
-                                    <option>KB</option>
-                                    <option>SD</option>
-                                    <option>SMP</option>
-                                    <option>SMA</option>
+                                    <option>TK/KB/PKBM</option>
+                                    <option>SD/MI</option>
+                                    <option>SMP/MTS</option>
+                                    <option>SMA/SMK</option>
                                 </select>
                             </div>
 
@@ -292,38 +292,157 @@
     }
 
     const wilayahPapuaBarat = {
-        "Manokwari": [
-            "Amban",
-            "Sanggeng",
-            "Wosi",
-            "Pasir Putih"
+        "Ayau": [
+            "Boiseran",
+            "Dornaslos",
+            "Runi",
+            "Yenwaupnor"
         ],
-        "Manokwari Barat": [
-            "Padarni",
-            "Soribo",
-            "Brawijaya"
+
+        "Batanta Selatan": [
+            "Amdui",
+            "Yenanas",
+            "Yesner"
         ],
-        "Manokwari Timur": [
-            "Anday",
-            "Arowi",
-            "Warmare"
+
+        "Batanta Utara": [
+            "Arefi",
+            "Warmaker",
+            "Yensawai"
         ],
-        "Manokwari Selatan": [
-            "Ransiki",
-            "Oransbari",
-            "Tahota"
+
+        "Kepulauan Ayau": [
+            "Abidon",
+            "Meos Bekwan",
+            "Yenbekaki"
         ],
-        "Fakfak": [
-            "Danaweria",
-            "Wrikapal",
-            "Kampung Sekru"
+
+        "Kepulauan Sembilan": [
+            "Tikus",
+            "Pulau Sembilan"
         ],
-        "Kaimana": [
-            "Krooy",
-            "Trikora",
-            "Coa"
+
+        "Kofiau": [
+            "Balal",
+            "Deer",
+            "Dibalal",
+            "Mikiran",
+            "Tolobi"
+        ],
+
+        "Kota Waisai": [
+            "Kelurahan Sapordanco",
+            "Kelurahan Warmasen",
+            "Kelurahan Waisai Kota",
+            "Kelurahan Bonkawir"
+        ],
+
+        "Meos Mansar": [
+            "Arborek",
+            "Kurkapa",
+            "Sawinggrai",
+            "Yenbuba"
+        ],
+
+        "Misool Utara": [
+            "Aduwei",
+            "Atkari",
+            "Salafen",
+            "Solal"
+        ],
+
+        "Misool Barat": [
+            "Biga",
+            "Gamta",
+            "Lilinta",
+            "Magey"
+        ],
+
+        "Misool Selatan": [
+            "Dabatan",
+            "Fafanlap",
+            "Usaha Jaya",
+            "Yellu"
+        ],
+
+        "Misool Timur": [
+            "Audam",
+            "Folley",
+            "Tomolol"
+        ],
+
+        "Salawati Barat": [
+            "Kalobo",
+            "Samate",
+            "Solol"
+        ],
+
+        "Salawati Tengah": [
+            "Sakabu",
+            "Waibeem",
+            "Wailen"
+        ],
+
+        "Salawati Utara": [
+            "Kalwal",
+            "Samate"
+        ],
+
+        "Supnin": [
+            "Kapadiri",
+            "Rauki",
+            "Supnin"
+        ],
+
+        "Teluk Mayalibit": [
+            "Beo",
+            "Mumes",
+            "Warsambin"
+        ],
+
+        "Tiplol Mayalibit": [
+            "Go",
+            "Kabilol",
+            "Lapintal",
+            "Lupintal"
+        ],
+
+        "Waigeo Barat": [
+            "Bianci",
+            "Mutus",
+            "Selpele",
+            "Waisilip"
+        ],
+
+        "Waigeo Barat Kepulauan": [
+            "Gag",
+            "Magey",
+            "Pam"
+        ],
+
+        "Waigeo Selatan": [
+            "Saonek",
+            "Saporkren",
+            "Yenbeser"
+        ],
+
+        "Waigeo Timur": [
+            "Yensner",
+            "Urbinasopen"
+        ],
+
+        "Waigeo Utara": [
+            "Kabare",
+            "Kapadiri",
+            "Rauki"
+        ],
+
+        "Warwarbomi": [
+            "Warwarbomi"
         ]
     };
+
+
 
     $(document).ready(function () {
 

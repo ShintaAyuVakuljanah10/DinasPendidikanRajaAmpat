@@ -21,6 +21,7 @@ use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\BackEnd\ProfileController;
 use App\Http\Controllers\BackEnd\DownloadController;
 use App\Http\Controllers\Backend\SekolahController;
+use App\Http\Controllers\Frontend\SekolahFrontendController;
 
 
 // Route::get('/', function () {
@@ -205,9 +206,10 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::delete('/sekolah/{id}', [SekolahController::class, 'destroy'])->name('sekolah.destroy');
 });
 
-// Route::get('/kategori', [KategoriController::class, 'index']);
-// Route::get('/dokumen-publik', [DokumenPublikController::class, 'index']);
+Route::get('/dokumen-publik', [FileManagerController::class, 'front']);
 Route::get('/unduh/{id}', [\App\Http\Controllers\Frontend\DownloadController::class, 'download'])
-    ->name('download.file');
+->name('download.file');
 Route::get('/kategori', [FrontendController::class, 'kategori']);
+Route::get('/{jenjang}', [SekolahFrontendController::class, 'index'])->where('jenjang', 'paudtkpkbm|sdmi|smpmts|smasmk')->name('sekolah.jenjang');
+Route::get('/sekolah/detail/{id}', [SekolahFrontendController::class, 'detail'])->name('sekolah.detail');
 Route::get('/{slug}', [FrontendController::class, 'show']);
