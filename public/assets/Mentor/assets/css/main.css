@@ -887,8 +887,8 @@ section,
 }
 
 #hero .carousel-item {
-  background-size: cover !important;
-  background-position: center center !important;
+  background-size: contain !important;
+  background-position: center !important;
   background-repeat: no-repeat;
   position: relative;
   z-index: 0;
@@ -2229,8 +2229,6 @@ section,
     line-height: 1.2;
     margin: 0;
 }
-
-
 
 
 

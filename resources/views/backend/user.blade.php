@@ -13,7 +13,7 @@
             <div class="card-body">
                 <h3 class="font-weight-bold mb-3">Data User</h3>
                 <div class="table-responsive">
-                    <table class="table table-hover" id="usersTable">
+                    <table class="table table-hover align-middle text-center" id="usersTable">
                         <thead classs="text-center">
                             <tr>
                                 <th width="5%">No</th>

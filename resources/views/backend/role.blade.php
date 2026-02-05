@@ -14,7 +14,7 @@
             <h3 class="font-weight-bold mb-3">Data Role</h3>
 
             <div class="table-responsive">
-                <table class="table table-hover" id="rolesTable">
+                <table class="table table-hover align-middle text-center" id="rolesTable">
                     <thead>
                         <tr>
                             <th width="5%">No</th>

@@ -426,3 +426,12 @@ $(document).on('click', '.delete-post', function () {
 
 </script>
 @endpush
+@push('styles')
+<style>
+#postTable.dataTable thead th,
+#postTable.dataTable tbody td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+</style>
+@endpush

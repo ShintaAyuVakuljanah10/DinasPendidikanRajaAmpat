@@ -27,9 +27,11 @@
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('assets/skydash/css/vertical-layout-light/style.css') }}">
+    @stack('styles')
+
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" />
-
+    
     {{-- <script>
         tinymce.init({
             selector: '#contentEditor'

@@ -14,7 +14,7 @@
             <h3 class="font-weight-bold mb-3">Data Banner</h3>
 
             <div class="table-responsive">
-                <table class="table table-hover" id="bannerTable">
+                <table class="table table-hover align-middle" id="bannerTable">
                     <thead class="text-center">
                         <tr>
                             <th width="5%">No</th>
@@ -153,7 +153,7 @@ $(document).ready(function () {
             bannerTable.row.add([
                 i + 1,
                 item.nama,
-                `<img src="/storage/${item.gambar}" width="200" class="img-thumbnail">`,
+                `<img src="/storage/${item.gambar}" style="width:120px; height:60px; object-fit:cover; border-radius:0;">`,
                 item.urutan,
                 `
                 <div class="btn-group btn-group-sm" role="group">
@@ -357,3 +357,23 @@ $(document).ready(function () {
     }
 </script>
 @endpush
+@push('styles')
+<style>
+#bannerTable.dataTable thead th,
+#bannerTable.dataTable tbody td {
+    vertical-align: middle !important;
+    text-align: center;
+}
+
+#bannerTable td:nth-child(2),
+#bannerTable th:nth-child(2) {
+    text-align: left !important;
+}
+
+#bannerTable td img {
+    display: block;
+    margin: auto;
+}
+</style>
+@endpush
+

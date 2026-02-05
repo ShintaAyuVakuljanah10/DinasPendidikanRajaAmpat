@@ -9,43 +9,48 @@
     <!-- Hero Section -->
 
     @if(isset($banners) && $banners->count())
-      <section id="hero" class="d-flex align-items-center">
+        <section id="hero" class="d-flex align-items-center">
 
-          <div id="heroCarousel"
+            <div id="heroCarousel"
               class="carousel slide carousel-fade w-100"
               data-bs-ride="carousel"
               data-bs-interval="4000">
 
-              <div class="carousel-inner">
+                <div class="carousel-inner">
 
-                  @foreach ($banners as $key => $banner)
-                  <div class="carousel-item {{ $loop->first ? 'active' : '' }}"
-                        style="background-image: url('{{ asset('storage/'.$banner->gambar) }}');">
-                  </div>
-                  @endforeach
+                    @foreach ($banners as $key => $banner)
+                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}"
+                            style="
+                                background-image: url('{{ asset('storage/'.$banner->gambar) }}');
+                                background-size: contain;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                            ">
+                        </div>
+                    @endforeach
 
-              </div>
+                </div>
 
               <!-- Tombol Prev -->
-              <button class="carousel-control-prev"
-                      type="button"
-                      data-bs-target="#heroCarousel"
-                      data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon"></span>
-              </button>
+                <button class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#heroCarousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
 
               <!-- Tombol Next -->
-              <button class="carousel-control-next"
-                      type="button"
-                      data-bs-target="#heroCarousel"
-                      data-bs-slide="next">
-                  <span class="carousel-control-next-icon"></span>
-              </button>
+                <button class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#heroCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
 
-          </div>
+            </div>
 
-      </section>
-      @endif
+        </section>
+    @endif
 
 
 
@@ -253,7 +258,7 @@
 
                         <img src="{{ asset('storage/'.$post->gambar) }}"
                             class="img-fluid"
-                            style="height:180px; width:100%; object-fit:cover;"
+                            style="height:180px; width:100%; object-fit:contain;"
                             alt="{{ $post->judul }}">
 
                         <div class="course-content">
