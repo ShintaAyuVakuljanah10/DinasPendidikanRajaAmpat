@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Backend\Banner;
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\BackEnd\Sekolah;
 
 class DashboardController extends Controller
 {
@@ -22,6 +23,18 @@ class DashboardController extends Controller
 
         $categories = Category::orderBy('nama', 'asc')->get();
 
-        return view('frontend.dashboard', compact('banners', 'posts', 'categories'));
+        $totalSekolah = Sekolah::count();
+        $totalSiswa   = Sekolah::sum('jumlah_siswa');
+        $totalGuru    = Sekolah::sum('jumlah_guru');
+
+        return view('frontend.dashboard', 
+        compact(
+            'banners', 
+            'posts', 
+            'categories',
+            'totalSekolah',
+            'totalSiswa',
+            'totalGuru'
+        ));
     }
 }

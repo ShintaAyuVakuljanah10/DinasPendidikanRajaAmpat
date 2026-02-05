@@ -88,110 +88,60 @@
 
     <!-- Counts Section -->
     <section id="counts" class="section counts light-background">
-
         <div class="container" data-aos="fade-up" data-aos-delay="100">
-
             <div class="row gy-4">
-
-                <div class="col-lg-3 col-md-6">
+    
+                <!-- SISWA -->
+                <div class="col-lg-4 col-md-6">
                     <div class="stats-item text-center w-100 h-100">
-                        <span data-purecounter-start="0" data-purecounter-end="1232" data-purecounter-duration="1"
-                            class="purecounter"></span>
-                        <p>Students</p>
+                        <span
+                            data-purecounter-start="0"
+                            data-purecounter-end="{{ $totalSiswa }}"
+                            data-purecounter-duration="1"
+                            class="purecounter">
+                        </span>
+                        <p>Total Siswa</p>
                     </div>
-                </div><!-- End Stats Item -->
-
-                <div class="col-lg-3 col-md-6">
+                </div>
+    
+                <!-- GURU -->
+                <div class="col-lg-4 col-md-6">
                     <div class="stats-item text-center w-100 h-100">
-                        <span data-purecounter-start="0" data-purecounter-end="64" data-purecounter-duration="1"
-                            class="purecounter"></span>
-                        <p>Courses</p>
+                        <span
+                            data-purecounter-start="0"
+                            data-purecounter-end="{{ $totalGuru }}"
+                            data-purecounter-duration="1"
+                            class="purecounter">
+                        </span>
+                        <p>Total Guru</p>
                     </div>
-                </div><!-- End Stats Item -->
-
-                <div class="col-lg-3 col-md-6">
+                </div>
+    
+                <!-- SEKOLAH -->
+                <div class="col-lg-4 col-md-6">
                     <div class="stats-item text-center w-100 h-100">
-                        <span data-purecounter-start="0" data-purecounter-end="42" data-purecounter-duration="1"
-                            class="purecounter"></span>
-                        <p>Events</p>
+                        <span
+                            data-purecounter-start="0"
+                            data-purecounter-end="{{ $totalSekolah }}"
+                            data-purecounter-duration="1"
+                            class="purecounter">
+                        </span>
+                        <p>Total Sekolah</p>
                     </div>
-                </div><!-- End Stats Item -->
-
-                <div class="col-lg-3 col-md-6">
-                    <div class="stats-item text-center w-100 h-100">
-                        <span data-purecounter-start="0" data-purecounter-end="24" data-purecounter-duration="1"
-                            class="purecounter"></span>
-                        <p>Trainers</p>
-                    </div>
-                </div><!-- End Stats Item -->
-
+                </div>
+    
             </div>
-
         </div>
-
-    </section><!-- /Counts Section -->
+    </section>
+    <!-- /Counts Section -->
 
     <!-- Why Us Section -->
     <section id="why-us" class="section why-us">
 
-        <div class="container">
+        
 
-            <div class="row gy-4">
-
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="why-box">
-                        <h3>Why Choose Our Products?</h3>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                            incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit
-                            Asperiores dolores sed et. Tenetur quia eos. Autem tempore quibusdam vel necessitatibus
-                            optio ad corporis.
-                        </p>
-                        <div class="text-center">
-                            <a href="#" class="more-btn"><span>Learn More</span> <i
-                                    class="bi bi-chevron-right"></i></a>
-                        </div>
-                    </div>
-                </div><!-- End Why Box -->
-
-                <div class="col-lg-8 d-flex align-items-stretch">
-                    <div class="row gy-4" data-aos="fade-up" data-aos-delay="200">
-
-                        <div class="col-xl-4">
-                            <div class="icon-box d-flex flex-column justify-content-center align-items-center">
-                                <i class="bi bi-clipboard-data"></i>
-                                <h4>Corporis voluptates officia eiusmod</h4>
-                                <p>Consequuntur sunt aut quasi enim aliquam quae harum pariatur laboris nisi ut
-                                    aliquip</p>
-                            </div>
-                        </div><!-- End Icon Box -->
-
-                        <div class="col-xl-4" data-aos="fade-up" data-aos-delay="300">
-                            <div class="icon-box d-flex flex-column justify-content-center align-items-center">
-                                <i class="bi bi-gem"></i>
-                                <h4>Ullamco laboris ladore pan</h4>
-                                <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                                    deserunt</p>
-                            </div>
-                        </div><!-- End Icon Box -->
-
-                        <div class="col-xl-4" data-aos="fade-up" data-aos-delay="400">
-                            <div class="icon-box d-flex flex-column justify-content-center align-items-center">
-                                <i class="bi bi-inboxes"></i>
-                                <h4>Labore consequatur incidid dolore</h4>
-                                <p>Aut suscipit aut cum nemo deleniti aut omnis. Doloribus ut maiores omnis facere
-                                </p>
-                            </div>
-                        </div><!-- End Icon Box -->
-
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section><!-- /Why Us Section -->
+    </section>
+    <!-- /Why Us Section -->
 
     <!-- Features Section -->
     <section id="kategori" class="features section" style="scroll-margin-top: 90px;">
