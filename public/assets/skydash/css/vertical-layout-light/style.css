@@ -13425,7 +13425,7 @@ input[type="button"].btn-block {
 
 .navbar-nav {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
@@ -30591,6 +30591,15 @@ div.tagsinput span.tag a {
     display: none;
   }
 }
+.custom-brand span {
+    margin-top: -4px; /* geser teks naik */
+}
+.navbar-brand img {
+    position: relative;
+    top: -5px;
+}
+
+
 
 
 /*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */

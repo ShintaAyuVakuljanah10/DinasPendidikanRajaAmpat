@@ -58,7 +58,8 @@ Route::get('/berita/kategori/{slug}', [BeritaController::class, 'kategori'])
 
 Route::middleware('auth')->group(function () {
     Route::get('/backend/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::put('/backend/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/backend/profile/update',[ProfileController::class, 'update'])->name('profile.update');
+
 });
     
     
@@ -70,8 +71,6 @@ Route::middleware(['auth', 'log.agent'])->group(function () {
     Route::post('/users/{id}', [UserController::class, 'update']);
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'delete'])->name('user.hapus');
-
-    
 });
 Route::prefix('roles')
     ->middleware(['auth', 'log.agent'])

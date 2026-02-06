@@ -58,14 +58,18 @@
         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                    <img src="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" alt="logo"
-                        style="width:30px;height:auto;margin-right:6px;">
-                    <span style="color:#000;font-size:14px;font-weight:500;">
-                        CMS DISDIK
+                    <img src="{{ $appSetting?->logo
+                        ? asset('storage/' . $appSetting->logo)
+                        : asset('assets/skydash/images/default-logo.png') }}"
+                        alt="Logo Aplikasi"
+                        style="width:50px;height:50px;object-fit:contain;">
+
+                    <span class="mb-0" style="color:#000;font-size:14px;font-weight:500;">
+                        {{ $appSetting->nama_aplikasi ?? 'Nama Aplikasi' }}
                     </span>
                 </a>
-
             </div>
+
             <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="icon-menu"></span>
@@ -79,7 +83,8 @@
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                            <img src="{{ asset('assets/skydash/images/faces/face28.jpg') }}" alt="profile" />
+                            <img src="{{ asset('storage/' . auth()->user()->foto) }}"
+                                alt="profile"/>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">

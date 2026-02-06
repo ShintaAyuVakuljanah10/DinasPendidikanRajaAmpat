@@ -15,8 +15,8 @@ class BeritaController extends Controller
         $posts = Post::where('status', 'published')
             ->orderBy('tanggal_publish', 'desc')
             ->paginate(12);
-
-        return view('frontend.berita', compact('posts'));
+        $categories = Category::orderBy('nama', 'asc')->get();
+        return view('frontend.berita', compact('posts', 'categories'));
     }
 
     public function show($slug)

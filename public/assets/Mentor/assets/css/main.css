@@ -917,9 +917,13 @@ section,
 }
 .course-content h3 {
     font-size: 16px;
-    line-height: 1.3;
-    height: 90px;   /* 2 baris */
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;   /* jumlah baris */
+    -webkit-box-orient: vertical;
+
     overflow: hidden;
+    min-height: 67px; /* biar tinggi card sama */
 }
 
 .course-content .description {

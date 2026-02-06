@@ -435,3 +435,4 @@ $(document).on('click', '.delete-post', function () {
 }
 </style>
 @endpush
+

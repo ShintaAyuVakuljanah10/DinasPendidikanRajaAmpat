@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,12 @@ class PostController extends Controller
 
     public function data(Request $request)
     {
+        $user = Auth::user();
         $query = Post::with('kategori')->latest();
+
+        if ($user->role->name !== 'admin') {
+            $query->where('user_id', $user->id);
+        }
 
         if ($request->status) {
             $query->where('status', $request->status);
@@ -74,6 +80,11 @@ class PostController extends Controller
         ]);
 
         $post = Post::findOrFail($id);
+        $user = Auth::user();
+
+        if ($user->role->name !== 'admin' && $post->user_id !== $user->id) {
+            abort(403, 'Tidak punya akses mengedit post ini');
+        }
 
         $post->judul           = $request->judul;
         $post->slug            = Str::slug($request->judul);
@@ -111,7 +122,14 @@ class PostController extends Controller
 
     public function destroy($id)
     {
-        Post::findOrFail($id)->delete();
+        $post = Post::findOrFail($id);
+        $user = Auth::user();
+
+        if ($user->role->name !== 'admin' && $post->user_id !== $user->id) {
+            abort(403, 'Tidak punya akses menghapus post ini');
+        }
+
+        $post->delete();
 
         return response()->json([
             'success' => true,

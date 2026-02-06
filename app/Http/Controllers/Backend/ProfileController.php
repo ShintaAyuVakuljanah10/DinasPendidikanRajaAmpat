@@ -25,7 +25,7 @@ class ProfileController extends Controller
             'name'     => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'password' => 'nullable|min:6',
-            'foto'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $data = [
@@ -41,14 +41,13 @@ class ProfileController extends Controller
         // update foto jika upload
         if ($request->hasFile('foto')) {
 
-            // hapus foto lama
             if ($user->foto && Storage::disk('public')->exists($user->foto)) {
                 Storage::disk('public')->delete($user->foto);
             }
 
-            $data['foto'] = $request->file('foto')
-                ->store('profile', 'public');
+            $data['foto'] = $request->file('foto')->store('users', 'public');
         }
+
 
         $user->update($data);
 

@@ -56,7 +56,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Foto</label>
+                        <label class="form-label">
+                            Foto<small class="text-muted"> (Pakai format jpg,jpeg,png,webp)</small>
+                        </label>
                         <input type="file" name="foto" class="form-control">
                     </div>
 

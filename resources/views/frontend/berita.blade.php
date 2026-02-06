@@ -14,8 +14,46 @@
     </div>
 
     <!-- Berita Section -->
+    {{-- <section id="kategori" class="features section" style="scroll-margin-top: 90px;">
+        <div class="container section-title mt-4" data-aos="fade-up">
+            <h2>Kategori</h2>
+        </div>
+
+
+        <div class="container">
+
+            <div class="row gy-4">
+
+                @foreach ($categories as $index => $kategori)
+                    <div class="col-lg-3 col-md-4"
+                        data-aos="fade-up"
+                        data-aos-delay="{{ ($index + 1) * 100 }}">
+
+                        <div class="features-item position-relative">
+
+                            <i class="bi {{ $kategori->icon ?? 'bi-folder' }}" 
+                                style="color:#0d6efd; font-size:24px;"></i>
+
+                            <h3>
+                                <a href="{{ route('berita.kategori', $kategori->slug) }}"
+                                class="stretched-link">
+                                    {{ $kategori->nama }}
+                                </a>
+                            </h3>
+
+                        </div>
+                    </div>
+                @endforeach
+
+            </div>
+
+
+        </div>
+
+    </section> --}}
     <section id="courses" class="courses section">
         <div class="container">
+            
 
             <div class="row">
             @foreach ($posts as $post)
@@ -56,9 +94,9 @@
             </div>
 
             <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4">
+            {{-- <div class="d-flex justify-content-center mt-4">
             {{ $posts->links() }}
-            </div>
+            </div> --}}
 
         </div>
     </section>
