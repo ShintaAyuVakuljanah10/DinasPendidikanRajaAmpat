@@ -43,9 +43,6 @@ class Menu extends Model
             ->filter(function ($name) use ($search) {
                 if (!$name) return false;
 
-                // optional filter backend only
-                // if (!str_starts_with($name, 'backend.')) return false;
-
                 if ($search) {
                     return str_contains(strtolower($name), strtolower($search));
                 }

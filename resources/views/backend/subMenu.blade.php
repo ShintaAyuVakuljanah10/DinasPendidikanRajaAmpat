@@ -28,9 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- <tr>
-                        <td colspan="7" class="text-center">Loading...</td>
-                    </tr> --}}
+                    
                 </tbody>
             </table>
 
@@ -132,7 +130,7 @@
                 ]
             });
 
-            loadSubMenu(); // ⬅️ panggil SETELAH init
+            loadSubMenu(); 
         });
 
 
@@ -181,7 +179,6 @@
             });
         }
 
-        // SUBMIT
         $('#formSubMenu').submit(function (e) {
             e.preventDefault();
 
@@ -212,7 +209,6 @@
             });
         });
 
-        // EDIT
         $(document).on('click', '.btn-edit', function () {
             let id = $(this).data('id');
 
@@ -229,7 +225,6 @@
             });
         });
 
-        // DELETE
         $(document).on('click', '.btn-delete', function () {
             let id = $(this).data('id');
 

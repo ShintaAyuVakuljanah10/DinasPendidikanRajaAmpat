@@ -30598,6 +30598,15 @@ div.tagsinput span.tag a {
     position: relative;
     top: -5px;
 }
+.file-card{
+    transition: 0.3s;
+}
+
+.file-card:hover{
+    transform: translateY(-5px);
+    background:#f8f9fa;
+}
+
 
 
 

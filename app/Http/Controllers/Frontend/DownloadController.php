@@ -13,7 +13,6 @@ class DownloadController extends Controller
     {
         $page = Pages::where('slug', $slug)->firstOrFail();
     
-        // ambil kode jenjang dari slug
         if (str_contains($slug, 'sd')) {
             $jenjang = 'SD/MI';
         } elseif (str_contains($slug, 'smp')) {
@@ -39,7 +38,6 @@ class DownloadController extends Controller
 
         $path = storage_path('app/public/' . $file->file);
 
-        // bersihin judul biar aman jadi nama file
         $safeName = str_replace(['/', '\\'], '-', $file->title);
 
         $extension = pathinfo($file->file, PATHINFO_EXTENSION);

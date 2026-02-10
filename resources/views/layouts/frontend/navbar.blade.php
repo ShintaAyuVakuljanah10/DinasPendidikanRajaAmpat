@@ -33,7 +33,6 @@
                         </li>
         
 
-                {{-- MENU DENGAN SUBMENU --}}
                 @else
                 @php
                 $isActiveParent = $page->children->contains(function ($child) {

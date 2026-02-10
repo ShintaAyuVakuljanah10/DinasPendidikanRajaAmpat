@@ -5,8 +5,6 @@
 @section('content')
 
 <div class="container">
-
-    {{-- FILTER --}}
     <div class="row mb-3 align-items-center g-3">
         <div class="col-md-8">
             <div class="row g-2">
@@ -45,7 +43,6 @@
         </div>
     </div>
 
-    {{-- TABLE --}}
     <div class="card">
         <div class="card-body">
             <h3 class="fw-bold mb-3">Data Sekolah</h3>
@@ -75,8 +72,6 @@
         </div>
     </div>
 </div>
-
-{{-- MODAL --}}
 <div class="modal fade" id="modalSekolah" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <form id="formSekolah">
@@ -91,7 +86,6 @@
 
                 <div class="modal-body">
 
-                    {{-- DATA UTAMA --}}
                     <div class="card mb-3">
                         <div class="card-header fw-bold">Informasi Sekolah</div>
                         <div class="card-body row g-3">
@@ -148,7 +142,6 @@
                         </div>
                     </div>
 
-                    {{-- KOORDINAT --}}
                     <div class="card mb-3">
                         <div class="card-header fw-bold">Koordinat Lokasi</div>
                         <div class="card-body row g-3">
@@ -163,8 +156,6 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- DATA STATISTIK --}}
                     <div class="card">
                         <div class="card-header fw-bold">Data Statistik</div>
                         <div class="card-body row g-3">
@@ -446,14 +437,11 @@
 
     $(document).ready(function () {
 
-        // isi dropdown kecamatan
         Object.keys(wilayahPapuaBarat).forEach(function (kecamatan) {
             $('#kecamatan').append(
                 `<option value="${kecamatan}">${kecamatan}</option>`
             );
         });
-
-        // ketika kecamatan berubah
         $('#kecamatan').on('change', function () {
             let kecamatan = $(this).val();
             let desaSelect = $('#desa');
@@ -536,8 +524,6 @@
         $('.modal-title').text('Tambah Sekolah');
     });
 
-
-    // EDIT
     $(document).on('click', '.edit', function () {
         let id = $(this).data('id');
 
@@ -570,7 +556,6 @@
         });
     });
 
-    // DELETE
     $(document).on('click', '.delete', function () {
         let id = $(this).data('id');
 

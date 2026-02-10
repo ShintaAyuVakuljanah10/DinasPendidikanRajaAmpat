@@ -57,9 +57,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- <tr>
-                            <td colspan="7" class="text-center">Loading...</td>
-                        </tr> --}}
+
                     </tbody>
 
                 </table>
@@ -67,7 +65,6 @@
         </div>
     </div>
 
-    <!-- MODAL -->
     <div class="modal fade" id="modalPage" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <form id="formPage" class="w-100">
@@ -75,8 +72,6 @@
 
                 <input type="hidden" name="id" id="page_id">
                 <input type="hidden" name="active" id="active" value="1">
-                {{-- <input type="hidden" name="type" id="type"> --}}
-                {{-- <input type="hidden" name="parent_id" id="parent_id"> --}}
 
                 <div class="modal-content rounded-4">
                     <div class="modal-header">
@@ -89,7 +84,6 @@
                     <div class="modal-body">
                         <div class="row g-4">
 
-                            <!-- CONTENT -->
                             <div class="col-lg-8">
                                 <div class="card">
                                     <div class="card-header fw-bold">Content</div>
@@ -99,7 +93,6 @@
                                 </div>
                             </div>
 
-                            <!-- SETTINGS -->
                             <div class="col-lg-4">
                                 <div class="vstack gap-3">
 
@@ -206,8 +199,8 @@
                 let type = $('#typeSelect').val();
                 let active = $('#activeSelect').val();
 
-                let colType = data[2]; // kolom Type
-                let colActive = $('<div>').html(data[4]).text().trim(); // Yes / No
+                let colType = data[2];
+                let colActive = $('<div>').html(data[4]).text().trim();
 
                 if (type && colType !== type) {
                     return false;
@@ -276,11 +269,9 @@
 
             $.get(`/backend/pages/${id}`, function (data) {
 
-                // Judul & tombol
                 $('#modalPage .modal-title').text('Edit Page');
                 $('#btnSave').text('Update');
 
-                // Isi field basic
                 $('#page_id').val(data.id);
                 $('#title').val(data.title);
                 $('#slug').val(data.slug);
@@ -293,11 +284,9 @@
                     tinymce.get('contentEditor').setContent(data.content ?? '');
                 }
 
-                // ✅ TYPE & PARENT
                 if (data.type === 'Sub Pages') {
                     $('#parentWrapper').show();
 
-                    // load parent + select parent_id yg tersimpan
                     loadParentPages(data.parent_id);
                 } else {
                     $('#parentWrapper').hide();
@@ -308,9 +297,6 @@
             });
         });
 
-
-        // ================= DELETE PAGE =================
-        // DELETE PAGE
         $(document).on('click', '.btn-delete', function () {
             let id = $(this).data('id');
 
@@ -347,8 +333,6 @@
                 }
             });
         });
-
-        // PAGE UP
         $(document).on('click', '.up', function (e) {
             e.preventDefault();
 
@@ -370,7 +354,6 @@
         });
 
 
-        // PAGE DOWN
         $(document).on('click', '.down', function (e) {
             e.preventDefault();
 
@@ -404,23 +387,19 @@
             });
         }
 
-
-        // Ketika Type berubah
         $(document).on('change', '#type', function () {
             const value = $(this).val();
 
             if (value === 'Sub Pages') {
                 $('#parentWrapper').slideDown();
-                // Jika ada parent_id yang sudah tersimpan (edit), kirim sebagai selectedId
                 let selectedId = $('#parent_id').val() || null;
                 loadParentPages(selectedId);
             } else {
                 $('#parentWrapper').slideUp();
-                $('#parent_id').val(''); // reset parent
+                $('#parent_id').val('');
             }
         });
 
-        // TYPE SELECT
         $(document).on('click', '.type-select', function (e) {
             e.preventDefault();
 
@@ -458,17 +437,15 @@
             }
         });
 
-        // PARENT SELECT
         $(document).on('click', '.parent-select', function (e) {
             e.preventDefault();
 
             let id = $(this).data('id');
 
-            $('#parent_id').val(id); // INI PENTING
+            $('#parent_id').val(id);
             $('#parentText').text($(this).text());
         });
 
-        // DROPDOWN SELECT (ACTIVE)
         $(document).on('click', '.dropdown-select', function (e) {
             e.preventDefault();
 
@@ -479,7 +456,6 @@
             $('#' + target + 'Text').text($(this).text());
         });
 
-        // OPEN / CLOSE DROPDOWN
         $('.dropdown-btn').on('click', function (e) {
             e.stopPropagation();
 
@@ -489,7 +465,6 @@
 
 
 
-        // SELECT ITEM
         $(document).on('click', '.dropdown-select', function (e) {
             e.preventDefault();
 
@@ -505,7 +480,6 @@
 
 
 
-        // SEARCH
         $(document).on('keyup', '.dropdown-search', function () {
             let keyword = $(this).val().toLowerCase();
 
@@ -514,30 +488,24 @@
             });
         });
 
-        // CLICK OUTSIDE → CLOSE
         $(document).on('click', function () {
             $('.manual-dropdown').removeClass('show');
         });
 
-        // RESET MODAL SAAT TOMBOL "TAMBAH PAGE" DIKLIK
         $('[data-target="#modalPage"]').click(function () {
-            // reset form
             $('#formPage')[0].reset();
-            $('#page_id').val(''); // kosongkan id
-            $('#type').val(''); // reset type
-            $('#active').val('1'); // default active
-            $('#parent_id').val(''); // reset parent
-            $('#parentWrapper').hide(); // sembunyikan parent
-            $('#modalPage .modal-title').text('Tambah Page'); // judul modal
-            $('#slug').val(''); // reset slug
+            $('#page_id').val('');
+            $('#type').val('');
+            $('#active').val('1');
+            $('#parent_id').val(''); 
+            $('#parentWrapper').hide();
+            $('#modalPage .modal-title').text('Tambah Page'); 
+            $('#slug').val(''); 
             if (window.tinymce && tinymce.get('contentEditor')) {
                 tinymce.get('contentEditor').setContent('');
             }
-            // reset editor
         });
-
-        // SUBMIT FORM (SAMA KAYA USER)
-        // SUBMIT FORM PAGE
+        
         $('#formPage').submit(function (e) {
             e.preventDefault();
 
@@ -548,7 +516,6 @@
 
             let formData = new FormData(this);
 
-            // pastikan TinyMCE ikut terkirim
             if (window.tinymce && tinymce.get('contentEditor')) {
                 formData.set('content', tinymce.get('contentEditor').getContent());
             } else {

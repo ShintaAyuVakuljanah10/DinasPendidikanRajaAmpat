@@ -18,19 +18,9 @@
 
                 <div class="card shadow-sm border-0">
                     <div class="card-body">
-
-                        {{-- Tanggal --}}
-                        <div class="d-flex justify-content-end mb-3">
-                            <small class="text-muted">
-                                {{ $page->created_at->format('d/m/Y H:i') }}
-                            </small>
-                        </div>
-
-                        {{-- Konten --}}
                         <div class="lh-lg">
                             {!! $page->content !!}
                         </div>
-
                     </div>
                 </div>
 

@@ -5,7 +5,6 @@
 @section('content')
 <div class="row">
 
-    <!-- FOTO BESAR (KIRI) -->
     <div class="col-md-4">
         <div class="card text-center">
             <div class="card-body">
@@ -23,7 +22,6 @@
         </div>
     </div>
 
-    <!-- FORM (KANAN) -->
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">

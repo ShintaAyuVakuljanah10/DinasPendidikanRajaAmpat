@@ -14,8 +14,6 @@
 
 <section class="download-page">
     <div class="container">
-
-        {{-- konten dari editor --}}
         <div class="page-content">
             {!! $page->content !!}
         </div>
@@ -34,7 +32,6 @@
                     <div class="card h-100 shadow-sm">
                         <div class="card-body d-flex align-items-center gap-3">
 
-                            {{-- ICON FILE --}}
                             <div class="file-icon fs-1 text-primary">
                                 @if(in_array($ext, ['pdf']))
                                 <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
@@ -49,7 +46,6 @@
                                 @endif
                             </div>
 
-                            {{-- INFO FILE --}}
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">{{ $file->title }}</h6>
                                 <small class="text-muted">
@@ -58,7 +54,6 @@
                                 </small>
                             </div>
 
-                            {{-- BUTTON --}}
                             <a href="{{ route('download.file', $file->id) }}"
                                 class="btn btn-sm btn-outline-primary">
                                  <i class="bi bi-download"></i> Unduh

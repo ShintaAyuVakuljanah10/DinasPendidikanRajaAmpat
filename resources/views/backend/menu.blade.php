@@ -165,7 +165,6 @@
 
         $(document).ready(function () {
 
-            // INIT DATATABLE (HARUS PERTAMA)
             table = $('#menuTable').DataTable({
                 pageLength: 10,
                 ordering: true,
@@ -333,12 +332,10 @@
                 }
             }
 
-            // pertama kali modal dibuka
             $('#modalMenu').on('shown.bs.modal', function () {
                 toggleRouteInput();
             });
 
-            // saat checkbox Sub Menu berubah
             $('#is_submenu').on('change', function () {
                 toggleRouteInput();
             });

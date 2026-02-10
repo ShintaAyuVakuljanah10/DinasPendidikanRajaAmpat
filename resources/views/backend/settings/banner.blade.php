@@ -178,8 +178,6 @@ $(document).ready(function () {
     });
 }
 
-
-    // tambah
     $('#btnAddBanner').click(function () {
         $('#formBanner')[0].reset();
         $('#banner_id').val('');
@@ -188,7 +186,6 @@ $(document).ready(function () {
         $('#modalBanner').modal('show');
     });
 
-    // simpan / update
     $('#formBanner').submit(function (e) {
         e.preventDefault();
         let id = $('#banner_id').val();
@@ -237,7 +234,6 @@ $(document).ready(function () {
         });
     });
 
-    // edit
     $(document).on('click', '.btn-edit', function () {
         let id = $(this).data('id');
 

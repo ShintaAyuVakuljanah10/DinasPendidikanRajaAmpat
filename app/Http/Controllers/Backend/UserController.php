@@ -72,12 +72,10 @@ public function update(Request $request, $id) {
 
     if ($request->hasFile('foto')) {
 
-        // hapus foto lama
         if ($user->foto && Storage::disk('public')->exists($user->foto)) {
             Storage::disk('public')->delete($user->foto);
         }
 
-        // simpan foto baru
         $user->foto = $request->file('foto')->store('users', 'public');
     }
 

@@ -3,7 +3,6 @@
     <div class="container footer-top">
         <div class="row gy-4">
 
-            <!-- ABOUT -->
             <div class="col-lg-4 col-md-6 footer-about">
             <a href="{{ url('/') }}" class="logo d-flex align-items-center mb-2">
                 <span class="sitename">
@@ -33,7 +32,6 @@
             </div>
             </div>
 
-            <!-- LINKS -->
             <div class="col-lg-3 col-md-3 footer-links">
             <h4>Useful Links</h4>
             <ul>
@@ -43,7 +41,6 @@
             </ul>
             </div>
 
-            <!-- EMPTY / FUTURE -->
             <div class="col-lg-3 col-md-3 footer-links">
             <h4>Layanan</h4>
             <ul>

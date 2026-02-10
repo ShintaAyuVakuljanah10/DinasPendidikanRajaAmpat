@@ -20,6 +20,8 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <link href="https://cdn.materialdesignicons.com/6.6.96/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.materialdesignicons.com/7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
@@ -31,13 +33,7 @@
 
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/skydash/images/logoRajaAmpat.ico') }}" />
-    
-    {{-- <script>
-        tinymce.init({
-            selector: '#contentEditor'
-        });
-
-    </script> --}}
+   
     <style>
         .tox-tinymce,
         .tox-editor-container,
@@ -54,7 +50,6 @@
 
 <body>
     <div class="container-scroller">
-        <!-- partial:partials/_navbar.html -->
         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
@@ -89,7 +84,6 @@
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
 
-                            <!-- My Profile -->
                             <a href="{{ route('profile.index') }}" class="dropdown-item">
                                 <i class="ti-user text-primary"></i>
                                 My Profile
@@ -97,7 +91,6 @@
 
                             <div class="dropdown-divider"></div>
 
-                            <!-- Logout -->
                             <a href="#" class="dropdown-item"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="ti-power-off text-danger"></i>
@@ -136,7 +129,6 @@
 
                     @foreach ($menus as $menu)
 
-                    {{-- CEK: menu punya sub yang diizinkan --}}
                     @php
                     $allowedSubs = $menu->submenus ?? collect();
 
@@ -144,16 +136,14 @@
                     ->contains(fn ($r) => request()->routeIs($r));
                     @endphp
 
-                    {{-- MENU TANPA SUB --}}
                     @if ($allowedSubs->isEmpty())
                     <li class="nav-item {{ request()->routeIs($menu->route) ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route($menu->route) }}">
+                        <a class="nav-link" href="{{ !empty($menu->route) ? route($menu->route) : '#' }}">
                             <i class="{{ $menu->icon }} menu-icon"></i>
                             <span class="menu-title">{{ $menu->name }}</span>
                         </a>
                     </li>
 
-                    {{-- MENU DENGAN SUB --}}
                     @else
                     <li class="nav-item {{ $isOpen ? 'active' : '' }}">
                         <a class="nav-link" data-toggle="collapse" href="#menu-{{ $menu->id }}"
@@ -208,7 +198,6 @@
         <!-- container-scroller -->
 
         <!-- plugins:js -->
-        <!-- jQuery (WAJIB PALING ATAS) -->
         <script src="{{ asset('assets/skydash/vendors/js/vendor.bundle.base.js') }}"></script>
 
         <!-- Plugin -->
@@ -223,7 +212,6 @@
 
         <!-- Dashboard -->
         <script src="{{ asset('assets/skydash/js/dashboard.js') }}"></script>
-        {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         
@@ -263,17 +251,14 @@
                     '';
             }
 
-            /* INIT SAAT MODAL TERBUKA */
             $('#modalPage').on('shown.bs.modal', function () {
                 initTiny();
             });
 
-            /* JANGAN DESTROY (API LEBIH STABIL) */
             $('#modalPage').on('hidden.bs.modal', function () {
-                // cukup clear content kalau perlu
+                
             });
 
-            /* ================= SAFE USAGE ================= */
 
         </script>
         <script>

@@ -11,7 +11,6 @@ class PagesController extends Controller
 {
     public function index()
     {
-        // $pages = Pages::orderBy('order', 'asc')->get();
 
         return view('backend.pages' );
     }
@@ -88,20 +87,6 @@ class PagesController extends Controller
     public function update(Request $request, $id)
     {
         $page = Pages::findOrFail($id);
-
-        // $rules = [
-        //     'title'   => 'required',
-        //     'slug'    => 'required|unique:pages,slug,' . $page->id,
-        //     'type'    => 'required|in:Pages,Sub Pages',
-        //     'handler' => 'required|in:page,download',
-        // ];
-
-        // if ($request->type === 'Sub Pages') {
-        //     $rules['parent_id'] = 'required|exists:pages,id';
-        // }
-
-        // $request->validate($rules);
-
         $page->update([
             'title'      => $request->title,
             'slug'       => $request->slug,
@@ -129,17 +114,14 @@ class PagesController extends Controller
         DB::transaction(function () use ($id) {
             $page = Pages::findOrFail($id);
 
-            // cari page di atasnya (order lebih kecil)
             $above = Pages::where('sort_order', '<', $page->sort_order)
                 ->orderBy('sort_order', 'desc')
                 ->first();
 
-            // kalau tidak ada, berarti sudah paling atas
             if (!$above) {
                 return;
             }
 
-            // swap order
             $currentOrder = $page->sort_order;
             $page->sort_order = $above->sort_order;
             $above->sort_order = $currentOrder;
@@ -157,17 +139,14 @@ class PagesController extends Controller
         DB::transaction(function () use ($id) {
             $page = Pages::findOrFail($id);
 
-            // cari page di bawahnya (order lebih besar)
             $below = Pages::where('sort_order', '>', $page->sort_order)
                 ->orderBy('sort_order', 'asc')
                 ->first();
 
-            // kalau tidak ada, berarti sudah paling bawah
             if (!$below) {
                 return;
             }
 
-            // swap order
             $currentOrder = $page->sort_order;
             $page->sort_order = $below->sort_order;
             $below->sort_order = $currentOrder;

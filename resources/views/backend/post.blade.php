@@ -25,9 +25,7 @@
                             </tr>
                         </thead>
                         <tbody id="post-table">
-                            {{-- <tr>
-                                <td colspan="6" class="text-center">Loading...</td>
-                            </tr> --}}
+                            
                         </tbody>
                     </table>
                 </div>

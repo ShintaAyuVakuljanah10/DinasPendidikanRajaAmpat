@@ -21,12 +21,10 @@ class FrontEndController extends Controller
 
     public function show($slug)
     {
-        // SLUG KHUSUS DOWNLOAD
         if (str_starts_with($slug, 'download-laporan-')) {
             return app(DownloadController::class)->index($slug);
         }
 
-        // PAGE BIASA
         $page = Pages::where('slug', $slug)->firstOrFail();
         return view('frontend.page', compact('page'));
     }

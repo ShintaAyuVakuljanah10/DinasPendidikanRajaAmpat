@@ -25,9 +25,7 @@
                             </tr>
                         </thead>
                         <tbody id="user-table">
-                            {{-- <tr>
-                                <td colspan="6" class="text-center">Loading...</td>
-                            </tr> --}}
+                            
                         </tbody>
                     </table>
                 </div>
@@ -35,7 +33,6 @@
         </div>
     </div>
 </div>
-<!-- Modal Create/Edit User -->
 <div class="modal fade" id="modalUser" tabindex="-1">
     <div class="modal-dialog">
         <form id="formUser" enctype="multipart/form-data">
@@ -182,7 +179,6 @@ $(document).ready(function () {
         });
     }
 
-    // Buka modal tambah
     $('#btnAddUser').click(function () {
         $('#formUser')[0].reset();
         $('.text-danger').text('');
@@ -192,7 +188,6 @@ $(document).ready(function () {
         $('#modalUser').modal('show');
     });
 
-    // Submit tambah / edit
     $('#formUser').submit(function (e) {
         e.preventDefault();
         let formData = new FormData(this);
@@ -202,7 +197,7 @@ $(document).ready(function () {
         let type = 'POST';
 
         if(userId){
-            formData.append('_method','PUT'); // untuk update di Laravel
+            formData.append('_method','PUT'); 
         }
 
         $.ajax({
@@ -245,7 +240,6 @@ $(document).ready(function () {
         });
     });
 
-    // Edit user
     $(document).on('click', '.btn-edit', function () {
         let userId = $(this).data('id');
         $.get(`/users/${userId}/edit`, function (data) {
@@ -261,7 +255,6 @@ $(document).ready(function () {
         });
     });
 
-    // Delete user
     $(document).on('click', '.btn-delete', function () {
         let userId = $(this).data('id');
         Swal.fire({

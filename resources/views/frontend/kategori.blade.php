@@ -3,7 +3,6 @@
 @section('title', 'Kategori')
 
 @section('content')
-<!-- Page Title -->
 <div class="page-title" data-aos="fade">
     <div class="heading">
         <div class="container text-center">
@@ -16,21 +15,17 @@
 <section id="courses" class="courses section">
     <div class="container">
 
-        {{-- Header Kategori --}}
         <div class="d-flex align-items-center mb-4">
             <i class="bi {{ $kategori->icon ?? 'bi-folder' }}"
                style="font-size:32px; color:#0d6efd; margin-right:12px;"></i>
             <h2 class="mb-0">{{ $kategori->nama }}</h2>
         </div>
 
-        {{-- Grid Berita --}}
         <div class="row">
             @forelse ($beritas as $b)
             <div class="col-xl-3 col-lg-4 col-md-6 d-flex align-items-stretch mb-4" data-aos="zoom-in">
 
                 <div class="course-item position-relative h-100">
-
-                    {{-- LINK OVERLAY --}}
                     <a href="{{ route('berita.detail', $b->slug) }}"
                        class="stretched-link"
                        aria-label="{{ $b->judul }}"></a>
@@ -49,8 +44,6 @@
                             {{ Str::limit(strip_tags($b->konten), 120) }}
                         </p>
                     </div>
-
-                    {{-- Views --}}
                     <div class="position-absolute"
                          style="right:12px; bottom:10px; font-size:13px; color:#6c757d;">
                         <i class="bi bi-eye"></i> {{ $b->views ?? 0 }} views
@@ -67,7 +60,6 @@
             @endforelse
         </div>
 
-        {{-- Pagination --}}
         <div class="d-flex justify-content-center mt-4">
             {{ $beritas->links() }}
         </div>

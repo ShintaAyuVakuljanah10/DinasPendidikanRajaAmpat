@@ -42,7 +42,6 @@
                     </div>
                 </div>
 
-                {{-- DESKRIPSI --}}
                 <div class="mb-3">
                     <label class="form-label">Deskripsi Judul</label>
                     <textarea name="deskripsi"
@@ -50,7 +49,6 @@
                               rows="3">{{ old('deskripsi', $setting->deskripsi ?? '') }}</textarea>
                 </div>
 
-                {{-- ROW 2 --}}
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">E-mail</label>
@@ -69,7 +67,6 @@
                     </div>
                 </div>
 
-                {{-- ALAMAT --}}
                 <div class="mb-3">
                     <label class="form-label">Alamat</label>
                     <textarea name="alamat"
@@ -77,7 +74,6 @@
                               rows="3">{{ old('alamat', $setting->alamat ?? '') }}</textarea>
                 </div>
 
-                {{-- SALAM SAMBUTAN --}}
                 <div class="mb-3">
                     <label class="form-label">Salam Sambutan</label>
                     <textarea
@@ -109,7 +105,7 @@
 
             <div class="modal-body">
                 <div class="row" id="fileManagerList">
-                    <!-- ajax -->
+                    
                 </div>
             </div>
         </div>
@@ -165,15 +161,6 @@
         initSalamEditor();
     });
 </script>
-{{-- <script>
-    tinymce.init({
-        selector: '#salamEditor',
-        height: 300,
-        menubar: true,
-        plugins: 'lists link image table code',
-        toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
-    });
-</script> --}}
 
 <script>
     function openFileManager() {

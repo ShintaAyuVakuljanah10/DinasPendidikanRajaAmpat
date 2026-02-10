@@ -9,19 +9,16 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    // halaman view
     public function index()
     {
         return view('backend.category');
     }
 
-    // ambil data
     public function data()
     {
         return response()->json(Category::latest()->get());
     }
 
-    // simpan
     public function store(Request $request)
     {
         $request->validate([
@@ -38,13 +35,11 @@ class CategoryController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // edit (ambil data)
     public function edit($id)
     {
         return response()->json(Category::findOrFail($id));
     }
 
-    // update
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -62,7 +57,6 @@ class CategoryController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // hapus
     public function destroy($id)
     {
         Category::findOrFail($id)->delete();

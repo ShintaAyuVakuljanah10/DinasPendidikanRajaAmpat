@@ -13,10 +13,6 @@ class BannerController extends Controller
     {
         return view('backend.settings.banner');
     }
-    // public function update(Request $request)
-    // {
-    //     return redirect()->back()->with('success', 'Pengaturan banner disimpan');
-    // }
     public function data()
     {
         return response()->json(

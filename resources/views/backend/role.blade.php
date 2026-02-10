@@ -30,7 +30,6 @@
     </div>
 </div>
 
-{{-- MODAL --}}
 <div class="modal fade" id="modalRole">
     <div class="modal-dialog">
         <form id="formRole">

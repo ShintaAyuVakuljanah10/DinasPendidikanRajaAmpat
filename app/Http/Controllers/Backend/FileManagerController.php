@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Backend\FileManager;
-// use App\Models\BackEnd\Pages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -48,13 +47,5 @@ class FileManagerController extends Controller
         $file->delete();
 
         return response()->json(['success' => true]);
-    }
-
-    public function front()
-    {
-        // $page = Pages::where('slug', $slug)->firstOrFail();
-        $files = FileManager::latest()->get();
-
-        return view('frontend.dokumenPublik', compact('files'));
     }
 }

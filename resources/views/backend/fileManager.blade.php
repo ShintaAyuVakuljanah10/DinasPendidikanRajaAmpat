@@ -89,14 +89,12 @@ $(document).ready(function () {
         });
     }
 
-    // buka modal
     $('#btnAdd').click(function () {
         $('#formFile')[0].reset();
         $('.text-danger').text('');
         $('#modalFile').modal('show');
     });
 
-    // simpan
     $('#formFile').submit(function (e) {
         e.preventDefault();
         let formData = new FormData(this);
@@ -138,7 +136,6 @@ $(document).ready(function () {
         });
     });
 
-    // hapus
     $(document).on('click', '.delete', function () {
         let id = $(this).data('id');
         Swal.fire({

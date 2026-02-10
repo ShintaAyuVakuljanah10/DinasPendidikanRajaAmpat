@@ -33,12 +33,10 @@ class ProfileController extends Controller
             'username' => $request->username,
         ];
 
-        // update password jika diisi
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
 
-        // update foto jika upload
         if ($request->hasFile('foto')) {
 
             if ($user->foto && Storage::disk('public')->exists($user->foto)) {

@@ -15,18 +15,13 @@ use App\Http\Controllers\Backend\SubMenuController;
 use App\Http\Controllers\Frontend\DashboardController;
 use App\Http\Controllers\Frontend\BeritaController;
 use App\Http\Controllers\Frontend\FrontEndController;
-// use App\Http\Controllers\Frontend\KategoriController;
-// use App\Http\Controllers\Frontend\DokumenPublikController;
 use App\Http\Controllers\Backend\RoleController;
-use App\Http\Controllers\BackEnd\ProfileController;
-use App\Http\Controllers\BackEnd\DownloadController;
+use App\Http\Controllers\Backend\ProfileController;
+use App\Http\Controllers\Backend\DownloadController;
 use App\Http\Controllers\Backend\SekolahController;
 use App\Http\Controllers\Frontend\SekolahFrontendController;
+use App\Http\Controllers\Backend\DokumenFileController;
 
-
-// Route::get('/', function () {
-//     return view('frontend.dashboard');
-// });
 
 Route::get('/', [DashboardController::class, 'index']);
 Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
@@ -157,7 +152,6 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::post('/pages/store', [PagesController::class, 'store'])->name('pages.store');
     Route::get('/pages/{id}', [PagesController::class, 'show']);
     Route::put('/pages/{id}', [PagesController::class, 'update'])->name('pages.update');
-    // Route::resource('pages', PagesController::class);
     Route::delete('/pages/{id}', [PagesController::class, 'destroy'])->name('pages.destroy');
 }); 
 
@@ -174,7 +168,22 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::delete('/menu/{id}', [MenuController::class, 'destroy']);
 });
 
-// Route::get('/backend/menu/routeSelect', [MenuController::class, 'routeSelect'])->name('backend.menu.routeSelect');
+Route::prefix('backend')
+->middleware(['auth','log.agent'])
+->name('backend.')
+->group(function () {
+    Route::get('/public',[DokumenFileController::class,'index'])->name('public');
+
+    Route::get('/public/data',[DokumenFileController::class,'data'])->name('public.data');
+
+    Route::post('/public',[DokumenFileController::class,'store'])->name('public.store');
+
+    Route::get('/public/{id}/edit',[DokumenFileController::class,'edit']);
+
+    Route::put('/public/{id}',[DokumenFileController::class,'update']);
+
+    Route::delete('/public/{id}',[DokumenFileController::class,'destroy']);
+});
 
 
 Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->group(function () {
@@ -205,7 +214,7 @@ Route::prefix('backend')->middleware(['auth', 'log.agent'])->name('backend.')->g
     Route::delete('/sekolah/{id}', [SekolahController::class, 'destroy'])->name('sekolah.destroy');
 });
 
-Route::get('/dokumen-publik', [FileManagerController::class, 'front']);
+Route::get('/dokumen-publik', [DokumenFileController::class, 'front']);
 Route::get('/unduh/{id}', [\App\Http\Controllers\Frontend\DownloadController::class, 'download'])
 ->name('download.file');
 Route::get('/kategori', [FrontendController::class, 'kategori']);

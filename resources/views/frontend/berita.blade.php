@@ -3,7 +3,6 @@
 @section('title', 'Berita')
 
 @section('content')
-    <!-- Page Title -->
     <div class="page-title" data-aos="fade">
         <div class="heading">
             <div class="container text-center">
@@ -12,45 +11,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Berita Section -->
-    {{-- <section id="kategori" class="features section" style="scroll-margin-top: 90px;">
-        <div class="container section-title mt-4" data-aos="fade-up">
-            <h2>Kategori</h2>
-        </div>
-
-
-        <div class="container">
-
-            <div class="row gy-4">
-
-                @foreach ($categories as $index => $kategori)
-                    <div class="col-lg-3 col-md-4"
-                        data-aos="fade-up"
-                        data-aos-delay="{{ ($index + 1) * 100 }}">
-
-                        <div class="features-item position-relative">
-
-                            <i class="bi {{ $kategori->icon ?? 'bi-folder' }}" 
-                                style="color:#0d6efd; font-size:24px;"></i>
-
-                            <h3>
-                                <a href="{{ route('berita.kategori', $kategori->slug) }}"
-                                class="stretched-link">
-                                    {{ $kategori->nama }}
-                                </a>
-                            </h3>
-
-                        </div>
-                    </div>
-                @endforeach
-
-            </div>
-
-
-        </div>
-
-    </section> --}}
     <section id="courses" class="courses section">
         <div class="container">
             
@@ -60,8 +20,6 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 d-flex align-items-stretch mb-4" data-aos="zoom-in">
 
                     <div class="course-item position-relative h-100">
-
-                        {{-- LINK OVERLAY --}}
                         <a href="{{ route('berita.detail', $post->slug) }}"
                         class="stretched-link"
                         aria-label="{{ $post->judul }}"></a>
@@ -81,7 +39,6 @@
                             </p>
                         </div>
 
-                        {{-- Views pojok kanan bawah --}}
                         <div class="position-absolute"
                             style="right:12px; bottom:10px; font-size:13px; color:#6c757d;">
                             <i class="bi bi-eye"></i> {{ $post->views }} views
@@ -92,12 +49,6 @@
                 </div>
             @endforeach
             </div>
-
-            <!-- Pagination -->
-            {{-- <div class="d-flex justify-content-center mt-4">
-            {{ $posts->links() }}
-            </div> --}}
-
         </div>
     </section>
 @endsection

@@ -31,7 +31,6 @@
 
                 </div>
 
-              <!-- Tombol Prev -->
                 <button class="carousel-control-prev"
                     type="button"
                     data-bs-target="#heroCarousel"
@@ -39,7 +38,6 @@
                     <span class="carousel-control-prev-icon"></span>
                 </button>
 
-              <!-- Tombol Next -->
                 <button class="carousel-control-next"
                     type="button"
                     data-bs-target="#heroCarousel"
@@ -66,14 +64,6 @@
                     data-aos="fade-up"
                     data-aos-delay="200">
 
-                    {{-- <h3>
-                        {{ $appSetting->judul_aplikasi ?? 'Tentang Kami' }}
-                    </h3>
-
-                    <p class="fst-italic">
-                        {{ $appSetting->deskripsi ?? '' }}
-                    </p> --}}
-
                     <div class="about-content">
                         {!! $appSetting->salam ?? '' !!}
                     </div>
@@ -91,7 +81,6 @@
         <div class="container" data-aos="fade-up" data-aos-delay="100">
             <div class="row gy-4">
     
-                <!-- SISWA -->
                 <div class="col-lg-4 col-md-6">
                     <div class="stats-item text-center w-100 h-100">
                         <span
@@ -104,7 +93,6 @@
                     </div>
                 </div>
     
-                <!-- GURU -->
                 <div class="col-lg-4 col-md-6">
                     <div class="stats-item text-center w-100 h-100">
                         <span
@@ -133,17 +121,10 @@
             </div>
         </div>
     </section>
-    <!-- /Counts Section -->
 
-    <!-- Why Us Section -->
     <section id="why-us" class="section why-us">
 
-        
-
     </section>
-    <!-- /Why Us Section -->
-
-    <!-- Features Section -->
     <section id="kategori" class="features section" style="scroll-margin-top: 90px;">
         <div class="container section-title" data-aos="fade-up">
             <h2>Kategori</h2>
@@ -181,12 +162,10 @@
 
         </div>
 
-    </section><!-- /Features Section -->
+    </section>
 
-    <!-- Courses Section -->
     <section id="courses" class="courses section">
 
-        <!-- Section Title -->
         <div class="container section-title" data-aos="fade-up">
             <h2>Berita</h2>
             <p>Berita Terbaru</p>
@@ -201,7 +180,6 @@
 
                         <div class="course-item position-relative h-100">
 
-                            {{-- LINK OVERLAY --}}
                             <a href="{{ route('berita.detail', $post->slug) }}"
                             class="stretched-link judul-post"
                             aria-label="{{ $post->judul }}"></a>
@@ -221,7 +199,6 @@
                                 </p>
                             </div>
 
-                            {{-- Views pojok kanan bawah --}}
                             <div class="position-absolute"
                                 style="right:12px; bottom:10px; font-size:13px; color:#6c757d;">
                                 <i class="bi bi-eye"></i> {{ $post->views }} views
@@ -243,7 +220,7 @@
 
 
 
-    </section><!-- /Courses Section -->
+    </section>
 </main>
 
 @endsection

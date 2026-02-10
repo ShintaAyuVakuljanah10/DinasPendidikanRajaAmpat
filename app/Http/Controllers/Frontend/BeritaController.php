@@ -33,13 +33,11 @@ class BeritaController extends Controller
     }
     public function kategori($slug)
     {
-        // Ambil kategori
         $kategori = Category::where('slug', $slug)->firstOrFail();
 
-        // Ambil berita sesuai kategori
         $beritas = Berita::where('kategori_id', $kategori->id)
                         ->latest()
-                        ->paginate(12); // Pagination
+                        ->paginate(12);
 
         return view('frontend.kategori', compact('kategori', 'beritas'));
     }

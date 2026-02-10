@@ -24,13 +24,11 @@
         <div class="container mb-4">
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
 
-                <!-- Kiri: Judul -->
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-list-ul fs-4 text-primary"></i>
                     <h5 class="mb-0 fw-bold">Daftar Sekolah</h5>
                 </div>
 
-                <!-- Kanan: Filter -->
                 <div class="d-flex align-items-center gap-2">
                     <div class="input-group input-group-sm filter-kecamatan">
                         <span class="input-group-text bg-light border-end-0">
@@ -101,7 +99,6 @@
     </div>
 </div>
 
-{{-- MODAL --}}
 <div class="modal fade" id="detailModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -112,7 +109,7 @@
             </div>
 
             <div class="modal-body" id="modalContent">
-                {{-- langsung diganti via AJAX --}}
+                
             </div>
 
         </div>
@@ -215,11 +212,10 @@
 
 </style>
 
-{{-- JS --}}
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // animasi masuk card
         document.querySelectorAll('.sekolah-item').forEach((el, i) => {
             setTimeout(() => {
                 el.style.transition = 'all .4s ease';
@@ -228,7 +224,6 @@
             }, i * 80);
         });
 
-        // AJAX modal tanpa loading
         document.querySelectorAll('.btn-detail').forEach(btn => {
             btn.addEventListener('click', function () {
                 
@@ -317,7 +312,6 @@
         const cards = document.querySelectorAll('.sekolah-item');
         const badge = document.getElementById('totalBadge');
 
-        // isi dropdown kecamatan (urut A-Z)
         Object.keys(wilayahPapuaBarat)
             .sort()
             .forEach(kec => {
@@ -327,7 +321,6 @@
                 kecamatanSelect.appendChild(opt);
             });
 
-        // filter realtime
         kecamatanSelect.addEventListener('change', function () {
             const selected = this.value;
             let visibleCount = 0;
@@ -343,7 +336,6 @@
                 }
             });
 
-            // update badge
             badge.textContent = visibleCount + ' Sekolah';
         });
     });

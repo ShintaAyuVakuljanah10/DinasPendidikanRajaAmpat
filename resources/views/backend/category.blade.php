@@ -257,7 +257,6 @@ $(document).ready(function () {
         });
     }
 
-    // buka modal tambah
     $('#btnAddCategory').click(function () {
         $('#formCategory')[0].reset();
         $('#category_id').val('');
@@ -266,7 +265,6 @@ $(document).ready(function () {
         $('#modalCategory').modal('show');
     });
 
-    // simpan / update
     $('#formCategory').submit(function (e) {
         e.preventDefault();
         let id = $('#category_id').val();
@@ -312,7 +310,6 @@ $(document).ready(function () {
 
     });
 
-    // edit
     $(document).on('click', '.btn-edit', function () {
         let id = $(this).data('id');
         $.get(`/categories/${id}/edit`, function (data) {
@@ -329,17 +326,15 @@ $(document).ready(function () {
         });
     });
 
-    // click
     $(document).on('click', '.icon-box', function () {
-        $('.icon-box').removeClass('active'); // hapus highlight semua
-        $(this).addClass('active');           // highlight yg diklik
+        $('.icon-box').removeClass('active'); 
+        $(this).addClass('active');
 
-        $('#icon').val($(this).data('icon')); // simpan ke hidden input
+        $('#icon').val($(this).data('icon'));
     });
 
 
 
-    // hapus
     $(document).on('click', '.btn-delete', function () {
         let id = $(this).data('id');
         Swal.fire({
